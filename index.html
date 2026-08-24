@@ -2016,6 +2016,28 @@ body{background:var(--canvas);color:var(--ink)}
 
 /* INVO · PANIER DÉCLARER · MODALES */
 body.invo-modal-open #cartbar{display:none!important}
+
+/* INVO · RÉGLAGES · DÉFILEMENT */
+.settings-layout{
+  height:calc(min(760px,calc(100dvh - 48px)) - 101px)!important;
+  min-height:0!important;
+}
+.settings-content{
+  min-height:0!important;
+  height:100%!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+}
+@media(max-width:680px){
+  .settings-layout{
+    height:calc(92dvh - 91px)!important;
+    max-height:none!important;
+    min-height:0!important;
+  }
+  .settings-content{flex:1 1 auto!important;min-height:0!important}
+}
 </style>
 </head>
 <body>
