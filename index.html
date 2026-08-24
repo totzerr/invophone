@@ -2063,6 +2063,10 @@ body.invo-modal-open #cartbar{display:none!important}
   .settings-layout{height:auto!important;max-height:none!important;min-height:auto!important}
   .settings-content{flex:0 0 auto!important;height:auto!important;overflow:visible!important}
 }
+
+/* INVO · TEST PILOTE AUTOMATIQUE */
+.settings-action-grid:has(#pilotAutoStart){grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:680px){.settings-action-grid:has(#pilotAutoStart){grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -3034,6 +3038,8 @@ function dessineAuth(){
 async function load(){const s=await Store.get(dataKey());if(s)st=Object.assign(st,s);
 /* Fin du flux fictif : INVO démarre désormais toujours en caisse manuelle. */
 if(!s||s.modeCaisse!=='manuel'){st.modeCaisse='manuel';st.live=false;}
+/* Aucun flux fictif ne peut survivre hors du parcours de démonstration explicite. */
+if(!st.demoParcours)st.live=false;
 if(!st.doseurs)st.doseurs={actif:false,releves:{}};
 if(!st.liv)st.liv=[];if(!st.invHist)st.invHist=[];if(!st.photos)st.photos={};
 if(!Array.isArray(st.fournisseurs))st.fournisseurs=[];
@@ -3145,7 +3151,7 @@ async function resetDemo(){
 
 /* Parcours entièrement fictif : il sert à vérifier les connexions commande,
    réception et caisse sans présenter ces données comme celles d'un restaurant. */
-async function chargerParcoursDemonstration(){
+async function chargerParcoursDemonstration(fluxAutomatique){
  let avant;
  try{avant=await creerSauvegarde()}catch(e){toast(t('backupRead'));return}
  if(!confirm(t('pilotDemoConfirm')))return;
@@ -3155,7 +3161,7 @@ async function chargerParcoursDemonstration(){
  st=stVierge();
  st.lang=lang;st.who=who;st.whoId=whoId;st.etabNom=etabNom;st.svc=svc;
  if(doseurs)st.doseurs=doseurs;
- st.modePilote=false;st.demoParcours=true;
+ st.modePilote=false;st.demoParcours=true;st.live=!!fluxAutomatique;
  st.prods=JSON.parse(JSON.stringify(PRODUITS_DEF));
  st.carte=JSON.parse(JSON.stringify(CARTE_DEF));
  st.prods.forEach(p=>st.stock[p.id]=p.s);
@@ -3178,7 +3184,9 @@ async function chargerParcoursDemonstration(){
  if(venteAnnulee.ok)creerMouvement({id:'demo_annulation',src:'demo',motif:'annul',plat:'vAbsolut',qty:1,parent:venteAnnulee.mv.id,table:'Démo',ts:maintenant.toISOString()},{forcer:true});
  Docs._cache={};panier={};motif=null;decPhoto=null;screen='dash';
  _pvCache=null;_pvCle='';
- await save();closeModal();renderAll();toast(t('pilotDemoReady'));
+ await save();closeModal();renderAll();startFeed();
+ if(st.live)setTimeout(posEvent,900);
+ toast(st.live?'Test pilote automatique lancé : données de démonstration uniquement.':t('pilotDemoReady'));
 }
 
 async function importerSauvegarde(f){
@@ -3390,7 +3398,8 @@ el.innerHTML=`<div class="toast">✓ ${msg}</div>`;setTimeout(()=>{el.innerHTML=
 
 /* ═════ FLUX CAISSE ═════ */
 function posEvent(){
- if(!st.carte.length)return;
+ /* Flux automatique réservé au parcours fictif : jamais au test réel. */
+ if(!st.live||!st.demoParcours||!st.carte.length)return;
  const c=st.carte[Math.floor(Math.random()*st.carte.length)];
  const pool=c.k==='food'
  ?['vente','vente','vente','vente','vente','vente','vente','offClient','annul','perso']
@@ -3405,8 +3414,8 @@ function posEvent(){
   if(cand.length){parent=cand[0].id}
   else{mo='vente'}                      /* sinon on retombe sur une vente */
  }
- const r=creerMouvement({src:'auto',motif:mo,plat:c.id,qty:q,
-  table:TABLES[Math.floor(Math.random()*TABLES.length)],who:'Cashpad',
+ const r=creerMouvement({src:'demo',motif:mo,plat:c.id,qty:q,
+  table:'Démo automatique',who:'INVO · Démo',
   parent},{accepteAlerte:true});        /* la caisse reflète le réel : on enregistre et on signale */
  if(!r.ok)return;                       /* mouvement incohérent : jamais écrit */
 
@@ -7282,6 +7291,8 @@ function settingsIcon(kind){
 function openReglages(){
  settingsTab=typeof arguments[0]==='string'?arguments[0]:(settingsTab||'general');
  const dos=st.doseurs||{actif:false,releves:{}};
+ const textePilote=st.demoParcours?(st.live?'Flux automatique de démonstration actif.':'Parcours de démonstration chargé.'):(st.modePilote?t('pilotOn'):t('pilotS'));
+ const etatPilote=st.demoParcours?(st.live?'Auto':'Démo'):(st.modePilote?'Actif':'Prêt');
  const general=`
   <section class="settings-group">
    <div class="settings-group-title">${settingsIcon('building')}<span>${t('etablissement')}</span></div>
@@ -7300,13 +7311,15 @@ function openReglages(){
    <div class="settings-group-title">${settingsIcon('pilot')}<span>${t('pilot')} / ${t('reset')}</span></div>
    <div class="settings-card">
     <div class="settings-status-row">
-     <span class="settings-field-label">${settingsIcon('pilot')}<span><b>Test pilote</b><small>${st.modePilote?t('pilotOn'):t('pilotS')}</small></span></span>
-     <span class="pill-etat ${st.modePilote?'on':'off'}">${st.modePilote?'Actif':'Prêt'}</span>
+     <span class="settings-field-label">${settingsIcon('pilot')}<span><b>Test pilote</b><small>${textePilote}</small></span></span>
+     <span class="pill-etat ${(st.modePilote||st.demoParcours)?'on':'off'}">${etatPilote}</span>
     </div>
     <div class="settings-action-grid">
+     <button class="settings-action-button" id="pilotAutoStart">${settingsIcon('pilot')}<span>Lancer le test pilote automatique</span></button>
      ${st.modePilote?'':`<button class="settings-action-button" id="pilotStart">${settingsIcon('pilot')}<span>${t('pilotStart')}</span></button>`}
      <button class="settings-action-button" id="resetDemo">${settingsIcon('general')}<span>${t('reset')}</span></button>
     </div>
+    ${st.demoParcours?`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Flux de démonstration</b><small>Les ventes automatiques restent fictives et ne correspondent jamais à la caisse réelle.</small></span></span><button class="settings-text-button" id="pilotAutoPause">${st.live?'Mettre en pause':'Reprendre'}${settingsIcon('arrow')}</button></div>`:''}
     ${st.modePilote?'':`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Parcours de démonstration</b><small>${t('pilotDemoS')}</small></span></span><button class="settings-text-button" id="pilotDemoLoad">${t('pilotDemoLoad')}${settingsIcon('arrow')}</button></div>`}
    </div>
   </section>
@@ -7345,6 +7358,10 @@ function openReglages(){
  if(bkBtn&&bkIn)bkBtn.onclick=()=>bkIn.click();
  const pilotBtn=document.getElementById('pilotStart');
  if(pilotBtn)pilotBtn.onclick=async()=>{pilotBtn.disabled=true;await preparerTestReel();};
+ const pilotAutoBtn=document.getElementById('pilotAutoStart');
+ if(pilotAutoBtn)pilotAutoBtn.onclick=async()=>{pilotAutoBtn.disabled=true;await chargerParcoursDemonstration(true);};
+ const pilotAutoPause=document.getElementById('pilotAutoPause');
+ if(pilotAutoPause)pilotAutoPause.onclick=async()=>{st.live=!st.live;await save();startFeed();if(st.live)setTimeout(posEvent,300);openReglages();};
  const resetBtn=document.getElementById('resetDemo');
  if(resetBtn)resetBtn.onclick=async()=>{resetBtn.disabled=true;await resetDemo();};
  const pilotDemoBtn=document.getElementById('pilotDemoLoad');
