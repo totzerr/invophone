@@ -1981,6 +1981,39 @@ html,body{color:var(--invo-text-strong)!important}
 body{background:var(--canvas);color:var(--ink)}
 
 </style>
+
+<style id="invo-history-audit-ui">
+/* INVO · HISTORIQUE, RÉGLAGES & VENTES · 2026-08-24 */
+#s-caisse .sales-new{background:linear-gradient(145deg,#FFFFFF,#F5F7FA)!important;border:1px solid #DCE2EA!important;color:#18202E!important;box-shadow:0 10px 24px rgba(24,32,46,.06)!important}
+#s-caisse .sales-new:hover{background:#FFFFFF!important;border-color:#BFC9D8!important;box-shadow:0 14px 28px rgba(24,32,46,.10)!important;transform:translateY(-1px)}
+#s-caisse .sales-new:focus-visible{outline:3px solid rgba(67,85,245,.28)!important;outline-offset:3px}
+#s-caisse .sales-new b{color:#18202E!important}
+#s-caisse .sales-new small{color:#687386!important}
+#s-caisse .sales-new i{color:#4355F5!important}
+#s-caisse .sales-new-plus{background:#EEF0FF!important;color:#3547E8!important;box-shadow:inset 0 0 0 1px #C7D0FF!important}
+#s-caisse .work-item{cursor:pointer}
+#s-caisse .work-item:focus-visible{outline:3px solid rgba(67,85,245,.28);outline-offset:2px}
+.settings-nav [data-settings="audit"]{display:flex}
+.audit-group{display:grid;gap:14px}
+.audit-intro{margin:0;padding:11px 12px;border:1px solid #DCE2EA;border-radius:12px;background:#F7F8FA;color:#536174;font:500 12px/1.5 Inter,system-ui,sans-serif}
+.audit-intro b{color:#18202E;font-weight:650}
+.audit-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.audit-filters label{display:grid;gap:5px;color:#687386;font:700 9px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.audit-filters select{width:100%;min-height:36px;padding:0 9px;border:1px solid #DCE2EA;border-radius:10px;background:#FFF;color:#18202E;font:500 12px Inter,system-ui,sans-serif}
+.audit-list{display:grid;gap:8px;max-height:440px;overflow:auto;padding-right:2px}
+.audit-row{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;padding:11px 12px;border:1px solid #E2E7EF;border-radius:12px;background:#FFF}
+.audit-row time{color:#687386;font:600 10px/1.45 Inter,system-ui,sans-serif}
+.audit-row-main{min-width:0}
+.audit-row-title{display:flex;align-items:center;justify-content:space-between;gap:9px;color:#18202E;font:650 13px/1.3 Inter,system-ui,sans-serif}
+.audit-role{flex:0 0 auto;padding:3px 6px;border-radius:999px;background:#EEF0FF;color:#4355F5;font:700 9px/1 Inter,system-ui,sans-serif;letter-spacing:.04em}
+.audit-element{margin-top:3px;color:#536174;font:500 11px/1.4 Inter,system-ui,sans-serif}
+.audit-change{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-top:7px;color:#536174;font:500 11px/1.35 Inter,system-ui,sans-serif}
+.audit-change span{min-width:0;padding:5px 7px;border-radius:8px;background:#F7F8FA;overflow-wrap:anywhere}
+.audit-change i{color:#8A96A8;font-style:normal}
+.audit-note{margin-top:6px;color:#687386;font:500 10px/1.4 Inter,system-ui,sans-serif}
+.audit-empty{padding:25px 14px;border:1px dashed #C9D2DF;border-radius:12px;text-align:center;color:#687386;font:500 12px/1.5 Inter,system-ui,sans-serif}
+@media(max-width:720px){.audit-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-row{grid-template-columns:1fr}.audit-change{grid-template-columns:1fr}.audit-change i{text-align:center;transform:rotate(90deg)}}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Aller au contenu</a>
@@ -1994,7 +2027,7 @@ body{background:var(--canvas);color:var(--ink)}
 <div class="top-right">
 <button class="lang" id="langBtn">FR</button>
 <button class="who-pill" id="whoBtn"><span class="dot"></span><span id="whoName">Thomas</span></button>
-<button class="gear" id="gearBtn" title="Réglages" aria-label="Réglages"><svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"></path><circle cx="12" cy="12" r="3.2"></circle></svg></button>
+<button class="gear" id="gearBtn" title="Réglages" aria-label="Réglages"><svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path><circle cx="9" cy="6" r="2"></circle><circle cx="15" cy="12" r="2"></circle><circle cx="11" cy="18" r="2"></circle></svg></button>
 </div></div>
 <main id="mainContent" tabindex="-1">
 <section class="screen on" id="s-dash"></section>
@@ -3620,7 +3653,7 @@ function renderCaisse(){
   <section class="activity-block"><div class="work-heading"><span>${t('jrnl')}</span><small>${st.mv.length}</small></div>
    <div class="activity-list">${rows}</div></section>`;
  document.getElementById('newSale').onclick=()=>{screen='dec';motif='vente';go()};
- document.querySelectorAll('[data-qual]').forEach(b=>b.onclick=()=>openQualification(b.dataset.qual));seenFeed=st.mv.length;
+ const caisseActions=document.getElementById('s-caisse');if(caisseActions)caisseActions.onclick=e=>{const b=e.target.closest('[data-qual]');if(!b||!caisseActions.contains(b))return;e.preventDefault();ouvrirTraitementVente(b.dataset.qual);};seenFeed=st.mv.length;
 }
 /* ═════ DÉCLARER ═════ */
 function catsDispo(){const s=new Set(st.carte.filter(c=>c.sv===st.svc||c.sv==='tous').map(c=>c.c));
@@ -7454,6 +7487,195 @@ async function bootApp(){
  document.getElementById('drBg').onclick=fermerMenu;
  renderAll();startFeed();setTimeout(()=>{if(st.live)posEvent();adminSynchronisationAutomatique()},1200);
 }
+
+/* INVO · HISTORIQUE D'AUDIT LOCAL · 2026-08-24
+   Démonstration locale : la visibilité est contrôlée dans l'interface.
+   Une conservation inviolable et un contrôle de rôle serveur exigent un backend. */
+let auditJournal=[];
+function cleHistoriqueAudit(){return dataKey()+':audit-v1'}
+function peutVoirHistoriqueAudit(){
+ return !!st&&(st.whoId==='gestion'||/gestion\s*\/?\s*direction/i.test(String(st.who||'')));
+}
+function roleHistoriqueAudit(){
+ if(peutVoirHistoriqueAudit())return 'Gestion / Direction';
+ const poste=(POSTES||[]).find(function(p){return p.id===st.whoId});
+ return poste?poste.n:(st.who||'Employé');
+}
+function echapperHistoriqueAudit(v){return escapeHTML(String(v===undefined||v===null||v===''?'—':v))}
+function resumeStockHistoriqueAudit(platId){
+ const c=item(platId);
+ if(!c||!c.f)return 'Aucun ingrédient relié';
+ const lignes=Object.entries(c.f).map(function(pair){
+  const p=prod(pair[0]),q=st.stock[pair[0]]||0;
+  return (p?p.n:pair[0])+' : '+fmtQ(q)+' '+(p?p.u:'');
+ });
+ return lignes.join(' · ')||'Aucun ingrédient relié';
+}
+function libelleHistoriqueMotif(motif){
+ const lib={vente:'Vente externe enregistrée',envoi:'Sortie enregistrée',annul:'Annulation classée',
+  offClient:'Offert client classé',offPart:'Offert partenaire classé',offGroupe:'Offert groupe classé',
+  casse:'Perte / casse classée',rate:'Perte / raté classée'};
+ return lib[motif]||'Mouvement enregistré';
+}
+function ajouterHistoriqueAudit(action,element,avant,apres,motif){
+ const entry={
+  id:'audit_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+  ts:new Date().toISOString(),
+  utilisateur:st&&st.who?st.who:'Utilisateur non identifié',
+  role:roleHistoriqueAudit(),
+  action:action||'Action enregistrée',
+  element:element||'—',
+  avant:avant===undefined?'—':avant,
+  apres:apres===undefined?'—':apres,
+  motif:motif||''
+ };
+ auditJournal.unshift(entry);
+ if(auditJournal.length>500)auditJournal.length=500;
+ Promise.resolve(Store.set(cleHistoriqueAudit(),auditJournal)).catch(function(){});
+ return entry;
+}
+const chargerDonneesInvoSansHistorique=load;
+load=async function(){
+ await chargerDonneesInvoSansHistorique();
+ const local=await Store.get(cleHistoriqueAudit());
+ auditJournal=Array.isArray(local)?local:[];
+};
+function formatDateHistoriqueAudit(ts){
+ const d=new Date(ts);
+ return isNaN(d.getTime())?'—':d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'})+' · '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+function optionsHistoriqueAudit(values,selected){
+ return values.map(function(v){return '<option value="'+echapperHistoriqueAudit(v)+'"'+(v===selected?' selected':'')+'>'+echapperHistoriqueAudit(v)+'</option>'}).join('');
+}
+function historiqueAuditHTML(){
+ const utilisateurs=['',...Array.from(new Set(auditJournal.map(function(x){return x.utilisateur}).filter(Boolean))).sort()];
+ const roles=['',...Array.from(new Set(auditJournal.map(function(x){return x.role}).filter(Boolean))).sort()];
+ const actions=['',...Array.from(new Set(auditJournal.map(function(x){return x.action}).filter(Boolean))).sort()];
+ return '<section class="audit-group">'+
+  '<p class="audit-intro"><b>Historique local de démonstration.</b> Il est visible uniquement depuis le profil Gestion / Direction dans cette version. Une conservation inviolable exige un backend.</p>'+
+  '<div class="audit-filters">'+
+   '<label>Utilisateur<select id="auditUser"><option value="">Tous</option>'+optionsHistoriqueAudit(utilisateurs.slice(1),'')+'</select></label>'+
+   '<label>Rôle<select id="auditRole"><option value="">Tous</option>'+optionsHistoriqueAudit(roles.slice(1),'')+'</select></label>'+
+   '<label>Action<select id="auditAction"><option value="">Toutes</option>'+optionsHistoriqueAudit(actions.slice(1),'')+'</select></label>'+
+   '<label>Période<select id="auditPeriod"><option value="">Toute période</option><option value="day">Aujourd’hui</option><option value="week">7 derniers jours</option><option value="month">30 derniers jours</option></select></label>'+
+  '</div><div class="audit-list" id="auditRows"></div></section>';
+}
+function rendreLignesHistoriqueAudit(){
+ const cible=document.getElementById('auditRows');if(!cible)return;
+ const utilisateur=document.getElementById('auditUser')?document.getElementById('auditUser').value:'';
+ const role=document.getElementById('auditRole')?document.getElementById('auditRole').value:'';
+ const action=document.getElementById('auditAction')?document.getElementById('auditAction').value:'';
+ const periode=document.getElementById('auditPeriod')?document.getElementById('auditPeriod').value:'';
+ const maintenant=Date.now();
+ const delai={day:86400000,week:7*86400000,month:30*86400000}[periode]||0;
+ const lignes=auditJournal.filter(function(x){
+  if(utilisateur&&x.utilisateur!==utilisateur)return false;
+  if(role&&x.role!==role)return false;
+  if(action&&x.action!==action)return false;
+  return !delai||maintenant-new Date(x.ts).getTime()<=delai;
+ });
+ cible.innerHTML=lignes.length?lignes.map(function(x){
+  return '<article class="audit-row"><time>'+echapperHistoriqueAudit(formatDateHistoriqueAudit(x.ts))+'</time><div class="audit-row-main">'+
+   '<div class="audit-row-title"><span>'+echapperHistoriqueAudit(x.action)+'</span><span class="audit-role">'+echapperHistoriqueAudit(x.role)+'</span></div>'+
+   '<div class="audit-element">'+echapperHistoriqueAudit(x.utilisateur)+' · '+echapperHistoriqueAudit(x.element)+'</div>'+
+   '<div class="audit-change"><span>'+echapperHistoriqueAudit(x.avant)+'</span><i>→</i><span>'+echapperHistoriqueAudit(x.apres)+'</span></div>'+
+   (x.motif?'<div class="audit-note">Motif / commentaire : '+echapperHistoriqueAudit(x.motif)+'</div>':'')+
+  '</div></article>';
+ }).join(''):'<div class="audit-empty">Aucune action ne correspond à ces filtres.</div>';
+}
+function lierHistoriqueAudit(){
+ ['auditUser','auditRole','auditAction','auditPeriod'].forEach(function(id){
+  const champ=document.getElementById(id);if(champ)champ.onchange=rendreLignesHistoriqueAudit;
+ });
+ rendreLignesHistoriqueAudit();
+}
+const ouvrirReglagesSansHistorique=openReglages;
+openReglages=function(onglet){
+ let voulu=typeof onglet==='string'?onglet:(settingsTab||'general');
+ if(voulu==='audit'&&!peutVoirHistoriqueAudit()){voulu='general';toast('Historique réservé à Gestion / Direction.');}
+ ouvrirReglagesSansHistorique(voulu==='audit'?'general':voulu);
+ if(!peutVoirHistoriqueAudit())return;
+ const nav=document.querySelector('.settings-nav');
+ if(nav&&!nav.querySelector('[data-settings="audit"]')){
+  nav.insertAdjacentHTML('beforeend','<button data-settings="audit" aria-current="false"><span class="settings-row-icon settings-row-icon--general">◷</span><span>Historique</span></button>');
+ }
+ const auditBtn=document.querySelector('[data-settings="audit"]');
+ if(auditBtn)auditBtn.onclick=function(){openReglages('audit')};
+ if(voulu==='audit'){
+  settingsTab='audit';
+  document.querySelectorAll('[data-settings]').forEach(function(b){const actif=b.dataset.settings==='audit';b.classList.toggle('on',actif);b.setAttribute('aria-current',actif?'page':'false');});
+  const contenu=document.querySelector('.settings-content');
+  if(contenu){contenu.innerHTML=historiqueAuditHTML();lierHistoriqueAudit();}
+ }
+};
+const creerMouvementSansHistorique=creerMouvement;
+creerMouvement=function(m,options){
+ const avant=resumeStockHistoriqueAudit(m.plat);
+ const resultat=creerMouvementSansHistorique.call(this,m,options);
+ if(resultat&&resultat.ok&&m.src!=='demo'){
+  const note=m.parent?'Transaction liée : '+m.parent:(m.table&&m.table!=='—'?'Référence : '+m.table:'');
+  ajouterHistoriqueAudit(libelleHistoriqueMotif(m.motif),resultat.mv.platN,avant,resumeStockHistoriqueAudit(m.plat),note);
+ }
+ return resultat;
+};
+const validerInventaireSansHistorique=validerInv;
+validerInv=async function(){
+ const avant=(st.invHist||[]).length;
+ await validerInventaireSansHistorique.apply(this,arguments);
+ const dernier=(st.invHist||[])[0];
+ if(dernier&&(st.invHist||[]).length>avant){
+  ajouterHistoriqueAudit('Inventaire validé',dernier.nb+' ligne(s) comptée(s)','Écarts avant validation : '+dernier.nbEcart,'Valeur d’écart : '+fmt(dernier.valEcart)+' €','Validation humaine de l’inventaire');
+ }
+};
+const preparerCommandeSansHistorique=preparerCommande;
+preparerCommande=async function(){
+ const avant=(st.commandes||[]).map(function(x){return x.id}).join('|');
+ await preparerCommandeSansHistorique.apply(this,arguments);
+ const commande=(st.commandes||[])[0];
+ if(commande&&avant.indexOf(commande.id)===-1){
+  ajouterHistoriqueAudit('Commande préparée',commande.fournisseur,'Stock inchangé',commande.lines.length+' ligne(s) en attente de réception','Livraison prévue : '+commande.dateLiv);
+ }
+};
+const saveLivSansHistorique=saveLiv;
+saveLiv=async function(){
+ const avant=(st.liv||[])[0]&&String((st.liv||[])[0].id);
+ await saveLivSansHistorique.apply(this,arguments);
+ const livraison=(st.liv||[])[0];
+ if(livraison&&String(livraison.id)!==avant){
+  ajouterHistoriqueAudit('Livraison validée',livraison.fo,'Stock avant réception',livraison.lines.length+' ligne(s) ajoutée(s)','Réception humaine validée');
+ }
+};
+const saveMatSansHistorique=saveMat;
+saveMat=async function(){
+ const ancien=fm&&fm.id?prod(fm.id):null;
+ const avant=ancien?ancien.n+' · stock '+fmtQ(st.stock[ancien.id]||0)+' '+ancien.u:'Matière inexistante';
+ const nom= fm&&fm.n?fm.n.trim():'Matière';
+ await saveMatSansHistorique.apply(this,arguments);
+ const trouve=(st.prods||[]).find(function(p){return p.n===nom});
+ if(trouve)ajouterHistoriqueAudit(ancien?'Matière modifiée':'Matière ajoutée',trouve.n,avant,'Stock '+fmtQ(st.stock[trouve.id]||0)+' '+trouve.u,'Catalogue stock');
+};
+const saveCarteSansHistorique=saveCarte;
+saveCarte=async function(){
+ const ancien=fm&&fm.id?(st.carte||[]).find(function(x){return x.id===fm.id}):null;
+ const nom=fm&&fm.n?fm.n.trim():'Produit';
+ await saveCarteSansHistorique.apply(this,arguments);
+ const trouve=(st.carte||[]).find(function(x){return x.n===nom});
+ if(trouve)ajouterHistoriqueAudit(ancien?'Produit carte modifié':'Produit carte ajouté',trouve.n,ancien?ancien.n:'Produit absent',trouve.n,'Fiche technique');
+};
+const signalerManquantSansHistorique=signalerProduitManquant;
+signalerProduitManquant=function(){
+ const avant=(st.commandes||[]).length;
+ const resultat=signalerManquantSansHistorique.apply(this,arguments);
+ if((st.commandes||[]).length===avant)ajouterHistoriqueAudit('Produit manquant signalé',commandeFo||'Fournisseur','Signalement non envoyé par INVO','Texte préparé pour le fournisseur','Copié manuellement, aucune donnée n’est envoyée automatiquement');
+ return resultat;
+};
+function ouvrirTraitementVente(mvId){
+ const cible=(st.mv||[]).find(function(x){return String(x.id)===String(mvId)});
+ if(!cible){toast('Cette vente n’est plus disponible.');return;}
+ screen='caisse';go();
+ requestAnimationFrame(function(){openQualification(mvId);});
+}
+
 /* Connexion désactivée pour la phase de test.
    Le code des comptes reste présent (creerCompte, connecter, showAuth…)
    et pourra être réactivé en remplaçant l'appel ci-dessous. */
