@@ -1910,6 +1910,54 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 .settings-sheet .user-card{border-color:#E3E6EC;border-radius:12px}.settings-sheet .user-remove{border-color:#F1D9D5;background:#FFF5F3}.settings-sheet .user-role{border-color:#DEE3EB!important;background:#F8F9FB!important}
 @media(max-width:680px){.settings-overlay{align-items:flex-end!important;padding:0!important}.settings-sheet{width:100%!important;max-height:92dvh!important;border-width:1px 0 0!important;border-radius:24px 24px 0 0!important}.settings-header{padding:18px 18px 15px}.settings-header h3{font-size:25px!important}.settings-layout{display:flex;flex-direction:column;max-height:calc(92dvh - 91px)}.settings-nav{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;border-right:0;border-bottom:1px solid #E3E6EC}.settings-nav button{flex:0 0 auto;width:auto;padding:8px 10px;border:1px solid transparent}.settings-nav button.on{border-color:#E0E4EB}.settings-content{padding:17px 14px 28px}.settings-group{margin-bottom:19px}.settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{padding:13px 12px;gap:10px}.settings-inline-input,.settings-inline-select{width:46%!important;min-width:118px}.settings-field-label small,.settings-mini-action small,.settings-static-row small{font-size:10px}.settings-action-grid{padding:9px 12px}.settings-choice{margin:9px 12px}.settings-users-card{padding:10px}.settings-sheet .user-card{padding:11px}}
 @media(max-width:420px){.settings-field-row{align-items:flex-start;flex-direction:column}.settings-inline-input,.settings-inline-select{width:100%!important}.settings-mini-action{align-items:flex-start}.settings-mini-action>.settings-text-button{margin-left:40px}.settings-static-row{align-items:flex-start}.settings-header p{font-size:11px}}
+
+/* INVO · TYPOGRAPHIE ARDOISE — textes neutres, accents or préservés */
+:root{
+  --ink:#18202E;
+  --steel-d:#687386;
+  --invo-text-strong:#18202E;
+  --invo-text-muted:#667184;
+  --invo-text-subtle:#8791A1;
+}
+html,body{color:var(--invo-text-strong)!important}
+.h-title,.dash-hero h1,.dashboard-new .dash-head h1,#s-caisse .sales-head h1,.declare-hero h1,.profile-dashboard h1,.admin-head h1{
+  color:var(--invo-text-strong)!important;
+}
+.h-sub,.dash-hero p,.dashboard-new .dash-head p,#s-caisse .sales-head p,.declare-hero p,.profile-dashboard .profile-intro,.admin-head p{
+  color:var(--invo-text-muted)!important;
+}
+.dashboard-new .dash-eyebrow,.profile-dashboard .profile-eyebrow,#s-caisse .sales-eyebrow,.admin-head small,.admin-section-head small{
+  color:var(--invo-text-muted)!important;
+}
+.profile-dashboard .profile-metric:not(.primary) small,
+.profile-dashboard .profile-share span,
+.profile-dashboard .profile-drink-stat span,
+.dashboard-state-card span,
+.dashboard-new .dash-sales small,
+.dashboard-new .dash-kpi span,
+.dashboard-new .dash-panel-head span,
+.dashboard-new .dash-performance-copy span,
+.dashboard-new .dash-cash span{
+  color:var(--invo-text-subtle)!important;
+}
+.profile-dashboard .profile-value,
+.profile-dashboard .profile-share b,
+.profile-dashboard .profile-drink-stat b,
+.dashboard-state-card b,
+.dashboard-new .dash-sales b,
+.dashboard-new .dash-kpi b,
+.dashboard-new .dash-panel-head b,
+.dashboard-new .dash-performance-copy b,
+.dashboard-new .dash-performance-metric b,
+.dashboard-new .dash-cash b{
+  color:var(--invo-text-strong)!important;
+}
+.profile-dashboard .profile-metric.primary .profile-value,
+.profile-dashboard .profile-drinks-total b,
+.dashboard-new .dash-week b,
+.dashboard-new .dash-week strong{
+  color:#FFF!important;
+}
 </style>
 </head>
 <body>
