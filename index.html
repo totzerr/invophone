@@ -3653,7 +3653,7 @@ function renderCaisse(){
   <section class="activity-block"><div class="work-heading"><span>${t('jrnl')}</span><small>${st.mv.length}</small></div>
    <div class="activity-list">${rows}</div></section>`;
  document.getElementById('newSale').onclick=()=>{screen='dec';motif='vente';go()};
- const caisseActions=document.getElementById('s-caisse');if(caisseActions)caisseActions.onclick=e=>{const b=e.target.closest('[data-qual]');if(!b||!caisseActions.contains(b))return;e.preventDefault();ouvrirTraitementVente(b.dataset.qual);};seenFeed=st.mv.length;
+ document.querySelectorAll('[data-qual]').forEach(function(b){b.type='button';b.onclick=function(){ouvrirTraitementVente(b.dataset.qual);};});seenFeed=st.mv.length;
 }
 /* ═════ DÉCLARER ═════ */
 function catsDispo(){const s=new Set(st.carte.filter(c=>c.sv===st.svc||c.sv==='tous').map(c=>c.c));
