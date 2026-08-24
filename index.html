@@ -2038,6 +2038,31 @@ body.invo-modal-open #cartbar{display:none!important}
   }
   .settings-content{flex:1 1 auto!important;min-height:0!important}
 }
+
+/* INVO · RÉGLAGES · DÉFILEMENT PLEIN ÉCRAN */
+.settings-sheet{
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.settings-header{position:sticky!important;top:0;z-index:3}
+.settings-layout{
+  height:auto!important;
+  max-height:none!important;
+  min-height:auto!important;
+  grid-template-rows:auto!important;
+}
+.settings-content{
+  height:auto!important;
+  min-height:auto!important;
+  overflow:visible!important;
+  touch-action:auto;
+}
+@media(max-width:680px){
+  .settings-layout{height:auto!important;max-height:none!important;min-height:auto!important}
+  .settings-content{flex:0 0 auto!important;height:auto!important;overflow:visible!important}
+}
 </style>
 </head>
 <body>
