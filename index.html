@@ -3912,9 +3912,9 @@ async function preparerCommande(){
 }
 function signalerProduitManquant(){
  const nom=prompt('Quel produit manque chez '+(commandeFo||'ce fournisseur')+' ?');
- if(nom===null||!nom.trim())return;
+ if(nom===null||!nom.trim())return false;
  const f=fournisseurParNom(commandeFo),txt='SIGNALEMENT PRODUIT MANQUANT\\n\\nFournisseur : '+commandeFo+'\\nProduit : '+nom.trim()+'\\nDate : '+new Date().toLocaleDateString('fr-FR')+'\\n\\nMerci de nous indiquer la disponibilité et le délai.';
- copyText(txt);toast(f&&f.mail?'Signalement copié pour '+f.mail+'.':'Signalement copié. Ajoute l’e-mail du fournisseur pour le retrouver ici.');
+ copyText(txt);toast(f&&f.mail?'Signalement copié pour '+f.mail+'.':'Signalement copié. Ajoute l’e-mail du fournisseur pour le retrouver ici.');return true;
 }
 function openFournisseur(nom){
  assurerFournisseurs();const f=nom?fournisseurParNom(nom):null;fournisseurForm=f?{id:f.id,n:f.n,mail:f.mail||''}:{id:null,n:'',mail:''};drawFournisseur();
@@ -7664,9 +7664,8 @@ saveCarte=async function(){
 };
 const signalerManquantSansHistorique=signalerProduitManquant;
 signalerProduitManquant=function(){
- const avant=(st.commandes||[]).length;
  const resultat=signalerManquantSansHistorique.apply(this,arguments);
- if((st.commandes||[]).length===avant)ajouterHistoriqueAudit('Produit manquant signalé',commandeFo||'Fournisseur','Signalement non envoyé par INVO','Texte préparé pour le fournisseur','Copié manuellement, aucune donnée n’est envoyée automatiquement');
+ if(resultat)ajouterHistoriqueAudit('Produit manquant signalé',commandeFo||'Fournisseur','Signalement non envoyé par INVO','Texte préparé pour le fournisseur','Copié manuellement, aucune donnée n’est envoyée automatiquement');
  return resultat;
 };
 function ouvrirTraitementVente(mvId){
