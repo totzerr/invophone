@@ -3368,7 +3368,7 @@ function startFeed(){if(timer)clearInterval(timer);timer=setInterval(()=>{if(st.
 function sinceSync(){const s=Math.floor((Date.now()-st.lastSync)/1000);return s<60?s+' s':Math.floor(s/60)+' min'}
 
 function openQualification(mvId){
- const m=(st.mv||[]).find(x=>x.id===mvId),reste=resteATracer(mvId);if(!m||reste<=0)return;
+ const m=(st.mv||[]).find(x=>String(x.id)===String(mvId)),reste=resteATracer(mvId);if(!m||reste<=0)return;
  const c=item(m.plat),choix=MOTIFS.filter(x=>MOTIFS_A_TRACER.includes(x.id)&&(x.ap==='tous'||x.ap===c.k));
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgQual"><div class="sheet">
  <h3>${t('qualifier')}</h3><p class="sh-sub">${t('qualifierS')}</p>
