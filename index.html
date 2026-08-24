@@ -3594,7 +3594,7 @@ function carteSourceMetier(label,source,contenu,classes){
 function enteteTableauMetier(profil,maintenant){
  const utilisateur=utilisateurDashboardActuel(),nom=((utilisateur&&utilisateur.nom)||st.who||'').split(' ')[0];
  const date=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
- return '<section class="profile-head"><div><div class="profile-eyebrow"><i></i>'+escapeHTML(profil.i+' '+profil.n)+' · '+date.toUpperCase()+'</div><h1>'+(nom?'Bonjour '+escapeHTML(nom)+'.':'Bonjour.')+'</h1><p class="profile-intro">Les informations utiles à votre activité sont mises en avant. Ce choix ne modifie ni votre rôle, ni vos accès.</p></div><button class="profile-change" data-profile-settings>Modifier le profil métier</button></section>';
+ return '<section class="profile-head"><div><div class="profile-eyebrow"><i></i>'+escapeHTML(profil.i+' '+profil.n)+' · '+date.toUpperCase()+'</div><h1>Bonjour.</h1><p class="profile-intro">Les informations utiles à votre activité sont mises en avant. Ce choix ne modifie ni votre rôle, ni vos accès.</p></div><button class="profile-change" data-profile-settings>Modifier le profil métier</button></section>';
 }
 function renderDashboardMetier(profilId){
  const profil=PROFILS_METIER.find(function(p){return p.id===profilId});
@@ -3666,7 +3666,7 @@ function renderDashboardGeneral(){
  commandesEnCours.filter(function(c){return !commandesARecevoir.some(function(a){return a.id===c.id})}).slice(0,1).forEach(function(c){actions.push('<button data-dashgo="cmd"><span>Commande en cours · '+escapeHTML(c.fournisseur||'Fournisseur')+'</span><i>›</i></button>')});
  const actionRows=actions.length?actions.slice(0,3).join(''):'<div class="dash-actions-empty">Rien à faire maintenant.</div>';
  const date=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}),heure=maintenant.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
- const titre=priorite.etat==='clear'?(nom?'Bonjour '+escapeHTML(nom)+'.':'Bonjour.'):'À traiter maintenant.';
+ const titre=priorite.etat==='clear'?'Bonjour.':'À traiter maintenant.';
  const demo='';
  document.getElementById('s-dash').innerHTML=demo+'<div class="dashboard-new">'
  +performanceHebdomadaire
