@@ -2013,6 +2013,9 @@ body{background:var(--canvas);color:var(--ink)}
 .audit-note{margin-top:6px;color:#687386;font:500 10px/1.4 Inter,system-ui,sans-serif}
 .audit-empty{padding:25px 14px;border:1px dashed #C9D2DF;border-radius:12px;text-align:center;color:#687386;font:500 12px/1.5 Inter,system-ui,sans-serif}
 @media(max-width:720px){.audit-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-row{grid-template-columns:1fr}.audit-change{grid-template-columns:1fr}.audit-change i{text-align:center;transform:rotate(90deg)}}
+
+/* INVO · PANIER DÉCLARER · MODALES */
+body.invo-modal-open #cartbar{display:none!important}
 </style>
 </head>
 <body>
@@ -7117,6 +7120,14 @@ if(screen==='stock')renderStock();if(screen==='inv')renderInv();if(screen==='bil
 if(screen==='admin')renderAdministration();
 if(screen!=='dec')document.getElementById('cartbar').innerHTML=''}
 
+function synchroniserVisibilitePanierSortie(){
+ const modal=document.getElementById('modal');
+ document.body.classList.toggle('invo-modal-open',!!(modal&&modal.childElementCount));
+}
+const modalPanierSortie=document.getElementById('modal');
+if(modalPanierSortie&&typeof MutationObserver!=='undefined'){
+ new MutationObserver(synchroniserVisibilitePanierSortie).observe(modalPanierSortie,{childList:true,subtree:true});
+}
 const closeModal=()=>{document.getElementById('modal').innerHTML='';fm=null};
 function openLang(){document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bg1"><div class="sheet">
 <h3>${t('lang')}</h3><p class="sh-sub">${t('langS')}</p>
@@ -7594,6 +7605,7 @@ openReglages=function(onglet){
  let voulu=typeof onglet==='string'?onglet:(settingsTab||'general');
  if(voulu==='audit'&&!peutVoirHistoriqueAudit()){voulu='general';toast('Historique réservé à Gestion / Direction.');}
  ouvrirReglagesSansHistorique(voulu==='audit'?'general':voulu);
+ synchroniserVisibilitePanierSortie();
  if(!peutVoirHistoriqueAudit())return;
  const nav=document.querySelector('.settings-nav');
  if(nav&&!nav.querySelector('[data-settings="audit"]')){
