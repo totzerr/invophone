@@ -1866,6 +1866,50 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 @media(max-width:640px){
   :root{--invo-page-title-size:32px}
 }
+
+/* INVO · RÉGLAGES — STRUCTURE CLAIRE, PC & PHONE */
+.settings-overlay{align-items:center!important;padding:24px!important;background:rgba(20,22,29,.28)!important;backdrop-filter:blur(8px)!important}
+.settings-sheet{width:min(920px,calc(100vw - 48px))!important;max-width:920px!important;max-height:min(760px,calc(100dvh - 48px))!important;padding:0!important;overflow:hidden!important;border:1px solid #E0E3E8!important;border-radius:22px!important;background:#F6F7F9!important;box-shadow:0 24px 60px rgba(22,25,35,.20)!important;animation:settings-in .24s cubic-bezier(.2,.8,.3,1)!important}
+@keyframes settings-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.settings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:25px 28px 20px;background:#fff;border-bottom:1px solid #E8EAF0}
+.settings-kicker{display:block;color:#687084;font:800 9px Inter,system-ui,sans-serif;letter-spacing:.14em}
+.settings-header h3{margin:5px 0 4px!important;color:#171A24!important;font:500 28px/1 var(--invo-heading-font)!important;letter-spacing:-.045em!important}
+.settings-header p{margin:0;color:#697184;font:500 12px/1.45 Inter,system-ui,sans-serif}
+.settings-close{display:grid;place-items:center;flex:0 0 auto;width:38px;height:38px;border:1px solid #E1E5EC;border-radius:50%;background:#fff;color:#222938;cursor:pointer;transition:transform .16s,background .16s}
+.settings-close:hover{background:#F2F4F8;transform:scale(1.04)}
+.settings-close .settings-row-icon{width:auto;height:auto;padding:0;background:transparent;color:inherit}.settings-close svg{width:18px;height:18px}
+.settings-layout{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:0;max-height:calc(min(760px,calc(100dvh - 48px)) - 101px)}
+.settings-nav{display:grid;align-content:start;gap:5px;padding:16px 12px;border-right:1px solid #E3E6EC;background:#F2F4F7}
+.settings-nav button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;border-radius:11px;background:transparent;color:#5F6778;font:700 12px Inter,system-ui,sans-serif;text-align:left;cursor:pointer;transition:background .16s,color .16s}
+.settings-nav button:hover{background:#E8EBF1;color:#242B3A}.settings-nav button.on{background:#fff;color:#202735;box-shadow:0 1px 2px rgba(24,29,39,.08)}
+.settings-nav .settings-row-icon{width:25px;height:25px;padding:5px;border-radius:8px;background:transparent;color:currentColor}
+.settings-content{overflow:auto;padding:22px 26px 28px;overscroll-behavior:contain}
+.settings-group{margin:0 0 23px}.settings-group:last-child{margin-bottom:0}
+.settings-group-title{display:flex;align-items:center;gap:7px;margin:0 0 8px;color:#687084;font:800 10px Inter,system-ui,sans-serif;letter-spacing:.10em;text-transform:uppercase}
+.settings-group-title .settings-row-icon{width:22px;height:22px;padding:4px;border-radius:7px;background:#E9ECF2;color:#536072}
+.settings-card{overflow:hidden;border:1px solid #E3E6EC;border-radius:15px;background:#fff;box-shadow:0 1px 2px rgba(20,24,35,.025)}
+.settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid #EDF0F4}
+.settings-field-row:last-child,.settings-status-row:last-child,.settings-mini-action:last-child,.settings-static-row:last-child{border-bottom:0}
+.settings-field-label,.settings-mini-action>span:first-child,.settings-static-row>span:first-child{display:flex;align-items:center;gap:10px;min-width:0}
+.settings-row-icon{display:grid;place-items:center;flex:0 0 auto;width:30px;height:30px;padding:7px;border-radius:9px;background:#F3F5F8;color:#3B4658}
+.settings-row-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.settings-field-label b,.settings-mini-action b,.settings-static-row b{display:block;color:#202631;font:700 12px/1.25 Inter,system-ui,sans-serif}
+.settings-field-label small,.settings-mini-action small,.settings-static-row small{display:block;margin-top:3px;color:#7A8393;font:500 10.5px/1.35 Inter,system-ui,sans-serif}
+.settings-inline-input,.settings-inline-select{width:min(255px,42%)!important;min-height:38px!important;padding:8px 10px!important;border:1px solid #DEE3EB!important;border-radius:9px!important;background:#F8F9FB!important;color:#242B38!important;font:600 12px Inter,system-ui,sans-serif!important;outline:none}
+.settings-inline-input:focus,.settings-inline-select:focus{border-color:#4355F5!important;box-shadow:0 0 0 3px rgba(67,85,245,.12)}
+.settings-action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:11px 16px;border-bottom:1px solid #EDF0F4}
+.settings-action-grid:empty{display:none}
+.settings-action-button,.settings-text-button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #DEE3EB;border-radius:10px;background:#fff;color:#293143;font:700 11px Inter,system-ui,sans-serif;cursor:pointer;transition:border-color .16s,background .16s,transform .16s}
+.settings-action-button{min-height:38px;padding:8px 10px}.settings-action-button:hover,.settings-text-button:hover{border-color:#C7CEFF;background:#F4F5FF}.settings-action-button:active,.settings-text-button:active{transform:scale(.98)}
+.settings-action-button .settings-row-icon{width:20px;height:20px;padding:3px;border-radius:6px;background:#EEF0FF;color:#4355F5}
+.settings-text-button{flex:0 0 auto;min-height:34px;padding:7px 9px;white-space:nowrap}.settings-text-button .settings-row-icon{width:16px;height:16px;padding:0;background:transparent;color:currentColor}.settings-text-button svg{width:16px;height:16px}
+.settings-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;margin:10px 16px;padding:3px;border-radius:10px;background:#F1F3F7}
+.settings-choice button{min-height:35px;border:0;border-radius:8px;background:transparent;color:#687184;font:700 10.5px Inter,system-ui,sans-serif;cursor:pointer}.settings-choice button.on{background:#fff;color:#273142;box-shadow:0 1px 2px rgba(27,32,43,.10)}
+.settings-sheet .pill-etat{border:1px solid transparent;font-size:8.5px}.settings-sheet .pill-etat.on{background:#EAF6EE;color:#287047}.settings-sheet .pill-etat.off{background:#F1F3F6;color:#697283}.settings-sheet .pill-etat.soon{background:#EEF0FF;color:#4355F5}
+.settings-users-card{padding:14px}.settings-users-card .user-list{margin:0}.settings-users-card .auth-msg{margin:0 0 12px}.settings-users-card .btn{width:auto;margin:0 0 12px}
+.settings-sheet .user-card{border-color:#E3E6EC;border-radius:12px}.settings-sheet .user-remove{border-color:#F1D9D5;background:#FFF5F3}.settings-sheet .user-role{border-color:#DEE3EB!important;background:#F8F9FB!important}
+@media(max-width:680px){.settings-overlay{align-items:flex-end!important;padding:0!important}.settings-sheet{width:100%!important;max-height:92dvh!important;border-width:1px 0 0!important;border-radius:24px 24px 0 0!important}.settings-header{padding:18px 18px 15px}.settings-header h3{font-size:25px!important}.settings-layout{display:flex;flex-direction:column;max-height:calc(92dvh - 91px)}.settings-nav{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;border-right:0;border-bottom:1px solid #E3E6EC}.settings-nav button{flex:0 0 auto;width:auto;padding:8px 10px;border:1px solid transparent}.settings-nav button.on{border-color:#E0E4EB}.settings-content{padding:17px 14px 28px}.settings-group{margin-bottom:19px}.settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{padding:13px 12px;gap:10px}.settings-inline-input,.settings-inline-select{width:46%!important;min-width:118px}.settings-field-label small,.settings-mini-action small,.settings-static-row small{font-size:10px}.settings-action-grid{padding:9px 12px}.settings-choice{margin:9px 12px}.settings-users-card{padding:10px}.settings-sheet .user-card{padding:11px}}
+@media(max-width:420px){.settings-field-row{align-items:flex-start;flex-direction:column}.settings-inline-input,.settings-inline-select{width:100%!important}.settings-mini-action{align-items:flex-start}.settings-mini-action>.settings-text-button{margin-left:40px}.settings-static-row{align-items:flex-start}.settings-header p{font-size:11px}}
 </style>
 </head>
 <body>
@@ -7060,35 +7104,74 @@ function optionsProfilMetier(){
  const actuel=profilMetierActuel();
  return '<option value="" '+(!actuel?'selected':'')+'>Vue générale (par défaut)</option>'+PROFILS_METIER.map(function(p){return '<option value="'+p.id+'" '+(actuel===p.id?'selected':'')+'>'+p.i+' '+p.n+'</option>'}).join('');
 }
+function settingsIcon(kind){
+ const icons={
+  general:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z"></path><path d="M9 20v-5h6v5"></path></svg>',
+  users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3.8 20c.6-3.2 2.4-5 5.2-5s4.6 1.8 5.2 5"></path><path d="M16 8h4m-2-2v4"></path></svg>',
+  building:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h14v17"></path><path d="M9 8h2m2 0h2M9 12h2m2 0h2M10 21v-4h4v4"></path></svg>',
+  profile:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5.5 20c.8-3.7 3-5.5 6.5-5.5s5.7 1.8 6.5 5.5"></path></svg>',
+  pilot:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 9v6M4.9 7.5l2.2 2.2m9.8 4.6 2.2 2.2M3 12h3m12 0h3m-2.1-4.5-2.2 2.2m-9.8 4.6-2.2 2.2"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+  backup:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"></path><path d="M8 4v6h8V4M8 20v-6h8v6"></path></svg>',
+  hardware:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16H7z"></path><path d="M10 7h4m-4 4h4m-2 6h.01"></path></svg>',
+  close:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg>',
+  arrow:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>'
+ };
+ return '<span class="settings-row-icon settings-row-icon--'+kind+'">'+(icons[kind]||icons.general)+'</span>';
+}
 function openReglages(){
  settingsTab=typeof arguments[0]==='string'?arguments[0]:(settingsTab||'general');
  const dos=st.doseurs||{actif:false,releves:{}};
  const general=`
- <div class="set-sec">${t('etablissement')}</div>
- <div class="fld"><label>${t('nomEtab')}</label>
- <input id="rEtab" value="${(st.etabNom||'SP Wallace').replace(/"/g,'&quot;')}" placeholder="SP Wallace"></div>
- <div class="set-sec">PERSONNALISATION DU TABLEAU DE BORD</div>
- <div class="fld"><label for="rProfilMetier">Profil métier</label><select id="rProfilMetier">${optionsProfilMetier()}</select>
- <small class="profile-setting-help">Cette préférence change uniquement les indicateurs de l’accueil. Elle ne modifie aucun rôle, droit ou accès.</small></div>
- <div class="set-sec">${t('pilot')} / ${t('reset')}</div>
- <div class="auth-msg ${st.modePilote?'ok':'info'}">${st.modePilote?t('pilotOn'):t('pilotS')}</div>
- <div class="pilot-actions" style="margin:10px 0 18px">${st.modePilote?'':`<button class="btn btn-2 btn-sm" id="pilotStart">${t('pilotStart')}</button>`}
-  <button class="btn btn-2 btn-sm" id="resetDemo">${t('reset')}</button></div>
- ${st.modePilote?'':`<div class="auth-msg info">${t('pilotDemoS')}</div><div class="pilot-actions" style="margin:10px 0 18px"><button class="btn btn-2 btn-sm" id="pilotDemoLoad">${t('pilotDemoLoad')}</button></div>`}
- <div class="set-sec">${t('sauvegarde')}</div><div class="auth-msg info">${t('sauvegardeS')}</div>
- <div class="sh-actions" style="margin:10px 0 18px"><button class="btn btn-2 btn-sm" id="bkExport">${t('exportSauvegarde')}</button>
-  <button class="btn btn-2 btn-sm" id="bkImportBtn">${t('importSauvegarde')}</button><input id="bkImport" type="file" accept=".json,application/json" style="display:none"></div>
- <div class="auth-msg info">${t('importAide')}</div><div class="set-sec">${t('materiel')}</div><div class="auth-msg info">${t('materielS')}</div>
- <div class="set-row"><span class="set-lab">${t('doseurs')}<small>${t('doseursS')}</small></span><span class="pill-etat ${dos.actif?'on':'off'}">${dos.actif?t('activeManuel'):t('nonConfig')}</span></div>
- <div class="seg" style="margin-top:10px"><button class="${!dos.actif?'on':''}" data-dos="0">${t('sansDoseurs')}</button><button class="${dos.actif?'on':''}" data-dos="1">${t('avecDoseurs')}</button></div>
- <div class="set-row"><span class="set-lab">${t('futs')}<small>${t('futsS')}</small></span><span class="pill-etat soon">${t('aVenir')}</span></div>
- <div class="set-row"><span class="set-lab">${t('balances')}<small>${t('balancesS')}</small></span><span class="pill-etat soon">${t('aVenir')}</span></div>`;
- document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgR"><div class="sheet">
- <h3>${t('reglages')}</h3><p class="sh-sub">${t('reglagesS')}</p>
- <div class="subtabs settings-tabs"><button class="${settingsTab==='general'?'on':''}" data-settings="general">Général</button>
-  <button class="${settingsTab==='users'?'on':''}" data-settings="users">Utilisateurs</button></div>
- ${settingsTab==='general'?general:dessinerUtilisateurs()}
- <div class="sh-actions"><button class="btn" id="rFerm">${t('fermer')}</button></div>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('building')}<span>${t('etablissement')}</span></div>
+   <div class="settings-card">
+    <div class="settings-field-row">
+     <label for="rEtab" class="settings-field-label">${settingsIcon('building')}<span><b>${t('nomEtab')}</b><small>Nom affiché dans INVO.</small></span></label>
+     <input class="settings-inline-input" id="rEtab" value="${(st.etabNom||'SP Wallace').replace(/"/g,'&quot;')}" placeholder="SP Wallace">
+    </div>
+    <div class="settings-field-row">
+     <label for="rProfilMetier" class="settings-field-label">${settingsIcon('profile')}<span><b>Profil métier</b><small>Personnalise l’accueil, sans modifier les accès.</small></span></label>
+     <select class="settings-inline-select" id="rProfilMetier">${optionsProfilMetier()}</select>
+    </div>
+   </div>
+  </section>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('pilot')}<span>${t('pilot')} / ${t('reset')}</span></div>
+   <div class="settings-card">
+    <div class="settings-status-row">
+     <span class="settings-field-label">${settingsIcon('pilot')}<span><b>Test pilote</b><small>${st.modePilote?t('pilotOn'):t('pilotS')}</small></span></span>
+     <span class="pill-etat ${st.modePilote?'on':'off'}">${st.modePilote?'Actif':'Prêt'}</span>
+    </div>
+    <div class="settings-action-grid">
+     ${st.modePilote?'':`<button class="settings-action-button" id="pilotStart">${settingsIcon('pilot')}<span>${t('pilotStart')}</span></button>`}
+     <button class="settings-action-button" id="resetDemo">${settingsIcon('general')}<span>${t('reset')}</span></button>
+    </div>
+    ${st.modePilote?'':`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Parcours de démonstration</b><small>${t('pilotDemoS')}</small></span></span><button class="settings-text-button" id="pilotDemoLoad">${t('pilotDemoLoad')}${settingsIcon('arrow')}</button></div>`}
+   </div>
+  </section>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('backup')}<span>${t('sauvegarde')}</span></div>
+   <div class="settings-card">
+    <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('exportSauvegarde')}</b><small>${t('sauvegardeS')}</small></span></span><button class="settings-text-button" id="bkExport">Exporter${settingsIcon('arrow')}</button></div>
+    <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('importSauvegarde')}</b><small>${t('importAide')}</small></span></span><button class="settings-text-button" id="bkImportBtn">Importer${settingsIcon('arrow')}</button><input id="bkImport" type="file" accept=".json,application/json" style="display:none"></div>
+   </div>
+  </section>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('hardware')}<span>${t('materiel')}</span></div>
+   <div class="settings-card">
+    <div class="settings-status-row">
+     <span class="settings-field-label">${settingsIcon('hardware')}<span><b>${t('doseurs')}</b><small>${t('doseursS')}</small></span></span>
+     <span class="pill-etat ${dos.actif?'on':'off'}">${dos.actif?t('activeManuel'):t('nonConfig')}</span>
+    </div>
+    <div class="settings-choice" role="group" aria-label="${t('doseurs')}"><button class="${!dos.actif?'on':''}" data-dos="0">${t('sansDoseurs')}</button><button class="${dos.actif?'on':''}" data-dos="1">${t('avecDoseurs')}</button></div>
+    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('futs')}</b><small>${t('futsS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
+    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('balances')}</b><small>${t('balancesS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
+   </div>
+  </section>`;
+ const users=`<section class="settings-group settings-users-group"><div class="settings-group-title">${settingsIcon('users')}<span>Utilisateurs</span></div><div class="settings-card settings-users-card">${dessinerUtilisateurs()}</div></section>`;
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg settings-overlay" id="bgR"><div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <header class="settings-header"><div><span class="settings-kicker">INVO</span><h3 id="settingsTitle">${t('reglages')}</h3><p>${t('reglagesS')}</p></div><button type="button" class="settings-close" id="rFerm" aria-label="${t('fermer')}">${settingsIcon('close')}</button></header>
+  <div class="settings-layout"><nav class="settings-nav" aria-label="Sections des réglages"><button class="${settingsTab==='general'?'on':''}" data-settings="general" aria-current="${settingsTab==='general'?'page':'false'}">${settingsIcon('general')}<span>Général</span></button><button class="${settingsTab==='users'?'on':''}" data-settings="users" aria-current="${settingsTab==='users'?'page':'false'}">${settingsIcon('users')}<span>Utilisateurs</span></button></nav><div class="settings-content">${settingsTab==='general'?general:users}</div></div>
  </div></div>`;
  document.getElementById('bgR').onclick=e=>{if(e.target.id==='bgR')closeModal()};
  document.getElementById('rFerm').onclick=closeModal;
