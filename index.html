@@ -1809,6 +1809,59 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 :root{
   --invo-heading-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
 }
+
+/* INVO · HIÉRARCHIE TYPOGRAPHIQUE UNIFIÉE */
+:root{
+  --invo-page-title-size:40px;
+  --invo-page-title-line:1.03;
+  --invo-page-subtitle-size:13px;
+  --invo-page-subtitle-line:1.55;
+  --invo-label-size:10px;
+  --invo-section-title-size:18px;
+}
+.h-title,
+.dash-hero h1,
+.nord-dashboard-refresh .nord-hero h1,
+.dashboard-new .dash-head h1,
+#s-caisse .sales-head h1,
+.profile-dashboard h1,
+.admin-head h1{
+  font-family:var(--invo-heading-font)!important;
+  font-size:var(--invo-page-title-size)!important;
+  line-height:var(--invo-page-title-line)!important;
+  letter-spacing:-.052em!important;
+}
+.h-sub,
+.dash-hero p,
+.nord-dashboard-refresh .nord-hero p,
+.dashboard-new .dash-head p,
+#s-caisse .sales-head p,
+.profile-dashboard .profile-intro,
+.admin-head p{
+  font-size:var(--invo-page-subtitle-size)!important;
+  line-height:var(--invo-page-subtitle-line)!important;
+}
+.eyebrow,
+.dashboard-new .dash-eyebrow,
+#s-caisse .sales-eyebrow,
+.profile-dashboard .profile-eyebrow,
+.admin-head small,
+.admin-section-head small{
+  font-size:var(--invo-label-size)!important;
+}
+.dashboard-new .dash-panel-head b,
+#s-caisse .work-heading,
+.dashboard-new .dash-actions>b,
+.dashboard-new .dash-cash b,
+.admin-section-head b,
+.admin-widget h2{
+  font-family:var(--invo-heading-font)!important;
+  font-size:var(--invo-section-title-size)!important;
+  line-height:1.2!important;
+}
+@media(max-width:640px){
+  :root{--invo-page-title-size:32px}
+}
 </style>
 </head>
 <body>
