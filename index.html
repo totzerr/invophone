@@ -1003,6 +1003,7 @@ main{padding-top:24px;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 /* Commandes en attente : passer directement à la réception contrôlée */
 .pending-orders{margin:0 0 16px}.pending-order-card{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto 10px;align-items:center;gap:8px;text-align:left;border:1px solid var(--accent-soft-brd,#C7D0FF);border-radius:13px;background:var(--surface,#fff);box-shadow:var(--shadow-card);padding:12px 11px;margin:0 0 8px;color:var(--ink,#18202E);font-family:inherit;cursor:pointer}.pending-order-icon{font-size:18px;text-align:center}.pending-order-card b{display:block;font-size:12.5px;line-height:1.25}.pending-order-card small{display:block;margin-top:2px;color:var(--steel-d,#687386);font-size:10px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pending-order-card em{font-style:normal;border-radius:999px;padding:4px 6px;font-size:8.5px;font-weight:800;white-space:nowrap}.pending-order-card em.ok{background:var(--green-soft,#EAF2EC);color:var(--green,#235A34)}.pending-order-card em.warn{background:var(--amber-soft,#EEF0FF);color:var(--amber,#4355F5)}.pending-order-card em.info{background:var(--blue-soft,#E9EFF4);color:var(--blue,#254A67)}.pending-order-card i{font-style:normal;color:var(--steel-d,#687386);font-size:17px}
+.reception-control{margin:14px 0 2px;padding:12px;border:1px solid #D9E2EF;border-radius:13px;background:#F8FAFD}.reception-control.warn{border-color:#C7D0FF;background:#F6F8FF}.reception-control-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.reception-control b{font-size:12px}.reception-control-state{font-size:9px;font-weight:800;letter-spacing:.04em;color:#2563EB;text-transform:uppercase}.reception-control.ok .reception-control-state{color:#23704A}.reception-control-list{display:grid;gap:5px;margin:10px 0}.reception-control-line{display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.35;color:var(--steel-d,#687386)}.reception-control-line i{display:block;flex:0 0 6px;width:6px;height:6px;margin-top:5px;border-radius:50%;background:#5B6FF5}.reception-control-line.price i{background:#B7791F}.reception-control-line.extra i{background:#64748B}.reception-control .btn{width:100%;margin-top:2px}
 
 
 /* ═════ INVO · INTERFACE FROIDE ET ÉPURÉE ═════ */
@@ -3950,6 +3951,56 @@ function texteCommande(c){
  c.lines.forEach(function(l){const p=prod(l.id);if(p)txt+='• '+p.n+' : '+fmtQ(l.q)+' '+p.u+'\\n'});
  if(f&&f.mail)txt+='\\nContact : '+f.mail;return txt;
 }
+function analyserReception(form){
+ const commande=form&&form.commandId?(st.commandes||[]).find(function(c){return c.id===form.commandId}):null;
+ const lignes=(form&&form.lines||[]).filter(function(l){return l&&l.id}).map(function(l){
+  const p=prod(l.id),attendu=Math.max(0,num(l.attendu)),recu=Math.max(0,num(l.q));
+  const prixCommande=Math.max(0,num(l.prixCommande)),prixRecu=Math.max(0,num(l.px));
+  const manquant=attendu>recu+.0001?attendu-recu:0,surplus=attendu>0&&recu>attendu+.0001?recu-attendu:0;
+  const hausse=prixCommande>0&&prixRecu>prixCommande+.0001?prixRecu-prixCommande:0;
+  const baisse=prixCommande>0&&prixRecu>0&&prixRecu<prixCommande-.0001?prixCommande-prixRecu:0;
+  return{id:l.id,n:p?p.n:'Produit',u:p?p.u:'',attendu:attendu,recu:recu,prixCommande:prixCommande,prixRecu:prixRecu,
+   manquant:manquant,surplus:surplus,hausse:hausse,baisse:baisse,inattendu:!!commande&&attendu<=.0001};
+ });
+ return{commande:commande,fournisseur:form&&form.fo||commande&&commande.fournisseur||'',lignes:lignes,
+  manquants:lignes.filter(function(l){return l.manquant>0}),surplus:lignes.filter(function(l){return l.surplus>0}),
+  hausses:lignes.filter(function(l){return l.hausse>0}),baisses:lignes.filter(function(l){return l.baisse>0}),
+  inattendus:lignes.filter(function(l){return l.inattendu})};
+}
+function ouvrirSignalementFournisseur(nom,objet,texte){
+ const f=fournisseurParNom(nom),mail=f&&String(f.mail||'').trim();
+ if(mail){window.location.href='mailto:'+encodeURIComponent(mail)+'?subject='+encodeURIComponent(objet)+'&body='+encodeURIComponent(texte);return'mail'}
+ copyText(texte);return'copie';
+}
+function controleReceptionHTML(form){
+ const r=analyserReception(form);if(!r.commande)return'';
+ const lignes=[];
+ r.manquants.forEach(function(l){lignes.push('<div class="reception-control-line"><i></i><span><b>Manquant</b> · '+escapeHTML(l.n)+' : '+fmtQ(l.manquant)+' '+escapeHTML(l.u)+' non reçu</span></div>')});
+ r.surplus.forEach(function(l){lignes.push('<div class="reception-control-line extra"><i></i><span><b>Quantité en plus</b> · '+escapeHTML(l.n)+' : '+fmtQ(l.surplus)+' '+escapeHTML(l.u)+' au-delà de la commande</span></div>')});
+ r.inattendus.forEach(function(l){lignes.push('<div class="reception-control-line extra"><i></i><span><b>Ligne non prévue</b> · '+escapeHTML(l.n)+' sera ajoutée seulement si tu la valides</span></div>')});
+ r.hausses.forEach(function(l){const pct=Math.round(l.hausse/l.prixCommande*100);lignes.push('<div class="reception-control-line price"><i></i><span><b>Prix en hausse</b> · '+escapeHTML(l.n)+' : '+fmt(l.prixCommande)+' € → '+fmt(l.prixRecu)+' € (+'+pct+' %)</span></div>')});
+ r.baisses.forEach(function(l){const pct=Math.round(l.baisse/l.prixCommande*100);lignes.push('<div class="reception-control-line"><i></i><span><b>Prix en baisse</b> · '+escapeHTML(l.n)+' : '+fmt(l.prixCommande)+' € → '+fmt(l.prixRecu)+' € (-'+pct+' %)</span></div>')});
+ const ecarts=lignes.length>0;
+ return'<div class="reception-control '+(ecarts?'warn':'ok')+'"><div class="reception-control-head"><b>Contrôle avant validation</b><span class="reception-control-state">'+(ecarts?'Écart à vérifier':'Commande conforme')+'</span></div>'+
+  (ecarts?'<div class="reception-control-list">'+lignes.join('')+'</div><button class="btn btn-2 btn-sm" id="reportReceptionSupplier">Préparer le signalement fournisseur</button>':'<div class="reception-control-list"><div class="reception-control-line"><i></i><span>Quantités et prix saisis conformes à la commande.</span></div></div>')+'</div>';
+}
+function majControleLiv(){
+ const cible=document.getElementById('livControl');if(!cible)return;
+ cible.innerHTML=controleReceptionHTML(livForm);
+ const signaler=document.getElementById('reportReceptionSupplier');if(signaler)signaler.onclick=signalerEcartsReception;
+}
+function signalerEcartsReception(){
+ const r=analyserReception(livForm);if(!r.commande)return false;
+ if(!r.manquants.length&&!r.surplus.length&&!r.inattendus.length&&!r.hausses.length)return toast('Aucun écart à signaler pour cette réception.');
+ let texte='SIGNALEMENT RÉCEPTION INVO\\n\\nFournisseur : '+r.fournisseur+'\\nCommande du : '+dateLocale(String(r.commande.cree||'').slice(0,10))+'\\n\\n';
+ if(r.manquants.length){texte+='PRODUITS MANQUANTS\\n';r.manquants.forEach(function(l){texte+='• '+l.n+' : '+fmtQ(l.manquant)+' '+l.u+' manquant\\n'});texte+='\\n'}
+ if(r.hausses.length){texte+='PRIX À CONFIRMER\\n';r.hausses.forEach(function(l){texte+='• '+l.n+' : '+fmt(l.prixCommande)+' € → '+fmt(l.prixRecu)+' €\\n'});texte+='\\n'}
+ if(r.surplus.length||r.inattendus.length){texte+='LIGNES À CONFIRMER\\n';r.surplus.forEach(function(l){texte+='• '+l.n+' : '+fmtQ(l.surplus)+' '+l.u+' en plus\\n'});r.inattendus.forEach(function(l){texte+='• '+l.n+' : ligne non prévue à la commande\\n'});texte+='\\n'}
+ texte+='Merci de nous confirmer la disponibilité, le délai ou le prix applicable.';
+ const mode=ouvrirSignalementFournisseur(r.fournisseur,'INVO · Écart de réception',texte);
+ toast(mode==='mail'?'E-mail prérempli : vérifie-le puis envoie-le toi-même.':'Signalement copié. Ajoute l’e-mail du fournisseur pour l’ouvrir directement.');
+ return mode;
+}
 function renderCommander(){
  assurerFournisseurs();
  const noms=(st.fournisseurs||[]).map(function(f){return f.n}).filter(Boolean).sort(function(a,b){return a.localeCompare(b,'fr')});
@@ -3978,8 +4029,9 @@ async function preparerCommande(){
 function signalerProduitManquant(){
  const nom=prompt('Quel produit manque chez '+(commandeFo||'ce fournisseur')+' ?');
  if(nom===null||!nom.trim())return false;
- const f=fournisseurParNom(commandeFo),txt='SIGNALEMENT PRODUIT MANQUANT\\n\\nFournisseur : '+commandeFo+'\\nProduit : '+nom.trim()+'\\nDate : '+new Date().toLocaleDateString('fr-FR')+'\\n\\nMerci de nous indiquer la disponibilité et le délai.';
- copyText(txt);toast(f&&f.mail?'Signalement copié pour '+f.mail+'.':'Signalement copié. Ajoute l’e-mail du fournisseur pour le retrouver ici.');return true;
+ const txt='SIGNALEMENT PRODUIT MANQUANT\\n\\nFournisseur : '+commandeFo+'\\nProduit : '+nom.trim()+'\\nDate : '+new Date().toLocaleDateString('fr-FR')+'\\n\\nMerci de nous indiquer la disponibilité et le délai.';
+ const mode=ouvrirSignalementFournisseur(commandeFo,'INVO · Produit manquant',txt);
+ toast(mode==='mail'?'E-mail prérempli : vérifie-le puis envoie-le toi-même.':'Signalement copié. Ajoute l’e-mail du fournisseur pour l’ouvrir directement.');return mode;
 }
 function openFournisseur(nom){
  assurerFournisseurs();const f=nom?fournisseurParNom(nom):null;fournisseurForm=f?{id:f.id,n:f.n,mail:f.mail||''}:{id:null,n:'',mail:''};drawFournisseur();
@@ -4138,10 +4190,10 @@ function fallbackCopy(txt){
 function openLiv(commandeId){
  const commande=commandeId?(st.commandes||[]).find(function(c){return c.id===commandeId}):null;
  if(commande){
-  const restantes=lignesRestantesCommande(commande);
-  if(!restantes.length){toast('Cette commande est déjà entièrement réceptionnée.');return}
-  livForm={fo:commande.fournisseur,commandId:commande.id,lines:restantes.map(function(l){return{id:l.id,q:l.q,px:l.px??prod(l.id)?.px??''}})};
- }else livForm={fo:st.prods[0]?.fo||'',lines:[{id:st.prods[0]?.id||'',q:'',px:''}]};
+ const restantes=lignesRestantesCommande(commande);
+ if(!restantes.length){toast('Cette commande est déjà entièrement réceptionnée.');return}
+  livForm={fo:commande.fournisseur,commandId:commande.id,lines:restantes.map(function(l){return{id:l.id,q:l.q,px:l.px??prod(l.id)?.px??'',attendu:l.q,prixCommande:l.px??prod(l.id)?.px??0}})};
+ }else livForm={fo:st.prods[0]?.fo||'',lines:[{id:st.prods[0]?.id||'',q:'',px:'',attendu:0,prixCommande:0}]};
  drawLiv();
 }
 function drawLiv(){
@@ -4164,6 +4216,7 @@ function drawLiv(){
   <div class="fld"><label>${t('qteRecue')} · ${t('prixU2')}</label></div>
   ${lignes}
   <button class="ing-add" id="lAdd">${t('addLine')}</button>
+  <div id="livControl">${controleReceptionHTML(livForm)}</div>
   <div class="calc" style="margin-top:14px"><span class="calc-l">${t('totalLiv')}</span>
    <span class="calc-v">${fmt(total)} €</span></div>
   <div class="sh-actions"><button class="btn btn-2 btn-sm" id="lCancel">${t('cancel')}</button>
@@ -4172,25 +4225,27 @@ function drawLiv(){
  document.getElementById('lFo').oninput=e=>livForm.fo=e.target.value;
  document.querySelectorAll('[data-lk]').forEach(s=>s.onchange=e=>{
   livForm.lines[+s.dataset.lk].id=e.target.value;
+  livForm.lines[+s.dataset.lk].attendu=0;livForm.lines[+s.dataset.lk].prixCommande=0;
   const p=prod(e.target.value);if(p&&!livForm.lines[+s.dataset.lk].px)livForm.lines[+s.dataset.lk].px=p.px;
   drawLiv()});
  document.querySelectorAll('[data-lq]').forEach(i=>i.oninput=e=>{livForm.lines[+i.dataset.lq].q=e.target.value;majTotalLiv()});
  document.querySelectorAll('[data-lp]').forEach(i=>i.oninput=e=>{livForm.lines[+i.dataset.lp].px=e.target.value;majTotalLiv()});
  document.querySelectorAll('[data-lx]').forEach(b=>b.onclick=()=>{livForm.lines.splice(+b.dataset.lx,1);
-  if(!livForm.lines.length)livForm.lines.push({id:st.prods[0].id,q:'',px:''});drawLiv()});
- document.getElementById('lAdd').onclick=()=>{livForm.lines.push({id:st.prods[0].id,q:'',px:''});drawLiv()};
+ if(!livForm.lines.length)livForm.lines.push({id:st.prods[0].id,q:'',px:'',attendu:0,prixCommande:0});drawLiv()});
+ document.getElementById('lAdd').onclick=()=>{livForm.lines.push({id:st.prods[0].id,q:'',px:'',attendu:0,prixCommande:0});drawLiv()};
  document.getElementById('lCancel').onclick=closeModal;
  document.getElementById('lSave').onclick=saveLiv;
+ majControleLiv();
 }
 function majTotalLiv(){const c=document.querySelector('.calc-v');
- if(c)c.textContent=fmt(livForm.lines.reduce((s,l)=>s+num(l.q)*num(l.px),0))+' €'}
+ if(c)c.textContent=fmt(livForm.lines.reduce((s,l)=>s+num(l.q)*num(l.px),0))+' €';majControleLiv()}
 
 async function saveLiv(){
  if(!livForm||livForm.saving)return;
  const lines=livForm.lines.filter(l=>l.id&&num(l.q)>0);
  if(!lines.length)return toast('Saisis au moins une quantité réellement reçue.');
  livForm.saving=true;
- const total=lines.reduce((s,l)=>s+num(l.q)*num(l.px),0),receptionId=Date.now();
+ const controle=analyserReception(livForm),total=lines.reduce((s,l)=>s+num(l.q)*num(l.px),0),receptionId=Date.now();
  lines.forEach(l=>{
   const q=num(l.q),px=num(l.px);
   st.stock[l.id]=(st.stock[l.id]||0)+q;
@@ -4202,7 +4257,8 @@ async function saveLiv(){
   }
  });
  st.liv.unshift({id:receptionId,fo:livForm.fo||'Divers',ts:new Date().toISOString(),
-  lines:lines.map(l=>({id:l.id,q:num(l.q),px:num(l.px)})),total,commandeId:livForm.commandId||null});
+  lines:lines.map(l=>({id:l.id,q:num(l.q),px:num(l.px)})),total,commandeId:livForm.commandId||null,
+  controle:{manquants:controle.manquants.map(function(l){return{id:l.id,q:l.manquant}}),hausses:controle.hausses.map(function(l){return{id:l.id,avant:l.prixCommande,apres:l.prixRecu}}),inattendus:controle.inattendus.map(function(l){return{id:l.id}})}});
  if(livForm.commandId){
   const c=(st.commandes||[]).find(function(x){return x.id===livForm.commandId});
   if(c){
@@ -7724,8 +7780,19 @@ saveLiv=async function(){
  await saveLivSansHistorique.apply(this,arguments);
  const livraison=(st.liv||[])[0];
  if(livraison&&String(livraison.id)!==avant){
-  ajouterHistoriqueAudit('Livraison validée',livraison.fo,'Stock avant réception',livraison.lines.length+' ligne(s) ajoutée(s)','Réception humaine validée');
+  const controle=livraison.controle||{},ecarts=(controle.manquants||[]).length+(controle.hausses||[]).length+(controle.inattendus||[]).length;
+  ajouterHistoriqueAudit('Livraison validée',livraison.fo,'Stock avant réception',livraison.lines.length+' ligne(s) ajoutée(s)',ecarts?ecarts+' écart(s) contrôlé(s) avant validation humaine':'Réception humaine validée sans écart détecté');
  }
+};
+const signalerEcartsReceptionSansHistorique=signalerEcartsReception;
+signalerEcartsReception=function(){
+ const resultat=signalerEcartsReceptionSansHistorique.apply(this,arguments);
+ if(resultat){
+  const element=livForm&&livForm.fo?livForm.fo:'Fournisseur';
+  const suite=resultat==='mail'?'E-mail prérempli, envoi à confirmer par l’utilisateur':'Texte copié, aucun envoi automatique';
+  ajouterHistoriqueAudit('Écart de réception signalé',element,'Écart détecté avant validation',suite,'Aucune donnée n’est envoyée sans action humaine');
+ }
+ return resultat;
 };
 const saveMatSansHistorique=saveMat;
 saveMat=async function(){
@@ -7747,7 +7814,7 @@ saveCarte=async function(){
 const signalerManquantSansHistorique=signalerProduitManquant;
 signalerProduitManquant=function(){
  const resultat=signalerManquantSansHistorique.apply(this,arguments);
- if(resultat)ajouterHistoriqueAudit('Produit manquant signalé',commandeFo||'Fournisseur','Signalement non envoyé par INVO','Texte préparé pour le fournisseur','Copié manuellement, aucune donnée n’est envoyée automatiquement');
+ if(resultat)ajouterHistoriqueAudit('Produit manquant signalé',commandeFo||'Fournisseur','Signalement préparé dans INVO',resultat==='mail'?'E-mail prérempli, envoi à confirmer':'Texte copié faute d’e-mail fournisseur','Aucune donnée n’est envoyée automatiquement');
  return resultat;
 };
 function ouvrirTraitementVente(mvId){
