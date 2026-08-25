@@ -2067,18 +2067,6 @@ body.invo-modal-open #cartbar{display:none!important}
 /* INVO · DÉMO CAISSE */
 .settings-action-grid:has(#pilotAutoStart){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:680px){.settings-action-grid:has(#pilotAutoStart){grid-template-columns:1fr}}
-
-/* INVO · FLUX CAISSE EN DIRECT */
-@media (prefers-reduced-motion:no-preference){
-  #s-dash.invo-live-update .dashboard-new .dash-sales,
-  #s-dash.invo-live-update .dashboard-new .dash-performance-banner,
-  #s-dash.invo-live-update .profile-dashboard .profile-metric.primary{animation:invo-live-card .78s cubic-bezier(.2,.82,.25,1)!important}
-  #s-dash.invo-live-update .dashboard-new .dash-kpi{animation:invo-live-kpi .64s cubic-bezier(.2,.82,.25,1)!important}
-  #s-caisse.invo-live-update .activity-row:first-child{animation:invo-live-row .56s cubic-bezier(.2,.82,.25,1)!important}
-  @keyframes invo-live-card{0%{opacity:.72;transform:translateY(9px) scale(.986)}58%{opacity:1;transform:translateY(-2px) scale(1.006)}100%{opacity:1;transform:translateY(0) scale(1)}}
-  @keyframes invo-live-kpi{0%{opacity:.72;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
-  @keyframes invo-live-row{0%{opacity:0;transform:translateY(-12px);background:#EEF0FF}100%{opacity:1;transform:translateY(0);background:transparent}}
-}
 </style>
 </head>
 <body>
@@ -2815,7 +2803,7 @@ function administrationVierge(){return{
 
 let st={lang:'fr',who:'Responsable de salle',whoId:'salle',profilMetier:'',stock:{},mv:[],count:{},live:false,modeCaisse:'manuel',modePilote:false,
 lastSync:Date.now(),svc:'soir',prods:null,carte:null,liv:[],invHist:[],photos:{},fournisseurs:[],commandes:[],administration:administrationVierge()};
-let panier={},panierMotifs={},motif=null,motifLigneEditee=null,motifsOuverts=false,cat='cCock',screen='dash',seenFeed=0,timer=null,liveVisualTimer=null,sq='',stockTab='mat',fm=null;
+let panier={},panierMotifs={},motif=null,motifLigneEditee=null,motifsOuverts=false,cat='cCock',screen='dash',seenFeed=0,timer=null,sq='',stockTab='mat',fm=null;
 let msgDec=null,forcerStock=false;   /* retours de validation sur l'écran Déclarer */
 let cartePrix=false,prixEdit={},cartCat='tous';   /* édition groupée des prix de vente */
 let livTab='recep',invTab='count',invZone='all',invOrderMode=false,draggedProductId=null,zoneOrderSaveTimer=null,
@@ -3433,22 +3421,13 @@ function posEvent(){
 
  st.lastSync=Date.now();save();
  /* La Démo caisse actualise immédiatement les indicateurs visibles. */
- if(screen==='dash'){animerMiseAJourCaisse();renderNav();renderDash();}
- else if(screen==='caisse'){seenFeed=st.mv.length;animerMiseAJourCaisse();renderCaisse();}
+ if(screen==='dash'){renderNav();renderDash();}
+ else if(screen==='caisse'){seenFeed=st.mv.length;renderCaisse();}
  else renderNav();
 }
 
 function startFeed(){if(timer)clearInterval(timer);timer=setInterval(()=>{if(st.live)posEvent()},3800)}
 function sinceSync(){const s=Math.floor((Date.now()-st.lastSync)/1000);return s<60?s+' s':Math.floor(s/60)+' min'}
-function animerMiseAJourCaisse(){
- const cible=screen==='dash'?document.getElementById('s-dash'):(screen==='caisse'?document.getElementById('s-caisse'):null);
- if(!cible)return;
- cible.classList.remove('invo-live-update');
- void cible.offsetWidth;
- cible.classList.add('invo-live-update');
- if(liveVisualTimer)clearTimeout(liveVisualTimer);
- liveVisualTimer=setTimeout(function(){cible.classList.remove('invo-live-update');},900);
-}
 
 function openQualification(mvId){
  const m=(st.mv||[]).find(x=>String(x.id)===String(mvId)),reste=resteATracer(mvId);if(!m||reste<=0)return;
