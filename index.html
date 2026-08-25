@@ -3702,8 +3702,11 @@ function renderCaisse(){
   <p class="work-help">${t('aVerifierS')}</p><div class="work-list">${aVerifier.map(m=>`<button class="work-item" data-qual="${m.id}">
    <span>${m.platI}</span><div><b>${m.platN}</b><small>${fmtQ(resteATracer(m.id))} · ${fmt(pvMv(m))} €</small></div><i>›</i></button>`).join('')}</div></section>`
  :`<section class="work-block work-idle"><div class="work-heading"><span>${t('aVerifier')}</span></div><p>${t('verifVide')}</p></section>`;
+ const caisseContexte=st.demoParcours
+  ?'<div class="sales-eyebrow"><i></i>DÉMO CAISSE · VENTES SIMULÉES</div>'
+  :`<div class="sales-eyebrow"><i></i>${t('manuel').toUpperCase()} · VENTES</div>`;
  document.getElementById('s-caisse').innerHTML=`<section class="sales-head">
-   <div><div class="sales-eyebrow"><i></i>${t('manuel').toUpperCase()} · VENTES</div>
+   <div>${caisseContexte}
    <h1>${t('caisseT')}</h1><p>${t('caisseS')}</p></div>
    <button class="sales-new" id="newSale"><span class="sales-new-plus">＋</span>
     <span><b>${t('newVente')}</b><small>${t('manualCaisse')}</small></span><i>›</i></button>
