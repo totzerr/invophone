@@ -3420,7 +3420,10 @@ function posEvent(){
  if(!r.ok)return;                       /* mouvement incohérent : jamais écrit */
 
  st.lastSync=Date.now();save();
- if(screen==='caisse'){seenFeed=st.mv.length;renderCaisse()}else renderNav();
+ /* La Démo caisse actualise immédiatement les indicateurs visibles. */
+ if(screen==='dash'){renderNav();renderDash();}
+ else if(screen==='caisse'){seenFeed=st.mv.length;renderCaisse();}
+ else renderNav();
 }
 
 function startFeed(){if(timer)clearInterval(timer);timer=setInterval(()=>{if(st.live)posEvent()},3800)}
