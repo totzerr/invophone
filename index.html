@@ -2068,6 +2068,10 @@ body.invo-modal-open #cartbar{display:none!important}
 /* INVO · DÉMO CAISSE */
 .settings-action-grid:has(#pilotAutoStart){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:680px){.settings-action-grid:has(#pilotAutoStart){grid-template-columns:1fr}}
+
+/* INVO · INVENTAIRE GUIDÉ PAR EMPLACEMENT */
+.inv-guide-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:2px 0 16px}.inv-guide-head h1{margin:0;color:#18202E;font:600 27px/1.08 var(--invo-heading-font);letter-spacing:-.03em}.inv-guide-head p{margin:6px 0 0;color:#687386;font:500 12px/1.45 Inter,system-ui,sans-serif}.inv-config-btn{flex:0 0 auto;min-height:38px;padding:0 12px;border:1px solid #DCE2EA;border-radius:11px;background:#FFF;color:#334155;font:700 11px Inter,system-ui,sans-serif;cursor:pointer}.inv-config-btn:hover{border-color:#BFC9FF;background:#F8F9FF}.inv-session-note{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:10px 12px;border:1px solid #D9E2EF;border-radius:12px;background:#F8FAFD;color:#526176;font:500 11px/1.4 Inter,system-ui,sans-serif}.inv-session-note b{display:block;color:#1F2937;font:700 11px Inter,system-ui,sans-serif}.inv-location-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.inv-location-card{min-height:116px;padding:14px;border:1px solid #DCE2EA;border-radius:16px;background:#FFF;box-shadow:0 2px 7px rgba(30,41,59,.035);color:#18202E;font-family:inherit;text-align:left;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}.inv-location-card:hover{transform:translateY(-1px);border-color:#BFC9FF;box-shadow:0 9px 18px rgba(38,53,86,.08)}.inv-location-card.done{border-color:#B8E3C5;background:#F7FCF8}.inv-location-card .inv-location-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#EEF0FF;color:#4355F5;font-size:16px}.inv-location-card.done .inv-location-icon{background:#EAF6EE;color:#287047}.inv-location-card b{display:block;margin-top:12px;font:700 13px/1.25 Inter,system-ui,sans-serif}.inv-location-card small{display:block;margin-top:5px;color:#687386;font:500 10px/1.35 Inter,system-ui,sans-serif}.inv-progress-track{height:5px;margin-top:10px;overflow:hidden;border-radius:99px;background:#E9EDF3}.inv-progress-track i{display:block;height:100%;border-radius:inherit;background:#4355F5}.inv-location-card.done .inv-progress-track i{background:#2E8B57}.inv-count-top{margin:0 0 12px;padding:13px 14px;border:1px solid #C9D4FF;border-radius:16px;background:linear-gradient(135deg,#F6F8FF,#FFF)}.inv-count-kicker{color:#4355F5;font:800 9px/1 Inter,system-ui,sans-serif;letter-spacing:.11em;text-transform:uppercase}.inv-count-top h2{margin:5px 0 0;color:#172033;font:650 21px/1.15 var(--invo-heading-font);letter-spacing:-.025em}.inv-count-progress{display:flex;justify-content:space-between;gap:8px;margin-top:10px;color:#687386;font:600 10px/1.35 Inter,system-ui,sans-serif}.inv-count-progress b{color:#4355F5}.inv-count-row{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:11px;align-items:center;padding:12px 2px;border-bottom:1px solid #E9EDF3}.inv-count-row:last-child{border-bottom:0}.inv-count-row.is-extra{margin:6px -2px;padding:11px 10px;border:1px dashed #A9B8CC;border-radius:12px;background:#FBFCFE}.inv-count-row.is-moved{border-color:#C7D0FF;background:#F7F8FF}.inv-count-row b{display:block;color:#18202E;font:700 13px/1.25 Inter,system-ui,sans-serif}.inv-count-row small{display:block;margin-top:3px;color:#687386;font:500 10px/1.35 Inter,system-ui,sans-serif}.inv-count-input{width:100%;min-height:48px;padding:9px 10px;border:1px solid #D4DCE7;border-radius:12px;background:#FFF;color:#18202E;font:700 17px Inter,system-ui,sans-serif;text-align:center;outline:none}.inv-count-input:focus{border-color:#4355F5;box-shadow:0 0 0 3px rgba(67,85,245,.12)}.inv-count-input.is-set{border-color:#B9DFC6;background:#F8FCF9}.inv-open-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:15px 0}.inv-open-actions button,.inv-finish-zone{min-height:44px;border:1px solid #DCE2EA;border-radius:12px;background:#FFF;color:#334155;font:700 11px Inter,system-ui,sans-serif;cursor:pointer}.inv-open-actions button:hover{border-color:#BFC9FF;background:#F8F9FF}.inv-finish-zone{width:100%;border-color:#4355F5;background:#4355F5;color:#FFF;box-shadow:0 8px 18px rgba(67,85,245,.16)}.inv-finish-zone:disabled{opacity:.5;cursor:default;box-shadow:none}.inv-back{margin:0 0 12px;padding:0;border:0;background:transparent;color:#4355F5;font:700 12px Inter,system-ui,sans-serif;cursor:pointer}.inv-summary{display:grid;gap:10px}.inv-summary-head{padding:13px 14px;border:1px solid #C9D4FF;border-radius:15px;background:#F7F8FF}.inv-summary-head b{display:block;color:#18202E;font:700 14px Inter,system-ui,sans-serif}.inv-summary-head p{margin:4px 0 0;color:#687386;font:500 11px/1.4 Inter,system-ui,sans-serif}.inv-category-card{overflow:hidden;border:1px solid #E0E6EE;border-radius:15px;background:#FFF}.inv-category-card h3{margin:0;padding:12px 13px;border-bottom:1px solid #E9EDF3;color:#18202E;font:700 13px Inter,system-ui,sans-serif}.inv-summary-product{padding:10px 13px;border-bottom:1px solid #EEF1F5}.inv-summary-product:last-child{border-bottom:0}.inv-summary-product>button{display:grid;grid-template-columns:minmax(0,1fr) auto 16px;gap:9px;width:100%;padding:0;border:0;background:transparent;color:#18202E;font-family:inherit;text-align:left;cursor:pointer}.inv-summary-product b{font-size:12px}.inv-summary-product small{display:block;margin-top:3px;color:#687386;font:500 10px Inter,system-ui,sans-serif}.inv-summary-product em{font-style:normal;color:#4355F5;font:700 12px Inter,system-ui,sans-serif}.inv-summary-locations{display:none;gap:5px;margin-top:9px;padding:8px 9px;border-radius:10px;background:#F7F8FA}.inv-summary-locations.on{display:grid}.inv-summary-locations div{display:flex;justify-content:space-between;color:#526176;font:500 10px Inter,system-ui,sans-serif}.inv-summary-locations b{font-size:10px}.inv-anomalies{padding:12px 13px;border:1px solid #F0D5D7;border-radius:14px;background:#FFF8F8;color:#8F3440;font:500 11px/1.45 Inter,system-ui,sans-serif}.inv-anomalies b{display:block;margin-bottom:4px;color:#A53B47;font-size:12px}.inv-config-list{display:grid;gap:7px;margin:12px 0}.inv-config-location{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;align-items:center;padding:8px;border:1px solid #E2E7EF;border-radius:11px;background:#FFF}.inv-config-location input{min-width:0;min-height:34px;padding:7px 8px;border:1px solid #DCE2EA;border-radius:8px;font:600 11px Inter,system-ui,sans-serif}.inv-config-location button{width:31px;height:31px;border:1px solid #DCE2EA;border-radius:8px;background:#FFF;color:#4355F5;font:700 13px Inter,system-ui,sans-serif;cursor:pointer}.inv-config-location button.danger{color:#B54A56}.inv-config-product{display:grid;gap:9px;margin-top:18px}.inv-config-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.inv-config-checks label{display:flex;gap:7px;align-items:center;padding:8px;border:1px solid #E2E7EF;border-radius:9px;color:#334155;font:600 10px Inter,system-ui,sans-serif}.inv-config-checks input{width:auto;min-height:0}.inv-sheet .sheet{max-width:620px}.inv-sheet .sh-actions{position:sticky;bottom:-18px;padding:12px 0 2px;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 28%)}
+@media(max-width:620px){.inv-guide-head h1{font-size:24px}.inv-config-btn{padding:0 10px;font-size:10px}.inv-location-grid{grid-template-columns:1fr}.inv-location-card{min-height:102px}.inv-count-row{grid-template-columns:minmax(0,1fr) 96px}.inv-count-input{min-height:50px}.inv-config-location{grid-template-columns:minmax(0,1fr) auto auto}.inv-config-location .inv-active-toggle{grid-column:1/-1}.inv-config-checks{grid-template-columns:1fr}.inv-summary-product>button{grid-template-columns:minmax(0,1fr) auto 12px}}
 </style>
 </head>
 <body>
@@ -2803,7 +2807,7 @@ function administrationVierge(){return{
 }}
 
 let st={lang:'fr',who:'Responsable de salle',whoId:'salle',profilMetier:'',stock:{},mv:[],count:{},live:false,modeCaisse:'manuel',modePilote:false,
-lastSync:Date.now(),svc:'soir',serviceActif:null,serviceHist:[],prods:null,carte:null,liv:[],invHist:[],photos:{},fournisseurs:[],commandes:[],administration:administrationVierge()};
+lastSync:Date.now(),svc:'soir',serviceActif:null,serviceHist:[],prods:null,carte:null,liv:[],invHist:[],inventory:null,photos:{},fournisseurs:[],commandes:[],administration:administrationVierge()};
 let panier={},panierMotifs={},motif=null,motifLigneEditee=null,motifsOuverts=false,cat='cCock',screen='dash',seenFeed=0,timer=null,sq='',stockTab='mat',fm=null;
 let msgDec=null,forcerStock=false;   /* retours de validation sur l'écran Déclarer */
 let cartePrix=false,prixEdit={},cartCat='tous';   /* édition groupée des prix de vente */
@@ -2915,7 +2919,7 @@ async function hashPwd(pwd,salt){
 
 function stVierge(){return{lang:st?st.lang:'fr',who:'Responsable de salle',whoId:'salle',profilMetier:st&&PROFILS_METIER_IDS.includes(st.profilMetier)?st.profilMetier:'',
 stock:{},mv:[],count:{},live:false,modeCaisse:'manuel',modePilote:false,lastSync:Date.now(),svc:'soir',prods:null,carte:null,
-liv:[],invHist:[],photos:{},fournisseurs:[],commandes:[],doseurs:{actif:false,releves:{}},administration:administrationVierge()}}
+liv:[],invHist:[],inventory:null,photos:{},fournisseurs:[],commandes:[],doseurs:{actif:false,releves:{}},administration:administrationVierge()}}
 
 /* ── Création de compte ── */
 async function creerCompte(nom,mail,etab,pwd,pwd2){
@@ -3075,6 +3079,7 @@ ZONES_L.forEach(z=>{
 if(!Array.isArray(st.carte))st.carte=st.modePilote?[]:JSON.parse(JSON.stringify(CARTE_DEF));
 else if(!st.carte.length&&!st.modePilote)st.carte=JSON.parse(JSON.stringify(CARTE_DEF));
 if(migrerUnitesBoissons())ordreMigre=true;
+if(migrationInventaireEmplacements())ordreMigre=true;
 if(!Object.keys(st.stock).length)st.prods.forEach(p=>st.stock[p.id]=p.s);
 assurerFournisseurs();
 if(ordreMigre)await Store.set(dataKey(),st)}
@@ -3923,7 +3928,105 @@ await save();panier={};panierMotifs={};motif=null;motifLigneEditee=null;motifsOu
 
 /* ═════ LIVRAISONS ═════ */
 const ZONES_L=['bar','cave','cuisine','reserve'];
-const zLabel=z=>t('z'+z.charAt(0).toUpperCase()+z.slice(1));
+const zLabel=z=>{const l=st&&st.inventory&&Array.isArray(st.inventory.locations)&&st.inventory.locations.find(x=>x.id===z);return l?l.n:t('z'+z.charAt(0).toUpperCase()+z.slice(1))};
+
+/* ═════ INVENTAIRE PAR EMPLACEMENT ═════
+   Le stock reste global. L'inventaire, lui, mémorise chaque quantité par
+   emplacement afin qu'une même bouteille ne soit jamais écrasée par un autre
+   comptage. Cette structure remplace progressivement l'ancien st.count global. */
+const INV_CATEGORIES=[
+ {id:'spiritueux',n:'Spiritueux'}, {id:'vins',n:'Vins'}, {id:'bieres',n:'Bières'},
+ {id:'champagnes',n:'Champagnes'}, {id:'sans_alcool',n:'Boissons sans alcool'},
+ {id:'sirops',n:'Sirops'}, {id:'autres',n:'Autres'}
+];
+const INV_EMPLACEMENTS_DEFAUT=[
+ {id:'cave',n:'Cave'}, {id:'reserve',n:'Réserve'}, {id:'frigo_bar',n:'Réfrigérateurs du bar'},
+ {id:'bar',n:'Étagères du bar'}, {id:'arriere_bar',n:'Arrière-bar'}, {id:'cuisine',n:'Cuisine'}
+];
+function inventaireCategorieParDefaut(p){
+ const id=String((p&&p.id)||'').toLowerCase(),nom=String((p&&p.n)||'').toLowerCase();
+ if(/sirop/.test(id+' '+nom))return 'sirops';
+ if(/champ|mo[eë]t|veuve/.test(id+' '+nom))return 'champagnes';
+ if(/vin_|tariq|chardo|clape|stnico|prosecco/.test(id+' '+nom))return 'vins';
+ if(/biere|bière|ipa|pression/.test(id+' '+nom))return 'bieres';
+ if(/soft|coca|redbull|jus|orange|citron|menthe|fruitrouge/.test(id+' '+nom))return 'sans_alcool';
+ if((p&&p.bottle)||/gin|vodka|rhum|tequila|whisk|aperol|campari|ricard|martini|cointreau|st.?germain/.test(id+' '+nom))return 'spiritueux';
+ return 'autres';
+}
+function normaliserEmplacementsProduit(p){
+ const disponibles=(st.inventory&&Array.isArray(st.inventory.locations)?st.inventory.locations:[]).map(l=>l.id);
+ let emplacements=Array.isArray(p.emplacements)?p.emplacements.filter(id=>disponibles.includes(id)):[];
+ if(!emplacements.length)emplacements=[p.z||'reserve'];
+ p.emplacements=[...new Set(emplacements)];
+ p.z=p.emplacements[0]||'reserve'; /* compatibilité avec les écrans historiques */
+ if(!p.invCategory||!INV_CATEGORIES.some(c=>c.id===p.invCategory))p.invCategory=inventaireCategorieParDefaut(p);
+ return p.emplacements;
+}
+function creerSessionInventaire(){return{
+ version:2,id:uid('inventaire'),startedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
+ zones:{},anomalies:[],journal:[]
+}}
+function migrationInventaireEmplacements(){
+ let change=false;
+ if(!st.inventory||typeof st.inventory!=='object'){
+  st.inventory={version:2,locations:INV_EMPLACEMENTS_DEFAUT.map((l,index)=>({...l,active:true,order:index})),active:null};change=true;
+ }
+ if(!Array.isArray(st.inventory.locations)||!st.inventory.locations.length){
+  st.inventory.locations=INV_EMPLACEMENTS_DEFAUT.map((l,index)=>({...l,active:true,order:index}));change=true;
+ }
+ st.inventory.locations.forEach((l,index)=>{
+  if(!l.id){l.id='emplacement_'+index;change=true}
+  if(!l.n){l.n='Emplacement';change=true}
+  if(l.active===undefined){l.active=true;change=true}
+  if(!Number.isFinite(Number(l.order))){l.order=index;change=true}
+ });
+ const ids=new Set(st.inventory.locations.map(l=>l.id));
+ (st.prods||[]).forEach(p=>{
+  const legacy=p.z||'reserve';
+  if(!ids.has(legacy)){st.inventory.locations.push({id:legacy,n:zLabel(legacy)||legacy,active:true,order:st.inventory.locations.length});ids.add(legacy);change=true}
+  const avant=JSON.stringify({e:p.emplacements,z:p.z,c:p.invCategory});
+  normaliserEmplacementsProduit(p);
+  if(avant!==JSON.stringify({e:p.emplacements,z:p.z,c:p.invCategory}))change=true;
+ });
+ if(!st.inventory.active&&Object.keys(st.count||{}).length){
+  const active=creerSessionInventaire();
+  Object.entries(st.count).forEach(([pid,val])=>{
+   if(val===''||val===undefined)return;
+   const p=prod(pid);if(!p)return;
+   const loc=(p.emplacements||[p.z||'reserve'])[0];
+   active.zones[loc]={counts:{[pid]:{q:String(val),ts:new Date().toISOString(),utilisateur:st.who,role:roleHistoriqueAudit()}},extras:[],exclusions:{},doneAt:null};
+  });
+  st.inventory.active=active;st.count={};change=true;
+ }
+ if(st.inventory.version!==2){st.inventory.version=2;change=true}
+ return change;
+}
+function emplacementsInventaire(actifsSeulement){
+ const list=(st.inventory&&st.inventory.locations||[]).slice().sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0));
+ return actifsSeulement?list.filter(l=>l.active!==false):list;
+}
+function emplacementInventaire(id){return emplacementsInventaire(false).find(l=>l.id===id)}
+function nomEmplacementInventaire(id){const l=emplacementInventaire(id);return l?l.n:(id||'Emplacement')}
+function categorieInventaire(id){return INV_CATEGORIES.find(c=>c.id===id)||INV_CATEGORIES.at(-1)}
+function peutConfigurerInventaire(){return st.whoId==='gestion'}
+function sessionInventaire(){
+ if(!st.inventory) migrationInventaireEmplacements();
+ if(!st.inventory.active)st.inventory.active=creerSessionInventaire();
+ return st.inventory.active;
+}
+function zoneInventaire(session,locId){
+ if(!session.zones[locId])session.zones[locId]={counts:{},extras:[],exclusions:{},doneAt:null};
+ const z=session.zones[locId];
+ if(!z.counts)z.counts={};if(!Array.isArray(z.extras))z.extras=[];if(!z.exclusions)z.exclusions={};
+ return z;
+}
+function produitDansEmplacement(p,locId,session){
+ const z=zoneInventaire(session,locId);
+ return ((p.emplacements||[]).includes(locId)&&!z.exclusions[p.id])||z.extras.includes(p.id);
+}
+function produitsInventaireEmplacement(locId,session){
+ return (st.prods||[]).filter(p=>produitDansEmplacement(p,locId,session)).sort((a,b)=>a.n.localeCompare(b.n,'fr'));
+}
 
 /* Ordre d'affichage persistant et indépendant pour chaque zone. */
 function produitsZone(z){
@@ -6820,8 +6923,10 @@ async function saveMat(){
 if(!fm.n.trim())return;
 const px=fm.mode==='bottle'?num(fm.pc):(fm.mode==='cont'?(num(fm.ct)>0?num(fm.pc)/num(fm.ct):0):num(fm.px));
 const ancien=fm.id?prod(fm.id):null,nouvelleZone=fm.z||'reserve';
+const emplacements=Array.isArray(fm.emplacements)&&fm.emplacements.length?[...new Set(fm.emplacements)]:[nouvelleZone];
 const obj={id:fm.id||uid('m'),n:fm.n.trim(),i:fm.i||'📦',u:fm.mode==='bottle'?'btl':fm.u,px,
- seuil:num(fm.seuil),s:num(fm.stock),dlc:num(fm.dlc),z:nouvelleZone,fo:(fm.fo||'Divers').trim(),
+ seuil:num(fm.seuil),s:num(fm.stock),dlc:num(fm.dlc),z:emplacements[0],emplacements,
+ invCategory:fm.invCategory||inventaireCategorieParDefaut(fm),fo:(fm.fo||'Divers').trim(),
  displayOrder:ancien&&(ancien.z||'reserve')===nouvelleZone&&Number.isFinite(Number(ancien.displayOrder))
   ?Number(ancien.displayOrder):prochainePositionZone(nouvelleZone)};
 if(fm.pxPrev)obj.pxPrev=fm.pxPrev;if(fm.hist)obj.hist=fm.hist;
@@ -7076,6 +7181,7 @@ function openHist(ix){
  const rows=lignesAffichees.map(l=>`
   <div class="alert-row"><span class="alert-b"><div class="alert-n">${l.n}</div>
   <div class="alert-m">${voirEcarts?t('attendu').toLowerCase()+' '+fmtQ(l.att)+' · ':''}${t('compte').toLowerCase()} ${fmtQ(l.cpt)} ${l.u}</div></span>
+  ${h.version===2&&l.details&&l.details.length?`<span class="alert-m" style="grid-column:1/-1">${l.details.map(d=>escapeHTML(d.n||nomEmplacementInventaire(d.locId))+' : '+fmtQ(d.q)+' '+l.u).join(' · ')}</span>`:''}
   ${voirEcarts?`<span class="alert-v ${l.d<0?'up':'down'}">${l.d>0?'+':''}${fmtQ(l.d)}</span>`:''}</div>`).join('');
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgH"><div class="sheet">
   <h3>${t('inventaireDu')} ${jj}</h3>
@@ -7107,6 +7213,132 @@ function exportInvCsv(){
   const d=cpt===''?'':(cpt-att);
   rows.push(voirEcarts?[p.n,p.u,zLabel(p.z||'reserve'),att,cpt,d,p.px,d===''?'':(Math.round(d*p.px*100)/100)]:[p.n,p.u,zLabel(p.z||'reserve'),cpt])});
  dlCsv(rows,'inventaire_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+/* ═════ INVENTAIRE GUIDÉ V2 · EMPLACEMENTS ═════ */
+function statsInventaireZone(session,locId){
+ const lignes=produitsInventaireEmplacement(locId,session),z=zoneInventaire(session,locId);
+ const faits=lignes.filter(p=>z.counts[p.id]&&z.counts[p.id].q!==''&&z.counts[p.id].q!==undefined).length;
+ return{lignes,faits,restants:Math.max(0,lignes.length-faits),pourcent:lignes.length?Math.round(faits/lignes.length*100):100,terminee:!!z.doneAt};
+}
+function resultatInventaireSession(session){
+ const map={};
+ (st.prods||[]).forEach(p=>map[p.id]={id:p.id,n:p.n,i:p.i,u:p.u,categorie:p.invCategory||inventaireCategorieParDefaut(p),att:st.stock[p.id]??0,total:0,details:[]});
+ emplacementsInventaire(true).forEach(loc=>{
+  const z=zoneInventaire(session,loc.id);
+  Object.entries(z.counts).forEach(([pid,ligne])=>{
+   const p=map[pid];if(!p||ligne.q===''||ligne.q===undefined)return;
+   const q=num(ligne.q);p.total+=q;p.details.push({locId:loc.id,n:loc.n,q});
+  });
+ });
+ const lignes=Object.values(map).map(l=>({...l,d:l.total-l.att,val:(l.total-l.att)*(prod(l.id)?.px||0)}));
+ const ecarts=lignes.filter(l=>Math.abs(l.d)>0.001);
+ return{lignes,ecarts,nbEcart:ecarts.length,valEcart:ecarts.reduce((s,l)=>s+Math.abs(l.val),0)};
+}
+function toutesZonesInventaireTerminees(session){return emplacementsInventaire(true).every(loc=>!!zoneInventaire(session,loc.id).doneAt)}
+async function enregistrerComptageInventaire(locId,pid,valeur,avantForce){
+ const session=sessionInventaire(),z=zoneInventaire(session,locId),p=prod(pid);if(!p)return;
+ const ancien=avantForce===undefined?(z.counts[pid]&&z.counts[pid].q!==undefined?String(z.counts[pid].q):''):String(avantForce);
+ const suivant=String(valeur??'').trim();if(ancien===suivant)return;
+ const ts=new Date().toISOString();
+ z.counts[pid]={q:suivant,ts,utilisateur:st.who,role:roleHistoriqueAudit()};
+ session.updatedAt=ts;session.journal.unshift({ts,utilisateur:st.who,role:roleHistoriqueAudit(),locId,pid,avant:ancien,apres:suivant,type:'saisie'});
+ if(session.journal.length>500)session.journal.length=500;
+ await save();
+ ajouterHistoriqueAudit('Comptage inventaire',p.n+' · '+nomEmplacementInventaire(locId),ancien===''?'Non compté':ancien+' '+p.u,suivant===''?'Non compté':suivant+' '+p.u,'Saisie par emplacement');
+}
+function ouvrirProduitInconnuInventaire(locId){
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg inv-sheet" id="bgInvUnknown"><div class="sheet"><h3>Produit absent du catalogue</h3><p class="sh-sub">Il sera signalé au gestionnaire, sans créer de produit ni modifier le stock.</p><div class="fld"><label>Nom observé</label><input id="invUnknownName" placeholder="Ex. bouteille non référencée"></div><div class="sh-actions"><button class="btn btn-2 btn-sm" id="invUnknownCancel">${t('cancel')}</button><button class="btn" id="invUnknownSave">Signaler</button></div></div></div>`;
+ document.getElementById('bgInvUnknown').onclick=e=>{if(e.target.id==='bgInvUnknown')closeModal()};document.getElementById('invUnknownCancel').onclick=closeModal;
+ document.getElementById('invUnknownSave').onclick=async()=>{const nom=document.getElementById('invUnknownName').value.trim();if(!nom)return;
+  const s=sessionInventaire(),ts=new Date().toISOString();s.anomalies.push({type:'hors_catalogue',nom,to:locId,ts,utilisateur:st.who,role:roleHistoriqueAudit()});s.updatedAt=ts;await save();
+  ajouterHistoriqueAudit('Produit hors catalogue signalé',nom+' · '+nomEmplacementInventaire(locId),'Non référencé','À traiter par un gestionnaire','Inventaire par emplacement');closeModal();renderInv();};
+}
+async function ajouterProduitInventaire(locId,mode){
+ const session=sessionInventaire(),z=zoneInventaire(session,locId),candidates=(st.prods||[]).filter(p=>!produitDansEmplacement(p,locId,session));
+ if(!candidates.length){toast('Tous les produits du stock sont déjà affichés dans cet emplacement.');return}
+ let selection=candidates[0].id;
+ const dessiner=()=>{
+  const p=prod(selection),origines=(p&&p.emplacements||[]).filter(id=>id!==locId);
+  document.getElementById('modal').innerHTML=`<div class="sheet-bg inv-sheet" id="bgInvAdd"><div class="sheet"><h3>${mode==='move'?'Signaler un déplacement':'Ajouter une bouteille trouvée'}</h3><p class="sh-sub">${mode==='move'?'Le produit sera compté ici et retiré du comptage de son emplacement d’origine.':'Le produit est ajouté à cette zone pour ce seul inventaire ; le catalogue n’est pas modifié.'}</p><div class="fld"><label>Produit du stock</label><select id="invAddProduct">${candidates.map(x=>`<option value="${x.id}" ${x.id===selection?'selected':''}>${x.i} ${escapeHTML(x.n)} · ${x.u}</option>`).join('')}</select></div>${mode==='move'?`<div class="fld"><label>Emplacement d’origine</label><select id="invMoveFrom">${origines.map(id=>`<option value="${id}">${escapeHTML(nomEmplacementInventaire(id))}</option>`).join('')||'<option value="">Aucun emplacement habituel disponible</option>'}</select></div>`:''}<div class="sh-actions"><button class="btn btn-2 btn-sm" id="invAddCancel">${t('cancel')}</button><button class="btn" id="invAddSave">Ajouter au comptage</button></div><button class="auth-link" id="invUnknown">Produit absent du catalogue</button></div></div>`;
+  document.getElementById('bgInvAdd').onclick=e=>{if(e.target.id==='bgInvAdd')closeModal()};document.getElementById('invAddCancel').onclick=closeModal;
+  document.getElementById('invAddProduct').onchange=e=>{selection=e.target.value;dessiner()};document.getElementById('invUnknown').onclick=()=>ouvrirProduitInconnuInventaire(locId);
+  document.getElementById('invAddSave').onclick=async()=>{const produit=prod(selection);if(!produit)return;
+   if(mode==='move'){const origine=document.getElementById('invMoveFrom').value,source=origine?zoneInventaire(session,origine):null;if(!origine){toast('Choisis l’emplacement d’origine du produit.');return}if(source.counts[produit.id]&&source.counts[produit.id].q!==''&&source.counts[produit.id].q!==undefined){toast('Une quantité est déjà saisie à l’emplacement d’origine.');return}source.exclusions[produit.id]={to:locId,ts:new Date().toISOString()};session.anomalies.push({type:'deplacement',pid:produit.id,from:origine,to:locId,ts:new Date().toISOString(),utilisateur:st.who,role:roleHistoriqueAudit()})}else session.anomalies.push({type:'inattendu',pid:produit.id,to:locId,ts:new Date().toISOString(),utilisateur:st.who,role:roleHistoriqueAudit()});
+   if(!z.extras.includes(produit.id))z.extras.push(produit.id);session.updatedAt=new Date().toISOString();await save();ajouterHistoriqueAudit(mode==='move'?'Déplacement signalé':'Produit inattendu ajouté',produit.n+' · '+nomEmplacementInventaire(locId),'Non prévu dans cet emplacement','Ajouté au comptage','Inventaire par emplacement');closeModal();renderInv();
+  };
+ };dessiner();
+}
+function confirmerFinZoneInventaire(locId){
+ const session=sessionInventaire(),stat=statsInventaireZone(session,locId),z=zoneInventaire(session,locId),manquants=stat.lignes.filter(p=>!(z.counts[p.id]&&z.counts[p.id].q!==''&&z.counts[p.id].q!==undefined));
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg inv-sheet" id="bgInvFinish"><div class="sheet"><h3>Terminer ${escapeHTML(nomEmplacementInventaire(locId))} ?</h3><p class="sh-sub">${manquants.length?`${manquants.length} produit${manquants.length>1?'s restent':' reste'} à compter. Tu peux les confirmer à 0 si aucun n’est présent.`:'Tous les produits de cette zone ont une quantité saisie.'}</p><div class="sh-actions"><button class="btn btn-2 btn-sm" id="invFinishCancel">Continuer à compter</button><button class="btn" id="invFinishConfirm">${manquants.length?`Mettre ${manquants.length} à 0 et terminer`:'Confirmer la zone terminée'}</button></div></div></div>`;
+ document.getElementById('bgInvFinish').onclick=e=>{if(e.target.id==='bgInvFinish')closeModal()};document.getElementById('invFinishCancel').onclick=closeModal;
+ document.getElementById('invFinishConfirm').onclick=async()=>{const ts=new Date().toISOString();manquants.forEach(p=>{z.counts[p.id]={q:'0',ts,utilisateur:st.who,role:roleHistoriqueAudit()};session.journal.unshift({ts,utilisateur:st.who,role:roleHistoriqueAudit(),locId,pid:p.id,avant:'',apres:'0',type:'absence_confirmee'})});z.doneAt=ts;z.doneBy=st.who;z.doneRole=roleHistoriqueAudit();session.updatedAt=ts;await save();ajouterHistoriqueAudit('Zone d’inventaire terminée',nomEmplacementInventaire(locId),stat.faits+'/'+stat.lignes.length+' produits comptés',manquants.length?manquants.length+' absence(s) confirmée(s) à 0':'Zone complète','Validation humaine de la zone');invZone=null;closeModal();renderInv()};
+}
+async function reprendreZoneInventaire(locId){const z=zoneInventaire(sessionInventaire(),locId),avant=z.doneAt;z.doneAt=null;z.doneBy='';z.doneRole='';await save();ajouterHistoriqueAudit('Zone d’inventaire reprise',nomEmplacementInventaire(locId),avant?'Terminée':'En cours','En cours','Correction autorisée avant validation finale');renderInv()}
+
+function renduResumeInventaire(session){
+ const resultat=resultatInventaireSession(session),parCategorie={};resultat.lignes.forEach(l=>{(parCategorie[l.categorie]||(parCategorie[l.categorie]=[])).push(l)});
+ const cards=INV_CATEGORIES.filter(c=>parCategorie[c.id]&&parCategorie[c.id].length).map(c=>`<section class="inv-category-card"><h3>${c.n}</h3>${parCategorie[c.id].sort((a,b)=>a.n.localeCompare(b.n,'fr')).map(l=>`<div class="inv-summary-product"><button data-inv-detail="${l.id}"><span><b>${l.i} ${escapeHTML(l.n)}</b><small>${l.details.length} emplacement${l.details.length>1?'s':''}</small></span><em>Total : ${fmtQ(l.total)} ${l.u}</em><i>›</i></button><div class="inv-summary-locations" id="invDetail_${l.id}">${l.details.map(d=>`<div><span>${escapeHTML(d.n)}</span><b>${fmtQ(d.q)} ${l.u}</b></div>`).join('')||'<div><span>Aucun comptage</span></div>'}</div></div>`).join('')}</section>`).join('');
+ const zones=emplacementsInventaire(true),nonFinies=zones.filter(l=>!zoneInventaire(session,l.id).doneAt),anomalies=[...(session.anomalies||[])];
+ if(peutVoirEcartsInventaire())resultat.ecarts.forEach(l=>anomalies.push({type:'ecart',pid:l.id,d:l.d}));
+ const alertes=anomalies.length?`<div class="inv-anomalies"><b>${anomalies.length} anomalie${anomalies.length>1?'s':''} à contrôler</b>${anomalies.slice(0,8).map(a=>{const p=a.pid?prod(a.pid):null;if(a.type==='deplacement')return `Déplacement : ${escapeHTML(p?p.n:'Produit')} · ${escapeHTML(nomEmplacementInventaire(a.from))} → ${escapeHTML(nomEmplacementInventaire(a.to))}`;if(a.type==='hors_catalogue')return `Hors catalogue : ${escapeHTML(a.nom)} · ${escapeHTML(nomEmplacementInventaire(a.to))}`;if(a.type==='inattendu')return `Produit inattendu : ${escapeHTML(p?p.n:'Produit')} · ${escapeHTML(nomEmplacementInventaire(a.to))}`;return `Écart à vérifier : ${escapeHTML(p?p.n:'Produit')} (${a.d>0?'+':''}${fmtQ(a.d)})`}).join('<br>')}</div>`:'';
+ return `<div class="inv-summary"><div class="inv-summary-head"><b>Récapitulatif à vérifier</b><p>${nonFinies.length?`${nonFinies.length} zone${nonFinies.length>1?'s restent':' reste'} non vérifiée${nonFinies.length>1?'s':''}.`:'Toutes les zones sont terminées. Le stock ne changera qu’après ta validation finale.'}</p></div>${cards}${alertes}${toutesZonesInventaireTerminees(session)?'<button class="btn" id="invValidateFinal">Valider l’inventaire</button>':''}</div>`;
+}
+function renderInventaireChoix(session){
+ const locations=emplacementsInventaire(true),toutesTerminees=toutesZonesInventaireTerminees(session);
+ const cards=locations.map(loc=>{const s=statsInventaireZone(session,loc.id);return `<button class="inv-location-card ${s.terminee?'done':''}" data-inv-zone="${loc.id}"><span class="inv-location-icon">${s.terminee?'✓':'⌁'}</span><b>${escapeHTML(loc.n)}</b><small>${s.terminee?'Zone terminée':`${s.faits} compté${s.faits>1?'s':''} · ${s.restants} restant${s.restants>1?'s':''}`}</small><span class="inv-progress-track"><i style="width:${s.pourcent}%"></i></span></button>`}).join('');
+ return `<div class="inv-session-note"><span>◷</span><span><b>${toutesTerminees?'Inventaire complet — à valider':'Progression enregistrée automatiquement'}</b>${toutesTerminees?'Vérifie le récapitulatif avant de mettre à jour le stock.':'Tu peux quitter et reprendre exactement ici, même plus tard.'}</span></div>${toutesTerminees?renduResumeInventaire(session):''}<div class="inv-location-grid">${cards}</div>`;
+}
+function renderInventaireZone(session,locId){
+ const loc=emplacementInventaire(locId);if(!loc){invZone=null;renderInv();return}
+ const z=zoneInventaire(session,locId),stat=statsInventaireZone(session,locId),mouvements=(session.anomalies||[]).filter(a=>a.type==='deplacement'&&a.to===locId);
+ const rows=stat.lignes.map(p=>{const ligne=z.counts[p.id],has=ligne&&ligne.q!==''&&ligne.q!==undefined,isExtra=!(p.emplacements||[]).includes(locId),move=mouvements.find(a=>a.pid===p.id),fractions=(p.u==='btl'||p.bottle)?`<div class="frac"><button data-inv-fr="${p.id}" data-inv-fr-val="0.25" ${z.doneAt?'disabled':''}>¼</button><button data-inv-fr="${p.id}" data-inv-fr-val="0.5" ${z.doneAt?'disabled':''}>½</button><button data-inv-fr="${p.id}" data-inv-fr-val="0.75" ${z.doneAt?'disabled':''}>¾</button></div>`:'';return `<div class="inv-count-row ${isExtra?'is-extra':''} ${move?'is-moved':''}"><span><b>${p.i} ${escapeHTML(p.n)}</b><small>${p.u}${isExtra?' · bouteille trouvée ici':''}${move?' · déplacée depuis '+escapeHTML(nomEmplacementInventaire(move.from)):''}</small></span><div><input class="inv-count-input ${has?'is-set':''}" inputmode="decimal" data-inv-count="${p.id}" value="${has?escapeHTML(ligne.q):''}" placeholder="0" ${z.doneAt?'disabled':''}>${fractions}</div></div>`}).join('')||'<div class="zone-empty">Aucun produit n’est prévu dans cet emplacement.</div>';
+ document.getElementById('s-inv').innerHTML=`<button class="inv-back" id="invBack">‹ Tous les emplacements</button><div class="inv-count-top"><div class="inv-count-kicker">Vous comptez actuellement</div><h2>${escapeHTML(loc.n)}</h2><div class="inv-count-progress"><span>${stat.faits} produit${stat.faits>1?'s':''} compté${stat.faits>1?'s':''} · ${stat.restants} restant${stat.restants>1?'s':''}</span><b>${stat.pourcent}%</b></div><span class="inv-progress-track"><i style="width:${stat.pourcent}%"></i></span></div>${z.doneAt?'<div class="inv-session-note"><span>✓</span><span><b>Zone terminée</b>Rouvre-la seulement si une correction est nécessaire avant la validation finale.</span></div>':''}<div>${rows}</div>${z.doneAt?'<button class="inv-finish-zone" id="invResumeZone">Reprendre ce comptage</button>':`<div class="inv-open-actions"><button id="invFound">＋ Bouteille trouvée</button><button id="invMoved">↔ Déplacement</button></div><button class="inv-finish-zone" id="invFinishZone">Marquer la zone terminée</button>`}`;
+ document.getElementById('invBack').onclick=()=>{invZone=null;renderInv()};
+ document.querySelectorAll('[data-inv-count]').forEach(inp=>{let ancien=inp.value;inp.oninput=e=>{const q=e.target.value;z.counts[e.target.dataset.invCount]={q,ts:new Date().toISOString(),utilisateur:st.who,role:roleHistoriqueAudit()};session.updatedAt=new Date().toISOString();save()};inp.onchange=async e=>{await enregistrerComptageInventaire(locId,e.target.dataset.invCount,e.target.value,ancien);ancien=e.target.value;renderInventaireZone(session,locId)};inp.onblur=async e=>{if(e.target.value!==ancien){await enregistrerComptageInventaire(locId,e.target.dataset.invCount,e.target.value,ancien);ancien=e.target.value}}});
+ document.querySelectorAll('[data-inv-fr]').forEach(b=>b.onclick=async()=>{const p=prod(b.dataset.invFr),ancien=z.counts[p.id]&&z.counts[p.id].q!==undefined?z.counts[p.id].q:'',suivant=String(Math.floor(num(ancien))+num(b.dataset.invFrVal));await enregistrerComptageInventaire(locId,p.id,suivant,ancien);renderInventaireZone(session,locId)});
+ const found=document.getElementById('invFound');if(found)found.onclick=()=>ajouterProduitInventaire(locId,'found');const moved=document.getElementById('invMoved');if(moved)moved.onclick=()=>ajouterProduitInventaire(locId,'move');const finish=document.getElementById('invFinishZone');if(finish)finish.onclick=()=>confirmerFinZoneInventaire(locId);const resume=document.getElementById('invResumeZone');if(resume)resume.onclick=()=>reprendreZoneInventaire(locId);
+}
+function confirmerValidationInventaire(){
+ const session=sessionInventaire(),r=resultatInventaireSession(session);if(!toutesZonesInventaireTerminees(session)){toast('Termine toutes les zones avant de valider.');return}
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg inv-sheet" id="bgInvValid"><div class="sheet"><h3>Valider cet inventaire ?</h3><p class="sh-sub">${r.lignes.length} produits seront consolidés par emplacement. Cette action mettra à jour le stock uniquement après cette confirmation humaine.</p><div class="sh-actions"><button class="btn btn-2 btn-sm" id="invValidCancel">Revoir</button><button class="btn" id="invValidConfirm">Valider le stock</button></div></div></div>`;
+ document.getElementById('bgInvValid').onclick=e=>{if(e.target.id==='bgInvValid')closeModal()};document.getElementById('invValidCancel').onclick=closeModal;document.getElementById('invValidConfirm').onclick=async()=>{closeModal();await validerInv()};
+}
+function renderInv(){
+ if(invTab==='hist'&&!peutVoirEcartsInventaire())invTab='count';
+ const sub=`<div class="subtabs"><button class="${invTab==='count'?'on':''}" data-it="count">📋 ${t('tabCount')}</button>${peutVoirEcartsInventaire()?`<button class="${invTab==='hist'?'on':''}" data-it="hist">🕘 ${t('tabHist')}</button>`:''}</div>`;
+ if(invTab==='hist'){renderInvHist(sub);return}
+ const session=sessionInventaire();if(!emplacementInventaire(invZone))invZone=null;
+ document.getElementById('s-inv').classList.remove('inventory-limited');
+ document.getElementById('s-inv').innerHTML=`<div class="inv-guide-head"><div><h1>Inventaire</h1><p>Choisis l’emplacement à compter. Une quantité par emplacement, un total automatique à la fin.</p></div>${peutConfigurerInventaire()?'<button class="inv-config-btn" id="invConfig">Configurer</button>':''}</div>${sub}<div id="invGuideBody"></div>`;
+ document.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{invTab=b.dataset.it;invZone=null;renderInv()});const config=document.getElementById('invConfig');if(config)config.onclick=ouvrirConfigurationInventaire;
+ const body=document.getElementById('invGuideBody');if(invZone){renderInventaireZone(session,invZone);return}body.innerHTML=renderInventaireChoix(session);document.querySelectorAll('[data-inv-zone]').forEach(b=>b.onclick=()=>{invZone=b.dataset.invZone;renderInv()});document.querySelectorAll('[data-inv-detail]').forEach(b=>b.onclick=()=>{const el=document.getElementById('invDetail_'+b.dataset.invDetail);if(el)el.classList.toggle('on')});const valider=document.getElementById('invValidateFinal');if(valider)valider.onclick=confirmerValidationInventaire;
+}
+async function validerInv(){
+ const session=sessionInventaire();if(!toutesZonesInventaireTerminees(session))return;
+ const r=resultatInventaireSession(session),lignes=r.lignes.map(l=>({id:l.id,n:l.n,u:l.u,att:l.att,cpt:l.total,d:l.d,val:l.val,details:l.details,categorie:l.categorie}));if(!lignes.length)return;
+ st.invHist.unshift({version:2,ts:new Date().toISOString(),lignes,zones:emplacementsInventaire(true).map(l=>({id:l.id,n:l.n,terminee:true,doneAt:zoneInventaire(session,l.id).doneAt})),anomalies:session.anomalies||[],nb:lignes.length,nbEcart:r.nbEcart,valEcart:r.valEcart});if(st.invHist.length>24)st.invHist.length=24;
+ lignes.forEach(l=>{st.stock[l.id]=l.cpt});st.inventory.active=null;st.count={};await save();invTab='hist';invZone=null;renderInv();toast(t('invOk'));
+}
+
+function ouvrirConfigurationInventaire(){
+ if(!peutConfigurerInventaire()){toast('Configuration réservée à Gestion / Direction.');return}
+ const locations=emplacementsInventaire(false).map(l=>({...l}));let pid=(st.prods[0]||{}).id||'';
+ const produitDraft={};(st.prods||[]).forEach(p=>produitDraft[p.id]={emplacements:[...(p.emplacements||[p.z||'reserve'])],categorie:p.invCategory||inventaireCategorieParDefaut(p)});
+ const memoriserProduit=()=>{const checks=[...document.querySelectorAll('[data-inv-location-check]:checked')].map(x=>x.value);if(pid)produitDraft[pid]={emplacements:checks,categorie:document.getElementById('invProductCategory')?.value||'autres'}};
+ const dessiner=()=>{
+  const p=prod(pid),draft=produitDraft[pid]||{emplacements:[],categorie:'autres'};
+  document.getElementById('modal').innerHTML=`<div class="sheet-bg inv-sheet" id="bgInvConfig"><div class="sheet"><h3>Configuration inventaire</h3><p class="sh-sub">Les emplacements guident le comptage. La catégorie sert uniquement au récapitulatif final.</p><div class="eyebrow">EMPLACEMENTS</div><div class="inv-config-list">${locations.map((l,index)=>`<div class="inv-config-location"><input data-inv-location-name="${l.id}" value="${escapeHTML(l.n)}" aria-label="Nom de l’emplacement"><button data-inv-location-up="${l.id}" ${index===0?'disabled':''} aria-label="Monter">↑</button><button data-inv-location-down="${l.id}" ${index===locations.length-1?'disabled':''} aria-label="Descendre">↓</button><button class="danger" data-inv-location-remove="${l.id}" aria-label="Supprimer l’emplacement">×</button><label class="inv-active-toggle"><input type="checkbox" data-inv-location-active="${l.id}" ${l.active!==false?'checked':''}> Actif pour les prochains inventaires</label></div>`).join('')}</div><button class="btn btn-2 btn-sm" id="invLocationAdd">+ Ajouter un emplacement</button><div class="inv-config-product"><div class="eyebrow">PRODUIT</div><select id="invConfigProduct">${(st.prods||[]).map(x=>`<option value="${x.id}" ${x.id===pid?'selected':''}>${x.i} ${escapeHTML(x.n)}</option>`).join('')}</select><div class="fld"><label>Catégorie d’inventaire</label><select id="invProductCategory">${INV_CATEGORIES.map(c=>`<option value="${c.id}" ${c.id===draft.categorie?'selected':''}>${c.n}</option>`).join('')}</select></div><div class="inv-config-checks">${locations.map(l=>`<label><input type="checkbox" value="${l.id}" data-inv-location-check ${draft.emplacements.includes(l.id)?'checked':''}> ${escapeHTML(l.n)}${l.active===false?' (désactivé)':''}</label>`).join('')}</div></div><div class="sh-actions"><button class="btn btn-2 btn-sm" id="invConfigCancel">${t('cancel')}</button><button class="btn" id="invConfigSave">Enregistrer</button></div></div></div>`;
+  document.getElementById('bgInvConfig').onclick=e=>{if(e.target.id==='bgInvConfig')closeModal()};document.getElementById('invConfigCancel').onclick=closeModal;
+  document.querySelectorAll('[data-inv-location-name]').forEach(i=>i.oninput=e=>{const l=locations.find(x=>x.id===e.target.dataset.invLocationName);if(l)l.n=e.target.value});document.querySelectorAll('[data-inv-location-active]').forEach(i=>i.onchange=e=>{const l=locations.find(x=>x.id===e.target.dataset.invLocationActive);if(l)l.active=e.target.checked});
+  document.querySelectorAll('[data-inv-location-up],[data-inv-location-down]').forEach(b=>b.onclick=()=>{const id=b.dataset.invLocationUp||b.dataset.invLocationDown,ix=locations.findIndex(x=>x.id===id),target=b.dataset.invLocationUp?ix-1:ix+1;if(target<0||target>=locations.length)return;[locations[ix],locations[target]]=[locations[target],locations[ix]];dessiner()});
+  document.querySelectorAll('[data-inv-location-remove]').forEach(b=>b.onclick=()=>{const id=b.dataset.invLocationRemove;if(locations.length===1){toast('Au moins un emplacement est nécessaire.');return}const used=(st.prods||[]).some(p=>(p.emplacements||[]).includes(id));if(used){toast('Désactive cet emplacement au lieu de le supprimer : il est déjà attribué.');return}locations.splice(locations.findIndex(x=>x.id===id),1);dessiner()});
+  document.getElementById('invLocationAdd').onclick=()=>{memoriserProduit();locations.push({id:uid('loc'),n:'Nouvel emplacement',active:true,order:locations.length});dessiner()};
+  document.getElementById('invConfigProduct').onchange=e=>{memoriserProduit();pid=e.target.value;dessiner()};
+  document.getElementById('invConfigSave').onclick=async()=>{memoriserProduit();if(locations.some(l=>!String(l.n||'').trim())){toast('Chaque emplacement doit avoir un nom.');return}const current=produitDraft[pid];if(!current.emplacements.length){toast('Attribue au moins un emplacement habituel à ce produit.');return}const enCours=st.inventory&&st.inventory.active;if(enCours&&locations.some(l=>l.active===false&&enCours.zones&&enCours.zones[l.id]&&(enCours.zones[l.id].doneAt||Object.keys(enCours.zones[l.id].counts||{}).length))){toast('Termine ou annule l’inventaire en cours avant de désactiver un emplacement compté.');return}locations.forEach((l,index)=>{l.n=String(l.n).trim();l.order=index});st.inventory.locations=locations;const produit=prod(pid);if(produit){produit.emplacements=[...new Set(current.emplacements)];produit.z=produit.emplacements[0];produit.invCategory=current.categorie}await save();ajouterHistoriqueAudit('Configuration inventaire',produit?produit.n:'Emplacements', 'Configuration précédente','Emplacements et catégorie enregistrés','Gestion / Direction');closeModal();renderInv()};
+ };
+ dessiner();
 }
 
 /* ═════ BILAN ═════ */
