@@ -2076,6 +2076,54 @@ body.invo-modal-open #cartbar{display:none!important}
 @media(max-width:620px){.inv-guide-head h1{font-size:24px}.inv-config-btn{padding:0 10px;font-size:10px}.inv-location-grid{grid-template-columns:1fr}.inv-location-card{min-height:102px}.inv-count-row{grid-template-columns:minmax(0,1fr) 96px}.inv-count-input{min-height:50px}.inv-config-location{grid-template-columns:minmax(0,1fr) auto auto}.inv-config-location .inv-active-toggle{grid-column:1/-1}.inv-config-checks{grid-template-columns:1fr}.inv-summary-product>button{grid-template-columns:minmax(0,1fr) auto 12px}}
 /* Garde la progression des emplacements compacte : span est inline par défaut. */
 .inv-progress-track{display:block;width:100%;height:5px;min-height:5px;max-height:5px}
+
+/* INVO · ACCUEIL · identité établissement et lecture instantanée des alertes */
+:root{
+  --dash-safe:#1E7A49;
+  --dash-safe-soft:#F3FBF6;
+  --dash-safe-border:#CBE8D5;
+  --dash-alert:#C2414A;
+  --dash-alert-soft:#FFF5F6;
+  --dash-alert-border:#F2CDD1;
+  --dash-watch:#A96900;
+  --dash-watch-soft:#FFF8E9;
+  --dash-watch-border:#F0DEA9;
+  --dash-receive:#176EA9;
+  --dash-receive-soft:#F1F8FF;
+  --dash-receive-border:#CBE4F7;
+  --dash-review:#6545A5;
+  --dash-review-soft:#F7F3FF;
+  --dash-review-border:#E1D4F6;
+}
+.top-brand{min-width:0!important}
+.top-brand .logo{gap:0!important}
+.top-company{display:inline-flex;align-items:center;min-width:0;max-width:260px;margin-left:12px;padding-left:12px;border-left:1px solid #DCE2EA;color:#475569;font:650 11px/1 -apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dashboard-new .dash-head p{color:#64748B!important}
+.dashboard-new .dash-eyebrow i{background:#4355F5!important;box-shadow:0 0 0 5px rgba(67,85,245,.12)!important}
+.dashboard-new .dash-sales{background:linear-gradient(145deg,#F2F7FF,#FFFFFF)!important;border-color:#D8E6FB!important}
+.dashboard-new .dash-sales:after{border-color:rgba(67,85,245,.22)!important;box-shadow:0 0 0 22px rgba(67,85,245,.045)!important}
+.dashboard-new .dash-sales b{color:#1D4ED8!important}
+.dashboard-new .dash-sales span,.dashboard-new .dash-sales time{color:#64748B!important}
+.dashboard-new .dash-kpi{border-left:3px solid #D9E2EF!important}
+.dashboard-new .dash-kpi small,.dashboard-new .dash-kpi span{color:#64748B!important}
+.dashboard-new .dash-kpi.clear{background:var(--dash-safe-soft)!important;border-color:var(--dash-safe-border)!important;border-left-color:var(--dash-safe)!important}
+.dashboard-new .dash-kpi.clear b,.dashboard-new .dash-kpi.clear span i{color:var(--dash-safe)!important}
+.dashboard-new .dash-kpi.critical{background:var(--dash-alert-soft)!important;border-color:var(--dash-alert-border)!important;border-left-color:var(--dash-alert)!important}
+.dashboard-new .dash-kpi.critical b,.dashboard-new .dash-kpi.critical span i{color:var(--dash-alert)!important}
+.dashboard-new .dash-kpi.watch{background:var(--dash-watch-soft)!important;border-color:var(--dash-watch-border)!important;border-left-color:var(--dash-watch)!important}
+.dashboard-new .dash-kpi.watch b,.dashboard-new .dash-kpi.watch span i{color:var(--dash-watch)!important}
+.dashboard-new .dash-kpi.pending{background:var(--dash-receive-soft)!important;border-color:var(--dash-receive-border)!important;border-left-color:var(--dash-receive)!important}
+.dashboard-new .dash-kpi.pending b,.dashboard-new .dash-kpi.pending span i{color:var(--dash-receive)!important}
+.dashboard-new .dash-kpi.review{background:var(--dash-review-soft)!important;border-color:var(--dash-review-border)!important;border-left-color:var(--dash-review)!important}
+.dashboard-new .dash-kpi.review b,.dashboard-new .dash-kpi.review span i{color:var(--dash-review)!important}
+.profile-dashboard .profile-metric{border-left:3px solid #D9E2EF!important;background:#FFF!important}
+.profile-dashboard .profile-metric.primary{background:linear-gradient(145deg,#EDF3FF,#FFFFFF)!important;border-color:#CEDDFF!important;border-left-color:#4355F5!important;color:#18202E!important}
+.profile-dashboard .profile-metric:nth-child(2){background:#F2FAF7!important;border-color:#D2EBDD!important;border-left-color:#23815A!important}
+.profile-dashboard .profile-metric:nth-child(3){background:#F7F3FF!important;border-color:#E2D7F7!important;border-left-color:#7654BB!important}
+.profile-dashboard .profile-metric small,.profile-dashboard .profile-metric.primary small,.profile-dashboard .profile-metric .profile-note,.profile-dashboard .profile-metric.primary .profile-note{color:#64748B!important}
+.profile-dashboard .profile-metric.primary .profile-value{color:#1D4ED8!important}
+@media(max-width:759px){.top-company{max-width:108px;margin-left:8px;padding-left:8px;font-size:9.5px}}
+@media(max-width:345px){.top-company{display:none!important}}
 </style>
 </head>
 <body>
@@ -3897,10 +3945,10 @@ function renderDashboardGeneral(){
  +performanceHebdomadaire
  +'<section class="dash-head"><div><div class="dash-eyebrow"><i></i>VUE D’ENSEMBLE · '+date.toUpperCase()+'</div><h1>'+titre+'</h1><p>'+escapeHTML(priorite.detail)+'</p><button class="dash-main-action" '+attr+'>'+priorite.action+' <i>›</i></button></div><aside class="dash-sales"><small>VENTES AUJOURD’HUI</small><b>'+fmt(caJour)+' €</b><span>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+' enregistrée'+(ventesJour.length>1?'s':'')+'</span><time>Actualisé · '+heure+'</time></aside></section>'
  +'<section class="dash-kpis" aria-label="Raccourcis de suivi">'
- +'<button class="dash-kpi '+(ruptures.length?'critical':'')+'" data-dashgo="stock"><small>RUPTURES</small><b>'+ruptures.length+'</b><span>'+(ruptures.length?'À traiter':'Stock stable')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(sousSeuil.length?'watch':'')+'" data-dashgo="cmd"><small>SOUS SEUIL</small><b>'+sousSeuil.length+'</b><span>'+(sousSeuil.length?'À anticiper':'Rien à commander')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(commandesARecevoir.length?'pending':'')+'" data-dashgo="liv"><small>RÉCEPTIONS</small><b>'+commandesARecevoir.length+'</b><span>'+(commandesARecevoir.length?'À contrôler':'Aucune prévue')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(aVerifier.length?'review':'')+'" data-dashgo="caisse"><small>À CLASSER</small><b>'+aVerifier.length+'</b><span>'+(aVerifier.length?'Caisse à vérifier':'Caisse à jour')+'<i>›</i></span></button></section>'
+ +'<button class="dash-kpi '+(ruptures.length?'critical':'clear')+'" data-dashgo="stock"><small>RUPTURES</small><b>'+ruptures.length+'</b><span>'+(ruptures.length?'À traiter':'Stock stable')+'<i>›</i></span></button>'
+ +'<button class="dash-kpi '+(sousSeuil.length?'watch':'clear')+'" data-dashgo="cmd"><small>SOUS SEUIL</small><b>'+sousSeuil.length+'</b><span>'+(sousSeuil.length?'À anticiper':'Rien à commander')+'<i>›</i></span></button>'
+ +'<button class="dash-kpi '+(commandesARecevoir.length?'pending':'clear')+'" data-dashgo="liv"><small>RÉCEPTIONS</small><b>'+commandesARecevoir.length+'</b><span>'+(commandesARecevoir.length?'À contrôler':'Aucune prévue')+'<i>›</i></span></button>'
+ +'<button class="dash-kpi '+(aVerifier.length?'review':'clear')+'" data-dashgo="caisse"><small>À CLASSER</small><b>'+aVerifier.length+'</b><span>'+(aVerifier.length?'Caisse à vérifier':'Caisse à jour')+'<i>›</i></span></button></section>'
  +'<section class="dash-grid"><section class="dash-panel"><header class="dash-panel-head"><div><small>STOCK</small><b>À surveiller</b></div><button data-dashgo="stock">Voir le stock</button></header><div class="dash-list">'+stockRows+'</div></section><aside class="dash-side"><section class="dash-actions"><small>PROCHAINES ACTIONS</small><b>À faire</b>'+actionRows+'</section></aside></section>'
  +'<section class="dash-cash"><div class="dash-cash-copy"><i>€</i><div><small>CAISSE</small><b>'+fmt(caJour)+' € aujourd’hui</b><span>'+aVerifier.length+' mouvement'+(aVerifier.length>1?'s':'')+' à classer</span></div></div><button data-dashgo="caisse">Ouvrir la caisse</button></section>'+adminWidgetAccueil()+'</div>';
  document.querySelectorAll('[data-dashgo]').forEach(function(b){b.onclick=function(){screen=b.dataset.dashgo;sq='';go()}});
@@ -7848,7 +7896,7 @@ function openReglages(){
    <div class="settings-card">
     <div class="settings-field-row">
      <label for="rEtab" class="settings-field-label">${settingsIcon('building')}<span><b>${t('nomEtab')}</b><small>Nom affiché dans INVO.</small></span></label>
-     <input class="settings-inline-input" id="rEtab" value="${(st.etabNom||'SP Wallace').replace(/"/g,'&quot;')}" placeholder="SP Wallace">
+     <input class="settings-inline-input" id="rEtab" value="${(st.etabNom===undefined?'SP Wallace':(st.etabNom||'')).replace(/"/g,'&quot;')}" placeholder="SP Wallace">
     </div>
     <div class="settings-field-row">
      <label for="rProfilMetier" class="settings-field-label">${settingsIcon('profile')}<span><b>Profil métier</b><small>Personnalise l’accueil, sans modifier les accès.</small></span></label>
@@ -7921,7 +7969,7 @@ function openReglages(){
  if(pilotDemoBtn)pilotDemoBtn.onclick=async()=>{pilotDemoBtn.disabled=true;await chargerParcoursDemonstration();};
  if(bkIn)bkIn.onchange=async()=>{const f=bkIn.files&&bkIn.files[0];bkIn.value='';await importerSauvegarde(f)};
  const re_=document.getElementById('rEtab');
- if(re_)re_.oninput=e=>{st.etabNom=e.target.value;save()};
+ if(re_)re_.oninput=e=>{st.etabNom=e.target.value;mettreAJourMarqueEtablissement();save()};
  const profilMetier=document.getElementById('rProfilMetier');
  if(profilMetier)profilMetier.onchange=async function(){profilMetier.disabled=true;try{await enregistrerProfilMetier(profilMetier.value)}catch(e){toast('Impossible d’enregistrer le profil métier.')}profilMetier.disabled=false};
  document.querySelectorAll('[data-dos]').forEach(b=>b.onclick=async()=>{
@@ -8091,6 +8139,22 @@ function anomalies(){
  return a;
 }
 
+function mettreAJourMarqueEtablissement(){
+ const marque=document.getElementById('topBrand');
+ if(!marque)return;
+ const nom=String(st&&st.etabNom===undefined?'SP Wallace':(st&&st.etabNom)||'').trim();
+ let nomAffiche=marque.querySelector('.top-company');
+ if(!nom){if(nomAffiche)nomAffiche.remove();marque.removeAttribute('aria-label');return}
+ if(!nomAffiche){
+  const logo=marque.querySelector('.logo');
+  if(!logo)return;
+  nomAffiche=document.createElement('span');
+  nomAffiche.className='top-company';
+  logo.insertAdjacentElement('afterend',nomAffiche);
+ }
+ nomAffiche.textContent=nom;
+ marque.setAttribute('aria-label','INVO · '+nom);
+}
 function renderAll(){document.getElementById('langBtn').textContent=t('code');
 document.getElementById('whoName').textContent=st.who.split(' ')[0];go()}
 async function bootApp(){
@@ -8106,6 +8170,7 @@ async function bootApp(){
  if(topBrandTpl&&!document.getElementById('topBrand')){
    topBrandTpl.insertAdjacentHTML('afterend',`<div class="top-brand" id="topBrand">${topBrandTpl.innerHTML}</div>`);
  }
+ mettreAJourMarqueEtablissement();
  seenFeed=st.mv.length;
  Docs.migrer().then(n=>{if(n)console.log('Documents migrés vers IndexedDB :',n)});
  document.getElementById('langBtn').onclick=openLang;
