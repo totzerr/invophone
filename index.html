@@ -1881,6 +1881,7 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 .settings-close .settings-row-icon{width:auto;height:auto;padding:0;background:transparent;color:inherit}.settings-close svg{width:18px;height:18px}
 .settings-layout{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:0;max-height:calc(min(760px,calc(100dvh - 48px)) - 101px)}
 .settings-nav{display:grid;align-content:start;gap:5px;padding:16px 12px;border-right:1px solid #E3E6EC;background:#F2F4F7}
+.settings-nav-label{display:block;margin:10px 8px 1px;color:#98A1B1;font:800 8px/1 Inter,system-ui,sans-serif;letter-spacing:.12em}.settings-nav-label:first-child{margin-top:2px}
 .settings-nav button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;border-radius:11px;background:transparent;color:#5F6778;font:700 12px Inter,system-ui,sans-serif;text-align:left;cursor:pointer;transition:background .16s,color .16s}
 .settings-nav button:hover{background:#E8EBF1;color:#242B3A}.settings-nav button.on{background:#fff;color:#202735;box-shadow:0 1px 2px rgba(24,29,39,.08)}
 .settings-nav .settings-row-icon{width:25px;height:25px;padding:5px;border-radius:8px;background:transparent;color:currentColor}
@@ -1888,6 +1889,7 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 .settings-group{margin:0 0 23px}.settings-group:last-child{margin-bottom:0}
 .settings-group-title{display:flex;align-items:center;gap:7px;margin:0 0 8px;color:#687084;font:800 10px Inter,system-ui,sans-serif;letter-spacing:.10em;text-transform:uppercase}
 .settings-group-title .settings-row-icon{width:22px;height:22px;padding:4px;border-radius:7px;background:#E9ECF2;color:#536072}
+.settings-intro{margin:0 0 9px;padding:0 2px;color:#687386;font:500 11px/1.45 Inter,system-ui,sans-serif}
 .settings-card{overflow:hidden;border:1px solid #E3E6EC;border-radius:15px;background:#fff;box-shadow:0 1px 2px rgba(20,24,35,.025)}
 .settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid #EDF0F4}
 .settings-field-row:last-child,.settings-status-row:last-child,.settings-mini-action:last-child,.settings-static-row:last-child{border-bottom:0}
@@ -1910,7 +1912,7 @@ button:disabled{cursor:not-allowed!important;box-shadow:none!important}
 .settings-users-card{padding:14px}.settings-users-card .user-list{margin:0}.settings-users-card .auth-msg{margin:0 0 12px}.settings-users-card .btn{width:auto;margin:0 0 12px}
 .settings-sheet .user-card{border-color:#E3E6EC;border-radius:12px}.settings-sheet .user-remove{border-color:#F1D9D5;background:#FFF5F3}.settings-sheet .user-role{border-color:#DEE3EB!important;background:#F8F9FB!important}
 .transfer-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 12px}.transfer-step{min-height:60px;padding:10px;border:1px solid #E3E6EC;border-radius:11px;background:#F9FAFC;color:#657084;font:600 10px/1.3 Inter,system-ui,sans-serif}.transfer-step b{display:block;margin-bottom:3px;color:#293244;font:800 10px Inter,system-ui,sans-serif}.transfer-step strong{display:inline-grid;place-items:center;width:16px;height:16px;margin-right:4px;border-radius:50%;background:#E9ECF2;color:#536072;font-size:9px}.transfer-status{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;background:#EEF0FF;color:#4355F5;font:800 9px Inter,system-ui,sans-serif;white-space:nowrap}.transfer-status.done{background:#EAF6EE;color:#287047}.transfer-status.todo{background:#F4F5F7;color:#697283}.transfer-note{margin:0;padding:11px 12px;border:1px solid #E2E6ED;border-radius:11px;background:#F8F9FB;color:#667187;font:500 11px/1.45 Inter,system-ui,sans-serif}.transfer-note b{color:#273142}.transfer-draft-list{display:grid;gap:8px}.transfer-draft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid #E3E6EC;border-radius:12px;background:#fff}.transfer-draft b{display:block;color:#263043;font:700 11px Inter,system-ui,sans-serif}.transfer-draft small{display:block;margin-top:4px;color:#768094;font:500 10px/1.35 Inter,system-ui,sans-serif}.transfer-modal{width:min(740px,calc(100vw - 28px))!important;max-height:min(86dvh,760px)!important;overflow:auto}.transfer-modal .sh-sub{margin-bottom:14px}.transfer-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:13px 0}.transfer-form-grid .fld{margin:0}.transfer-form-grid select,.transfer-form-grid input{width:100%}.transfer-warning{margin:10px 0;padding:10px 12px;border:1px solid #F0DDAA;border-radius:10px;background:#FFF9E9;color:#705724;font:600 10.5px/1.45 Inter,system-ui,sans-serif}.transfer-error{border-color:#F3D0D4;background:#FFF4F5;color:#9A3C49}.transfer-preview{overflow:auto;max-height:240px;margin:11px 0;border:1px solid #E3E6EC;border-radius:11px}.transfer-preview table{width:100%;border-collapse:collapse;font:500 10px/1.35 Inter,system-ui,sans-serif}.transfer-preview th,.transfer-preview td{min-width:105px;padding:8px 9px;border-bottom:1px solid #EDF0F4;text-align:left;vertical-align:top;color:#4F5A6D}.transfer-preview th{position:sticky;top:0;background:#F7F8FA;color:#293244;font-weight:800}.transfer-preview tr:last-child td{border-bottom:0}.transfer-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}.transfer-summary div{padding:9px;border-radius:10px;background:#F5F7FB;color:#687386;font:600 10px Inter,system-ui,sans-serif}.transfer-summary b{display:block;margin-bottom:3px;color:#202A3A;font-size:14px}.transfer-source-disabled{opacity:.72;cursor:not-allowed}
-@media(max-width:680px){.settings-overlay{align-items:flex-end!important;padding:0!important}.settings-sheet{width:100%!important;max-height:92dvh!important;border-width:1px 0 0!important;border-radius:24px 24px 0 0!important}.settings-header{padding:18px 18px 15px}.settings-header h3{font-size:25px!important}.settings-layout{display:flex;flex-direction:column;max-height:calc(92dvh - 91px)}.settings-nav{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;border-right:0;border-bottom:1px solid #E3E6EC}.settings-nav button{flex:0 0 auto;width:auto;padding:8px 10px;border:1px solid transparent}.settings-nav button.on{border-color:#E0E4EB}.settings-content{padding:17px 14px 28px}.settings-group{margin-bottom:19px}.settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{padding:13px 12px;gap:10px}.settings-inline-input,.settings-inline-select{width:46%!important;min-width:118px}.settings-field-label small,.settings-mini-action small,.settings-static-row small{font-size:10px}.settings-action-grid{padding:9px 12px}.settings-choice{margin:9px 12px}.settings-users-card{padding:10px}.settings-sheet .user-card{padding:11px}}
+@media(max-width:680px){.settings-overlay{align-items:flex-end!important;padding:0!important}.settings-sheet{width:100%!important;max-height:92dvh!important;border-width:1px 0 0!important;border-radius:24px 24px 0 0!important}.settings-header{padding:18px 18px 15px}.settings-header h3{font-size:25px!important}.settings-layout{display:flex;flex-direction:column;max-height:calc(92dvh - 91px)}.settings-nav{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;border-right:0;border-bottom:1px solid #E3E6EC}.settings-nav-label{display:none}.settings-nav button{flex:0 0 auto;width:auto;padding:8px 10px;border:1px solid transparent}.settings-nav button.on{border-color:#E0E4EB}.settings-content{padding:17px 14px 28px}.settings-group{margin-bottom:19px}.settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{padding:13px 12px;gap:10px}.settings-inline-input,.settings-inline-select{width:46%!important;min-width:118px}.settings-field-label small,.settings-mini-action small,.settings-static-row small{font-size:10px}.settings-action-grid{padding:9px 12px}.settings-choice{margin:9px 12px}.settings-users-card{padding:10px}.settings-sheet .user-card{padding:11px}}
 @media(max-width:420px){.settings-field-row{align-items:flex-start;flex-direction:column}.settings-inline-input,.settings-inline-select{width:100%!important}.settings-mini-action{align-items:flex-start}.settings-mini-action>.settings-text-button{margin-left:40px}.settings-static-row{align-items:flex-start}.settings-header p{font-size:11px}}
 @media(max-width:560px){.transfer-steps,.transfer-summary{grid-template-columns:1fr}.transfer-form-grid{grid-template-columns:1fr}.transfer-draft{align-items:flex-start;flex-direction:column}.transfer-modal{width:100%!important;max-height:92dvh!important;border-radius:24px 24px 0 0!important}.transfer-modal .sh-actions{position:sticky;bottom:-18px;margin:14px -18px -18px;padding:12px 18px;background:rgba(255,255,255,.96);border-top:1px solid #E7EAF0}}
 
@@ -3445,7 +3447,7 @@ async function preparerTransfertDonnees(){
  const brouillon={id:uid('transfer'),type:form.type,fileName:form.fileName,cree:new Date().toISOString(),statut:'à vérifier',mapping:Object.assign({},form.mapping),lignes:analyse.valides,erreurs:analyse.erreurs,alertes:analyse.alertes};
  st.legacyTransfers.unshift(brouillon);await save();
  ajouterHistoriqueAudit('Transfert préparé',defTransfertAncien(form.type).label,'Aucune donnée modifiée',analyse.valides.length+' ligne(s) à vérifier','Fichier '+form.fileName+' · validation humaine requise');
- transfertAncienForm=null;closeModal();openReglages('transfer');toast('Transfert préparé : vérifiez-le avant de valider.');
+ transfertAncienForm=null;closeModal();openReglages('donnees');toast('Transfert préparé : vérifiez-le avant de valider.');
 }
 function ouvrirRevueTransfert(id){
  const transfert=(st.legacyTransfers||[]).find(function(x){return x.id===id});if(!transfert)return;
@@ -3474,7 +3476,7 @@ async function validerTransfertDonnees(id){
   if(!confirm('Conserver ce transfert en attente de reprise manuelle ? Aucune donnée INVO ne sera modifiée.'))return;
   transfert.statut='à compléter';transfert.valideLe=new Date().toISOString();await save();
   ajouterHistoriqueAudit('Transfert à compléter',defTransfertAncien(type).label,'Aucune donnée modifiée',rows.length+' ligne(s) archivées','Reprise manuelle nécessaire');
-  closeModal();openReglages('transfer');toast('Transfert conservé pour reprise manuelle.');return;
+  closeModal();openReglages('donnees');toast('Transfert conservé pour reprise manuelle.');return;
  }
  const message=type==='stocks'?'Appliquer les quantités de stock après cette vérification humaine ?':'Importer les '+rows.length+' ligne(s) vérifiées ?';
  if(!confirm(message))return;
@@ -3484,7 +3486,7 @@ async function validerTransfertDonnees(id){
  if(type==='stocks')rows.forEach(function(row){const produit=produitParNomTransfere(valeurTransfertAncien(row,transfert.mapping,'produit')),quantite=nombreTransfere(valeurTransfertAncien(row,transfert.mapping,'quantite'));if(!produit||quantite.valeur===null){ignores++;return}const avant=st.stock[produit.id]??0;st.stock[produit.id]=quantite.valeur;stocksModifies++;ajouterHistoriqueAudit('Stock transféré',produit.n,fmtQ(avant)+' '+produit.u,fmtQ(quantite.valeur)+' '+produit.u,'Import validé manuellement')});
  assurerFournisseurs();transfert.statut='importé';transfert.valideLe=new Date().toISOString();transfert.resultat={ajouts:ajouts,stocksModifies:stocksModifies,ignores:ignores};
  await save();ajouterHistoriqueAudit('Transfert validé',defTransfertAncien(type).label,'Aucune donnée modifiée avant validation',ajouts+' ajout(s) · '+stocksModifies+' stock(s) appliqué(s)','Validation humaine explicite');
- closeModal();renderAll();openReglages('transfer');toast('Transfert validé : '+ajouts+' ajout(s), '+stocksModifies+' stock(s) appliqué(s).');
+ closeModal();renderAll();openReglages('donnees');toast('Transfert validé : '+ajouts+' ajout(s), '+stocksModifies+' stock(s) appliqué(s).');
 }
 
 function coutMat(id,q){const c=item(id);if(!c)return 0;let v=0;
@@ -7906,6 +7908,7 @@ function settingsIcon(kind){
   backup:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"></path><path d="M8 4v6h8V4M8 20v-6h8v6"></path></svg>',
   transfer:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10"></path><path d="m14 4 3 3-3 3"></path><path d="M17 17H7"></path><path d="m10 14-3 3 3 3"></path></svg>',
   hardware:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16H7z"></path><path d="M10 7h4m-4 4h4m-2 6h.01"></path></svg>',
+  data:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5M8 17h3"></path></svg>',
   close:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg>',
   arrow:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>'
  };
@@ -7929,8 +7932,29 @@ function openReglages(){
      <select class="settings-inline-select" id="rProfilMetier">${optionsProfilMetier()}</select>
     </div>
    </div>
+  </section>`;
+ const outils=`<section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('hardware')}<span>Matériel</span></div>
+   <p class="settings-intro">Ces outils sont facultatifs. INVO continue de fonctionner sans matériel ni service connecté.</p>
+   <div class="settings-card">
+    <div class="settings-status-row">
+     <span class="settings-field-label">${settingsIcon('hardware')}<span><b>${t('doseurs')}</b><small>${t('doseursS')}</small></span></span>
+     <span class="pill-etat ${dos.actif?'on':'off'}">${dos.actif?t('activeManuel'):t('nonConfig')}</span>
+    </div>
+    <div class="settings-choice" role="group" aria-label="${t('doseurs')}"><button class="${!dos.actif?'on':''}" data-dos="0">${t('sansDoseurs')}</button><button class="${dos.actif?'on':''}" data-dos="1">${t('avecDoseurs')}</button></div>
+    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('futs')}</b><small>${t('futsS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
+    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('balances')}</b><small>${t('balancesS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
+   </div>
   </section>
   <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('data')}<span>Services</span></div>
+   <div class="settings-card">
+    <div class="settings-static-row"><span>${settingsIcon('data')}<span><b>Caisse</b><small>Connexion à préparer avec le fournisseur de caisse.</small></span></span><span class="pill-etat soon">À connecter</span></div>
+    <div class="settings-static-row"><span>${settingsIcon('data')}<span><b>Hygiène</b><small>Connexion à préparer avec le logiciel d’hygiène.</small></span></span><span class="pill-etat soon">À connecter</span></div>
+    <div class="settings-static-row"><span>${settingsIcon('data')}<span><b>Comptabilité</b><small>Connexion à préparer avec le logiciel comptable.</small></span></span><span class="pill-etat soon">À connecter</span></div>
+   </div>
+  </section>`;
+ const donnees=`<section class="settings-group">
    <div class="settings-group-title">${settingsIcon('pilot')}<span>${t('pilot')} / ${t('reset')}</span></div>
    <div class="settings-card">
     <div class="settings-status-row">
@@ -7943,7 +7967,7 @@ function openReglages(){
      <button class="settings-action-button" id="resetDemo">${settingsIcon('general')}<span>${t('reset')}</span></button>
     </div>
     ${st.demoParcours?`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Démo caisse</b><small>Simule les ventes reçues depuis une caisse. Rien n’est envoyé à la caisse réelle.</small></span></span><button class="settings-text-button" id="pilotAutoPause">${st.live?'Mettre en pause':'Reprendre'}${settingsIcon('arrow')}</button></div>`:''}
-    ${st.modePilote?'':`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Démo caisse</b><small>${t('pilotDemoS')}</small></span></span><button class="settings-text-button" id="pilotDemoLoad">${t('pilotDemoLoad')}${settingsIcon('arrow')}</button></div>`}
+   ${st.modePilote?'':`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Démo caisse</b><small>${t('pilotDemoS')}</small></span></span><button class="settings-text-button" id="pilotDemoLoad">${t('pilotDemoLoad')}${settingsIcon('arrow')}</button></div>`}
    </div>
   </section>
   <section class="settings-group">
@@ -7952,24 +7976,11 @@ function openReglages(){
     <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('exportSauvegarde')}</b><small>${t('sauvegardeS')}</small></span></span><button class="settings-text-button" id="bkExport">Exporter${settingsIcon('arrow')}</button></div>
     <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('importSauvegarde')}</b><small>${t('importAide')}</small></span></span><button class="settings-text-button" id="bkImportBtn">Importer${settingsIcon('arrow')}</button><input id="bkImport" type="file" accept=".json,application/json" style="display:none"></div>
    </div>
-  </section>
-  <section class="settings-group">
-   <div class="settings-group-title">${settingsIcon('hardware')}<span>${t('materiel')}</span></div>
-   <div class="settings-card">
-    <div class="settings-status-row">
-     <span class="settings-field-label">${settingsIcon('hardware')}<span><b>${t('doseurs')}</b><small>${t('doseursS')}</small></span></span>
-     <span class="pill-etat ${dos.actif?'on':'off'}">${dos.actif?t('activeManuel'):t('nonConfig')}</span>
-    </div>
-    <div class="settings-choice" role="group" aria-label="${t('doseurs')}"><button class="${!dos.actif?'on':''}" data-dos="0">${t('sansDoseurs')}</button><button class="${dos.actif?'on':''}" data-dos="1">${t('avecDoseurs')}</button></div>
-    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('futs')}</b><small>${t('futsS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
-    <div class="settings-static-row"><span>${settingsIcon('hardware')}<span><b>${t('balances')}</b><small>${t('balancesS')}</small></span></span><span class="pill-etat soon">${t('aVenir')}</span></div>
-   </div>
-  </section>`;
+  </section>${transfertDonneesHTML()}`;
  const users=`<section class="settings-group settings-users-group"><div class="settings-group-title">${settingsIcon('users')}<span>Utilisateurs</span></div><div class="settings-card settings-users-card">${dessinerUtilisateurs()}</div></section>`;
- const transfer=transfertDonneesHTML();
  document.getElementById('modal').innerHTML=`<div class="sheet-bg settings-overlay" id="bgR"><div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
   <header class="settings-header"><div><span class="settings-kicker">INVO</span><h3 id="settingsTitle">${t('reglages')}</h3><p>${t('reglagesS')}</p></div><button type="button" class="settings-close" id="rFerm" aria-label="${t('fermer')}">${settingsIcon('close')}</button></header>
-  <div class="settings-layout"><nav class="settings-nav" aria-label="Sections des réglages"><button class="${settingsTab==='general'?'on':''}" data-settings="general" aria-current="${settingsTab==='general'?'page':'false'}">${settingsIcon('general')}<span>Général</span></button><button class="${settingsTab==='transfer'?'on':''}" data-settings="transfer" aria-current="${settingsTab==='transfer'?'page':'false'}">${settingsIcon('transfer')}<span>Transférer mes données</span></button><button class="${settingsTab==='users'?'on':''}" data-settings="users" aria-current="${settingsTab==='users'?'page':'false'}">${settingsIcon('users')}<span>Utilisateurs</span></button></nav><div class="settings-content">${settingsTab==='general'?general:settingsTab==='transfer'?transfer:users}</div></div>
+  <div class="settings-layout"><nav class="settings-nav" aria-label="Sections des réglages"><span class="settings-nav-label">ESSENTIEL</span><button class="${settingsTab==='general'?'on':''}" data-settings="general" aria-current="${settingsTab==='general'?'page':'false'}">${settingsIcon('general')}<span>Général</span></button><span class="settings-nav-label">CONNEXIONS</span><button class="${settingsTab==='outils'?'on':''}" data-settings="outils" aria-current="${settingsTab==='outils'?'page':'false'}">${settingsIcon('hardware')}<span>Outils connectés</span></button><span class="settings-nav-label">DONNÉES</span><button class="${settingsTab==='donnees'?'on':''}" data-settings="donnees" aria-current="${settingsTab==='donnees'?'page':'false'}">${settingsIcon('data')}<span>Données & sauvegarde</span></button><span class="settings-nav-label">ÉQUIPE</span><button class="${settingsTab==='users'?'on':''}" data-settings="users" aria-current="${settingsTab==='users'?'page':'false'}">${settingsIcon('users')}<span>Utilisateurs</span></button></nav><div class="settings-content">${settingsTab==='general'?general:settingsTab==='outils'?outils:settingsTab==='donnees'?donnees:users}</div></div>
  </div></div>`;
  document.getElementById('bgR').onclick=e=>{if(e.target.id==='bgR')closeModal()};
  document.getElementById('rFerm').onclick=closeModal;
