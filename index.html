@@ -2090,6 +2090,12 @@ body.invo-modal-open #cartbar{display:none!important}
   .settings-content{flex:1 1 auto!important;height:auto!important;min-height:0!important;overflow-y:auto!important}
 }
 
+/* INVO · RÉCAPITULATIF QUOTIDIEN */
+.morning-recap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid #DDE5FB;border-left:3px solid #4355F5;border-radius:16px;background:linear-gradient(135deg,#F5F8FF,#FFF)}
+.morning-recap small{display:block;color:#65748B;font:800 9px Inter,system-ui,sans-serif;letter-spacing:.11em}.morning-recap b{display:block;margin-top:5px;color:#202A3A;font:700 14px Inter,system-ui,sans-serif}.morning-recap span{display:block;margin-top:4px;color:#69778B;font:500 11px/1.4 Inter,system-ui,sans-serif}.morning-recap .settings-text-button{background:#FFF}
+.morning-recap.pending{border-color:#E3E7EE;border-left-color:#A5AFBD;background:#FAFBFC}.morning-recap.pending b{color:#586477}
+.recap-summary{display:grid;gap:10px}.recap-summary-head{padding:2px 2px 4px}.recap-summary-head small{display:block;color:#687386;font:800 9px Inter,system-ui,sans-serif;letter-spacing:.12em}.recap-summary-head b{display:block;margin-top:6px;color:#202A3A;font:700 20px Inter,system-ui,sans-serif}.recap-summary-head p{margin:5px 0 0;color:#687386;font:500 12px/1.45 Inter,system-ui,sans-serif}.recap-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.recap-summary-grid article{padding:12px;border:1px solid #E2E7EF;border-radius:12px;background:#F8FAFD}.recap-summary-grid small{display:block;color:#748196;font:800 8px Inter,system-ui,sans-serif;letter-spacing:.1em}.recap-summary-grid b{display:block;margin-top:7px;color:#202A3A;font:700 18px Inter,system-ui,sans-serif}.recap-summary-grid span{display:block;margin-top:4px;color:#6B778B;font:500 10px/1.4 Inter,system-ui,sans-serif}@media(max-width:520px){.morning-recap{grid-template-columns:1fr}.morning-recap .settings-text-button{width:100%}.recap-summary-grid{grid-template-columns:1fr}}
+
 /* INVO · DÉMO CAISSE */
 .settings-action-grid:has(#pilotAutoStart){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:680px){.settings-action-grid:has(#pilotAutoStart){grid-template-columns:1fr}}
@@ -2982,8 +2988,9 @@ const loadAuth=async()=>{
  let changed=false;
  Object.values(auth.users).forEach(u=>{
  if(!u.role){u.role='gestion';changed=true}
-  if(u.profilMetier&&!PROFILS_METIER_IDS.includes(u.profilMetier)){u.profilMetier='';changed=true}
-  if(!u.statut){u.statut=u.hash?'actif':'invite';changed=true}
+ if(u.profilMetier&&!PROFILS_METIER_IDS.includes(u.profilMetier)){u.profilMetier='';changed=true}
+  if(!u.recapMatin||typeof u.recapMatin!=='object'){u.recapMatin={actif:true,heure:'08:00'};changed=true}
+ if(!u.statut){u.statut=u.hash?'actif':'invite';changed=true}
   if(!u.cree){u.cree=Date.now();changed=true}
  });
  if(changed)await saveAuth();
@@ -3026,7 +3033,7 @@ async function creerCompte(nom,mail,etab,pwd,pwd2){
  if(pwd!==pwd2)return{e:t('aPwdDiff')};
  if(auth.users[mail])return{e:t('aDejaPris')};
  const salt=rnd(16), code=rnd(4)+'-'+rnd(4), etabId=uid('etab');
- auth.users[mail]={mail,nom:nom.trim(),etabId,etabNom:etab.trim(),profilMetier:'',
+ auth.users[mail]={mail,nom:nom.trim(),etabId,etabNom:etab.trim(),profilMetier:'',recapMatin:{actif:true,heure:'08:00'},
   salt,hash:await hashPwd(pwd,salt),codeHash:await hashPwd(code,salt),cree:Date.now(),role:'gestion',statut:'actif'};
  await saveAuth();
  session={email:mail,etabId};await saveSess();
@@ -3881,6 +3888,58 @@ function blocBoissonsHebdomadaireDashboard(maintenant){
 function utilisateurDashboardActuel(){
  return session&&session.email&&auth.users&&auth.users[session.email]?auth.users[session.email]:null;
 }
+let recapMatinTimer=null;
+function preferencesRecapMatin(){
+ const utilisateur=utilisateurDashboardActuel(),source=utilisateur?utilisateur.recapMatin:st.recapMatin||{};
+ const heure=/^([01]\d|2[0-3]):[0-5]\d$/.test(String(source.heure||''))?source.heure:'08:00';
+ return{actif:source.actif!==false,heure:heure};
+}
+async function enregistrerPreferencesRecapMatin(changement){
+ const actuel=preferencesRecapMatin(),suivant={...actuel,...changement};
+ const utilisateur=utilisateurDashboardActuel();
+ if(utilisateur){utilisateur.recapMatin=suivant;await saveAuth()}else{st.recapMatin=suivant;await save()}
+ programmerRecapMatin();
+ return suivant;
+}
+function recapMatinPret(preferences,maintenant){
+ if(!preferences.actif)return false;
+ const parts=preferences.heure.split(':').map(Number),minutes=maintenant.getHours()*60+maintenant.getMinutes();
+ return minutes>=parts[0]*60+parts[1];
+}
+function bilanRecapMatin(){
+ const maintenant=new Date(),debutJour=new Date(maintenant);debutJour.setHours(0,0,0,0);
+ const produits=st.prods||[],mouvements=st.mv||[],commandes=st.commandes||[];
+ const ventes=mouvements.filter(function(m){return m.motif==='vente'&&new Date(m.ts)>=debutJour});
+ const ca=ventes.reduce(function(s,m){return s+pvMv(m)},0);
+ const ruptures=produits.filter(function(p){return(st.stock[p.id]??0)<=0}).length;
+ const sousSeuil=produits.filter(function(p){const q=st.stock[p.id]??0;return q>0&&q<=p.seuil}).length;
+ const receptions=commandes.filter(function(c){return c&&c.statut!=='recu'&&c.statut!=='annulee'&&c.dateLiv&&c.dateLiv<=maintenant.toISOString().slice(0,10)}).length;
+ const aClasser=mouvements.filter(function(m){return MOTIFS_PRIMAIRES.includes(m.motif)&&resteATracer(m.id)>0}).length;
+ const profil=profilMetierActuel()||st.whoId||'gestion';
+ let cartes=[];
+ if(profil==='barman')cartes=[['VENTES DU JOUR',fmt(ventes.length),ventes.length?'Vente'+(ventes.length>1?'s':'')+' enregistrée'+(ventes.length>1?'s':''):'Aucune vente enregistrée'],['STOCK BAR À SURVEILLER',fmt(ruptures+sousSeuil),ruptures?'Rupture'+(ruptures>1?'s':'')+' à traiter':sousSeuil?'Sous seuil à anticiper':'Aucun niveau critique'],['RÉCEPTIONS',fmt(receptions),receptions?'À contrôler avant entrée en stock':'Aucune prévue'],['À CLASSER',fmt(aClasser),aClasser?'Sortie liée à vérifier':'Caisse à jour']];
+ else if(profil==='chef')cartes=[['STOCK À SURVEILLER',fmt(ruptures+sousSeuil),ruptures?'Rupture'+(ruptures>1?'s':'')+' à traiter':sousSeuil?'Sous seuil à anticiper':'Aucun niveau critique'],['RÉCEPTIONS',fmt(receptions),receptions?'À contrôler avant entrée en stock':'Aucune prévue'],['VENTES DU JOUR',fmt(ventes.length),ventes.length?'Donnée issue des ventes enregistrées':'Aucune vente enregistrée'],['À CLASSER',fmt(aClasser),aClasser?'À contrôler avant clôture':'Aucune sortie à classer']];
+ else if(profil==='salle')cartes=[['CHIFFRE D’AFFAIRES',fmt(ca)+' €',ventes.length+' vente'+(ventes.length>1?'s':'')+' enregistrée'+(ventes.length>1?'s':'')],['À CLASSER',fmt(aClasser),aClasser?'Sortie liée à vérifier':'Caisse à jour'],['RÉCEPTIONS',fmt(receptions),receptions?'À contrôler avant entrée en stock':'Aucune prévue'],['STOCK À SURVEILLER',fmt(ruptures+sousSeuil),ruptures?'Rupture'+(ruptures>1?'s':''):'Niveaux à surveiller']];
+ else cartes=[['CHIFFRE D’AFFAIRES',fmt(ca)+' €',ventes.length+' vente'+(ventes.length>1?'s':'')+' enregistrée'+(ventes.length>1?'s':'')],['RUPTURES',fmt(ruptures),ruptures?'À traiter en priorité':'Aucune rupture'],['SOUS SEUIL',fmt(sousSeuil),sousSeuil?'Commande à anticiper':'Aucun niveau critique'],['RÉCEPTIONS',fmt(receptions),receptions?'À contrôler humainement':'Aucune prévue']];
+ const poste=PROFILS_METIER.find(function(p){return p.id===profil})||POSTES.find(function(p){return p.id===st.whoId});
+ return{date:maintenant,profil:poste?poste.n:(st.who||'Utilisateur'),cartes:cartes};
+}
+function recapMatinHTML(){
+ const preferences=preferencesRecapMatin(),bilan=bilanRecapMatin(),pret=recapMatinPret(preferences,bilan.date),premiere=bilan.cartes[0];
+ return '<section class="morning-recap '+(pret?'':'pending')+'"><div><small>RÉCAPITULATIF DU MATIN · '+escapeHTML(preferences.heure)+'</small><b>'+(!preferences.actif?'Récapitulatif en pause':pret?'Votre récapitulatif est prêt.':'Prévu à '+escapeHTML(preferences.heure)+'.')+'</b><span>'+escapeHTML(bilan.profil)+' · '+escapeHTML(premiere[0])+' : '+escapeHTML(premiere[1])+' — '+escapeHTML(premiere[2])+'</span></div><button class="settings-text-button" data-open-recap>Ouvrir'+settingsIcon('arrow')+'</button></section>';
+}
+function ouvrirRecapMatin(){
+ const bilan=bilanRecapMatin(),preferences=preferencesRecapMatin(),date=bilan.date.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+ document.getElementById('modal').innerHTML='<div class="sheet-bg" id="bgRecap"><div class="sheet"><div class="recap-summary"><div class="recap-summary-head"><small>RÉCAPITULATIF DU MATIN · '+escapeHTML(preferences.heure)+'</small><b>'+escapeHTML(bilan.profil)+'</b><p>'+escapeHTML(date.charAt(0).toUpperCase()+date.slice(1))+' · informations calculées à partir des données enregistrées dans INVO.</p></div><div class="recap-summary-grid">'+bilan.cartes.map(function(c){return '<article><small>'+escapeHTML(c[0])+'</small><b>'+escapeHTML(c[1])+'</b><span>'+escapeHTML(c[2])+'</span></article>'}).join('')+'</div><p class="transfer-note">Sur GitHub Pages, ce récapitulatif est préparé lorsque l’application est ouverte. Un envoi programmé par e-mail ou notification, même application fermée, nécessite un backend et un service de notification.</p><div class="sh-actions"><button class="btn" id="recapClose">Fermer</button></div></div></div></div>';
+ document.getElementById('bgRecap').onclick=function(e){if(e.target.id==='bgRecap')closeModal()};document.getElementById('recapClose').onclick=closeModal;
+}
+function programmerRecapMatin(){
+ if(recapMatinTimer)clearTimeout(recapMatinTimer);
+ const preferences=preferencesRecapMatin();if(!preferences.actif)return;
+ const maintenant=new Date(),parts=preferences.heure.split(':').map(Number),prochain=new Date(maintenant);
+ prochain.setHours(parts[0],parts[1],0,0);if(prochain<=maintenant)prochain.setDate(prochain.getDate()+1);
+ recapMatinTimer=setTimeout(function(){if(screen==='dash'){renderDash();toast('Votre récapitulatif du matin est prêt.')}programmerRecapMatin()},Math.min(prochain-maintenant,2147483647));
+}
 function profilMetierDepuisVue(id){
  return PROFILS_METIER_IDS.includes(id)?id:'';
 }
@@ -3942,8 +4001,9 @@ function renderDashboardMetier(profilId){
    +carteSourceMetier('BONS NON SAISIS',bons,function(s){return '<strong class="profile-value">'+s.count+'</strong><p class="profile-note">Bon'+(s.count>1?'s':'')+' de commande à saisir</p>'});
  }
  const racine=document.getElementById('s-dash');
- racine.innerHTML='<div class="profile-dashboard dashboard-new">'+enteteTableauMetier(profil,maintenant)+bandeau+'<section class="profile-metrics'+classeGrille+'" aria-label="Indicateurs '+escapeHTML(profil.n)+'">'+cartes+'</section>'+adminWidgetAccueil()+'</div>';
+ racine.innerHTML='<div class="profile-dashboard dashboard-new">'+enteteTableauMetier(profil,maintenant)+recapMatinHTML()+bandeau+'<section class="profile-metrics'+classeGrille+'" aria-label="Indicateurs '+escapeHTML(profil.n)+'">'+cartes+'</section>'+adminWidgetAccueil()+'</div>';
  const reglages=racine.querySelector('[data-profile-settings]');if(reglages)reglages.onclick=function(){openReglages('general')};
+ const recap=racine.querySelector('[data-open-recap]');if(recap)recap.onclick=ouvrirRecapMatin;
  lierWidgetAdministration(racine);
 }
 let dashboardRenderVersion=0;
@@ -3990,6 +4050,7 @@ function renderDashboardGeneral(){
  const demo='';
  document.getElementById('s-dash').innerHTML=demo+'<div class="dashboard-new">'
  +performanceHebdomadaire
+ +recapMatinHTML()
  +'<section class="dash-head"><div><div class="dash-eyebrow"><i></i>VUE D’ENSEMBLE · '+date.toUpperCase()+'</div><h1>'+titre+'</h1><p>'+escapeHTML(priorite.detail)+'</p><button class="dash-main-action" '+attr+'>'+priorite.action+' <i>›</i></button></div><aside class="dash-sales"><small>VENTES AUJOURD’HUI</small><b>'+fmt(caJour)+' €</b><span>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+' enregistrée'+(ventesJour.length>1?'s':'')+'</span><time>Actualisé · '+heure+'</time></aside></section>'
  +'<section class="dash-kpis" aria-label="Raccourcis de suivi">'
  +'<button class="dash-kpi '+(ruptures.length?'critical':'clear')+'" data-dashgo="stock"><small>RUPTURES</small><b>'+ruptures.length+'</b><span>'+(ruptures.length?'À traiter':'Stock stable')+'<i>›</i></span></button>'
@@ -4000,6 +4061,7 @@ function renderDashboardGeneral(){
  +'<section class="dash-cash"><div class="dash-cash-copy"><i>€</i><div><small>CAISSE</small><b>'+fmt(caJour)+' € aujourd’hui</b><span>'+aVerifier.length+' mouvement'+(aVerifier.length>1?'s':'')+' à classer</span></div></div><button data-dashgo="caisse">Ouvrir la caisse</button></section>'+adminWidgetAccueil()+'</div>';
  document.querySelectorAll('[data-dashgo]').forEach(function(b){b.onclick=function(){screen=b.dataset.dashgo;sq='';go()}});
  document.querySelectorAll('[data-dashreceive]').forEach(function(b){b.onclick=function(){screen='liv';sq='';go();openLiv(b.dataset.dashreceive)}});
+ document.querySelectorAll('[data-open-recap]').forEach(function(b){b.onclick=ouvrirRecapMatin});
  lierWidgetAdministration(document.getElementById('s-dash'));
 }
 function renderCaisse(){
@@ -7925,7 +7987,7 @@ async function ajouterUtilisateur(){
  if(auth.users[mail])return fail('Un utilisateur possède déjà cette adresse e-mail.');
  if(!POSTES.some(p=>p.id===role))return fail('Sélectionnez un rôle valide.');
  const salt=rnd(16),code=rnd(4)+'-'+rnd(4),etabId=(session&&session.etabId)||'local';
- auth.users[mail]={mail,nom,role,profilMetier:'',etabId,etabNom:st.etabNom||'SP Wallace',salt,hash:await hashPwd(code,salt),
+ auth.users[mail]={mail,nom,role,profilMetier:'',recapMatin:{actif:true,heure:'08:00'},etabId,etabNom:st.etabNom||'SP Wallace',salt,hash:await hashPwd(code,salt),
   codeHash:await hashPwd(code,salt),cree:Date.now(),statut:'invite'};
  await saveAuth();
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgUC"><div class="sheet"><h3>Utilisateur ajouté</h3>
@@ -7947,6 +8009,7 @@ function settingsIcon(kind){
   pilot:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 9v6M4.9 7.5l2.2 2.2m9.8 4.6 2.2 2.2M3 12h3m12 0h3m-2.1-4.5-2.2 2.2m-9.8 4.6-2.2 2.2"></path><circle cx="12" cy="12" r="3"></circle></svg>',
   backup:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"></path><path d="M8 4v6h8V4M8 20v-6h8v6"></path></svg>',
   transfer:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10"></path><path d="m14 4 3 3-3 3"></path><path d="M17 17H7"></path><path d="m10 14-3 3 3 3"></path></svg>',
+  recap:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5l3 2"></path><circle cx="12" cy="12" r="8"></circle><path d="M12 2v2m0 16v2"></path></svg>',
   hardware:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16H7z"></path><path d="M10 7h4m-4 4h4m-2 6h.01"></path></svg>',
   data:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5M8 17h3"></path></svg>',
   close:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg>',
@@ -7958,7 +8021,7 @@ function openReglages(){
  const dejaOuvert=!!document.querySelector('.settings-sheet');
  settingsTab=typeof arguments[0]==='string'?arguments[0]:(settingsTab||'general');
  const dos=st.doseurs||{actif:false,releves:{}};
- const textePilote=st.demoParcours?(st.live?'Démo caisse active.':'Démo caisse prête.'):(st.modePilote?t('pilotOn'):t('pilotS'));
+ const textePilote=st.demoParcours?(st.live?'Démo caisse active.':'Démo caisse prête.'):(st.modePilote?t('pilotOn'):t('pilotS')),recapMatin=preferencesRecapMatin();
  const etatPilote=st.demoParcours?(st.live?'Auto':'Démo'):(st.modePilote?'Actif':'Prêt');
  const general=`
   <section class="settings-group">
@@ -7972,6 +8035,15 @@ function openReglages(){
      <label for="rProfilMetier" class="settings-field-label">${settingsIcon('profile')}<span><b>Profil métier</b><small>Personnalise l’accueil, sans modifier les accès.</small></span></label>
      <select class="settings-inline-select" id="rProfilMetier">${optionsProfilMetier()}</select>
     </div>
+   </div>
+  </section>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('recap')}<span>Récapitulatif quotidien</span></div>
+   <div class="settings-card">
+    <div class="settings-status-row"><span class="settings-field-label">${settingsIcon('recap')}<span><b>Mon récapitulatif du matin</b><small>Son contenu s’adapte à votre profil métier et aux données réellement enregistrées.</small></span></span><span class="pill-etat ${recapMatin.actif?'on':'off'}">${recapMatin.actif?'Actif':'En pause'}</span></div>
+    <div class="settings-field-row"><label for="recapTime" class="settings-field-label">${settingsIcon('recap')}<span><b>Heure de réception</b><small>Choix personnel : chaque utilisateur règle son propre horaire.</small></span></label><input class="settings-inline-input" id="recapTime" type="time" value="${recapMatin.heure}"></div>
+    <div class="settings-choice" role="group" aria-label="Statut du récapitulatif"><button class="${recapMatin.actif?'on':''}" data-recap-active="1">Activer</button><button class="${!recapMatin.actif?'on':''}" data-recap-active="0">Mettre en pause</button></div>
+    <div class="settings-mini-action"><span>${settingsIcon('profile')}<span><b>Contenu personnalisé</b><small>Profil actuel : ${escapeHTML((PROFILS_METIER.find(function(p){return p.id===profilMetierActuel()})||POSTES.find(function(p){return p.id===st.whoId})||{n:st.who}).n)}.</small></span></span><button class="settings-text-button" id="recapPreview">Voir${settingsIcon('arrow')}</button></div>
    </div>
   </section>`;
  const outils=`<section class="settings-group">
@@ -8050,6 +8122,9 @@ function openReglages(){
  if(re_)re_.oninput=e=>{st.etabNom=e.target.value;mettreAJourMarqueEtablissement();save()};
  const profilMetier=document.getElementById('rProfilMetier');
  if(profilMetier)profilMetier.onchange=async function(){profilMetier.disabled=true;try{await enregistrerProfilMetier(profilMetier.value)}catch(e){toast('Impossible d’enregistrer le profil métier.')}profilMetier.disabled=false};
+ const recapTime=document.getElementById('recapTime');if(recapTime)recapTime.onchange=async function(){await enregistrerPreferencesRecapMatin({heure:recapTime.value});toast('Heure du récapitulatif enregistrée.');};
+ document.querySelectorAll('[data-recap-active]').forEach(function(b){b.onclick=async function(){await enregistrerPreferencesRecapMatin({actif:b.dataset.recapActive==='1'});openReglages('general');};});
+ const recapPreview=document.getElementById('recapPreview');if(recapPreview)recapPreview.onclick=ouvrirRecapMatin;
  document.querySelectorAll('[data-dos]').forEach(b=>b.onclick=async()=>{
   st.doseurs.actif=b.dataset.dos==='1';await save();openReglages();
   if(screen==='bil')renderBil()});
@@ -8256,7 +8331,7 @@ async function bootApp(){
  document.getElementById('gearBtn').onclick=openReglages;
  document.getElementById('burgerBtn').onclick=basculerMenu;
  document.getElementById('drBg').onclick=fermerMenu;
- renderAll();startFeed();setTimeout(()=>{if(st.live)posEvent();adminSynchronisationAutomatique()},1200);
+ renderAll();programmerRecapMatin();startFeed();setTimeout(()=>{if(st.live)posEvent();adminSynchronisationAutomatique()},1200);
 }
 
 /* INVO · HISTORIQUE D'AUDIT LOCAL · 2026-08-24
