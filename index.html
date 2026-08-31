@@ -2069,6 +2069,27 @@ body.invo-modal-open #cartbar{display:none!important}
   .settings-content{flex:0 0 auto!important;height:auto!important;overflow:visible!important}
 }
 
+/* INVO · RÉGLAGES · CADRE STABLE ENTRE LES SECTIONS */
+.settings-sheet{
+  height:min(760px,calc(100dvh - 48px))!important;
+  max-height:min(760px,calc(100dvh - 48px))!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  overflow:hidden!important;
+  contain:layout paint;
+}
+.settings-header{position:static!important}
+.settings-layout{height:100%!important;min-height:0!important;max-height:none!important;grid-template-rows:none!important}
+.settings-content{height:100%!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.settings-sheet--switch{animation:none!important}
+.settings-sheet--switch .settings-content{animation:settings-content-in .18s cubic-bezier(.2,.75,.3,1)}
+@keyframes settings-content-in{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:680px){
+  .settings-sheet{height:92dvh!important;max-height:92dvh!important}
+  .settings-layout{height:100%!important;min-height:0!important;max-height:none!important}
+  .settings-content{flex:1 1 auto!important;height:auto!important;min-height:0!important;overflow-y:auto!important}
+}
+
 /* INVO · DÉMO CAISSE */
 .settings-action-grid:has(#pilotAutoStart){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:680px){.settings-action-grid:has(#pilotAutoStart){grid-template-columns:1fr}}
@@ -7934,6 +7955,7 @@ function settingsIcon(kind){
  return '<span class="settings-row-icon settings-row-icon--'+kind+'">'+(icons[kind]||icons.general)+'</span>';
 }
 function openReglages(){
+ const dejaOuvert=!!document.querySelector('.settings-sheet');
  settingsTab=typeof arguments[0]==='string'?arguments[0]:(settingsTab||'general');
  const dos=st.doseurs||{actif:false,releves:{}};
  const textePilote=st.demoParcours?(st.live?'Démo caisse active.':'Démo caisse prête.'):(st.modePilote?t('pilotOn'):t('pilotS'));
@@ -7997,7 +8019,7 @@ function openReglages(){
    </div>
   </section>${transfertDonneesHTML()}`;
  const users=`<section class="settings-group settings-users-group"><div class="settings-group-title">${settingsIcon('users')}<span>Utilisateurs</span></div><div class="settings-card settings-users-card">${dessinerUtilisateurs()}</div></section>`;
- document.getElementById('modal').innerHTML=`<div class="sheet-bg settings-overlay" id="bgR"><div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg settings-overlay" id="bgR"><div class="sheet settings-sheet${dejaOuvert?' settings-sheet--switch':''}" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
   <header class="settings-header"><div><span class="settings-kicker">INVO</span><h3 id="settingsTitle">${t('reglages')}</h3><p>${t('reglagesS')}</p></div><button type="button" class="settings-close" id="rFerm" aria-label="${t('fermer')}">${settingsIcon('close')}</button></header>
   <div class="settings-layout"><nav class="settings-nav" aria-label="Sections des réglages"><span class="settings-nav-label">ESSENTIEL</span><button class="${settingsTab==='general'?'on':''}" data-settings="general" aria-current="${settingsTab==='general'?'page':'false'}">${settingsIcon('general')}<span>Général</span></button><span class="settings-nav-label">CONNEXIONS</span><button class="${settingsTab==='outils'?'on':''}" data-settings="outils" aria-current="${settingsTab==='outils'?'page':'false'}">${settingsIcon('hardware')}<span>Outils connectés</span></button><span class="settings-nav-label">DONNÉES</span><button class="${settingsTab==='donnees'?'on':''}" data-settings="donnees" aria-current="${settingsTab==='donnees'?'page':'false'}">${settingsIcon('data')}<span>Données & sauvegarde</span></button><span class="settings-nav-label">ÉQUIPE</span><button class="${settingsTab==='users'?'on':''}" data-settings="users" aria-current="${settingsTab==='users'?'page':'false'}">${settingsIcon('users')}<span>Utilisateurs</span></button></nav><div class="settings-content">${settingsTab==='general'?general:settingsTab==='outils'?outils:settingsTab==='donnees'?donnees:users}</div></div>
  </div></div>`;
