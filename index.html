@@ -2176,6 +2176,14 @@ body.invo-modal-open #cartbar{display:none!important}
 .auth-slogan{margin-bottom:23px!important}
 .motifs-helper{margin:0 0 9px;color:#64748B;font-size:11px;line-height:1.4}
 .motifs-helper strong{color:#4355F5;font-weight:750}
+/* SWAY · ESPACE DE TRAVAIL — Stock et Déclarer utilisent toute la largeur disponible sur grand écran. */
+@media(min-width:900px){
+ #s-stock,#s-dec{width:100%!important;max-width:1360px!important}
+ #s-stock .subtabs,#s-stock .cats,#s-stock .search,#s-stock .line{width:100%!important;max-width:none!important}
+ #s-dec .declare-service,#s-dec .declare-catalog .grid,#s-dec .declare-reason .motifs,#s-dec .panier{width:100%!important;max-width:none!important}
+ #s-dec .declare-catalog .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))!important}
+ #s-dec .declare-reason .motifs{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important}
+}
 @media(max-width:759px){.stock-actions .btn{width:100%}.auth-box{padding-top:8px}.auth-welcome b{font-size:23px}.motifs-helper{font-size:10.5px}}
 </style>
 </head>
