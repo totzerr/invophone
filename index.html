@@ -22,11 +22,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="description" content="INVO Phone — gérez les stocks, les déclarations, les réceptions et l’administration de votre restaurant.">
+<meta name="description" content="Sway Phone — gérez les stocks, les déclarations, les réceptions et l’administration de votre restaurant.">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#0D1728">
-<title>INVO — Phone</title>
+<title>Sway — Phone</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
@@ -8613,10 +8613,37 @@ function ouvrirTraitementVente(mvId){
  requestAnimationFrame(function(){openQualification(mvId);});
 }
 
+/* Marque affichée : les clés locales historiques restent volontairement inchangées
+   afin de conserver les comptes et données déjà enregistrés sur cet appareil. */
+const SWAY_MARQUE={nom:'Sway',logo:'assets/sway-logo.png'};
+function texteSway(texte){return String(texte||'').replace(/\bINVO\b/g,'SWAY').replace(/\bInvo\b/g,'Sway').replace(/\binvo\b/g,'Sway');}
+function appliquerMarqueSway(racine){
+ const scope=racine||document;
+ const template=document.getElementById('invoLogo');
+ if(template&&template.content){const image=template.content.querySelector('.logo-img');if(image){image.src=SWAY_MARQUE.logo;image.alt='Logo Sway';image.decoding='async';}}
+ if(scope.querySelectorAll){scope.querySelectorAll('.logo-img').forEach(function(image){image.src=SWAY_MARQUE.logo;image.alt='Logo Sway';image.decoding='async';});}
+ const cible=scope.nodeType===1?scope:document.body;
+ if(!cible)return;
+ const filtre={acceptNode:function(noeud){return noeud.parentElement&&noeud.parentElement.closest('script,style,template')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;}};
+ const textes=document.createTreeWalker(cible,NodeFilter.SHOW_TEXT,filtre);
+ let noeud;
+ while((noeud=textes.nextNode())){const suivant=texteSway(noeud.nodeValue);if(suivant!==noeud.nodeValue)noeud.nodeValue=suivant;}
+ if(scope.querySelectorAll){scope.querySelectorAll('[title],[aria-label],[placeholder],[alt]').forEach(function(element){['title','aria-label','placeholder','alt'].forEach(function(attribut){if(element.hasAttribute(attribut)){const actuel=element.getAttribute(attribut),suivant=texteSway(actuel);if(suivant!==actuel)element.setAttribute(attribut,suivant);}});});}
+}
+function observerMarqueSway(){
+ const meta=document.querySelector('meta[name="description"]');if(meta)meta.content=texteSway(meta.content);document.title=texteSway(document.title);
+ appliquerMarqueSway(document);
+ new MutationObserver(function(mutations){mutations.forEach(function(mutation){
+  if(mutation.type==='characterData'){if(!mutation.target.parentElement||!mutation.target.parentElement.closest('script,style,template')){const suivant=texteSway(mutation.target.nodeValue);if(suivant!==mutation.target.nodeValue)mutation.target.nodeValue=suivant;}}
+  else if(mutation.type==='childList'){mutation.addedNodes.forEach(function(noeud){if(noeud.nodeType===3){if(!noeud.parentElement||!noeud.parentElement.closest('script,style,template')){const suivant=texteSway(noeud.nodeValue);if(suivant!==noeud.nodeValue)noeud.nodeValue=suivant;}}else if(noeud.nodeType===1&&!noeud.closest('script,style,template'))appliquerMarqueSway(noeud);});}
+ });}).observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+
 /* Connexion désactivée pour la phase de test.
    Le code des comptes reste présent (creerCompte, connecter, showAuth…)
    et pourra être réactivé en remplaçant l'appel ci-dessous. */
-(async()=>{await bootApp()})();
+observerMarqueSway();
+(async()=>{await bootApp();appliquerMarqueSway(document)})();
 </script>
 </body>
 </html>
