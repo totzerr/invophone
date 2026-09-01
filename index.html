@@ -2186,6 +2186,7 @@ body.invo-modal-open #cartbar{display:none!important}
 }
 /* Logo Sway : le mot-symbole bleu reste lisible sur tous les formats. */
 .logo-img{height:46px!important;width:auto!important;object-fit:contain!important}
+.top .logo-img{width:108px!important;height:46px!important;object-fit:cover!important;object-position:center!important}
 @media(max-width:759px){.top .logo-img{display:block!important;height:32px!important}.top .logo:before{display:none!important}}
 @media(max-width:759px){.stock-actions .btn{width:100%}.auth-box{padding-top:8px}.auth-welcome b{font-size:23px}.motifs-helper{font-size:10.5px}}
 </style>
@@ -8623,7 +8624,7 @@ function ouvrirTraitementVente(mvId){
 
 /* Marque affichée : les clés locales historiques restent volontairement inchangées
    afin de conserver les comptes et données déjà enregistrés sur cet appareil. */
-const SWAY_MARQUE={nom:'Sway',logo:'assets/sway-logo-black.png'};
+const SWAY_MARQUE={nom:'Sway',logo:'assets/sway-logo-source-black.png'};
 function texteSway(texte){return String(texte||'').replace(/\bINVO\b/g,'SWAY').replace(/\bInvo\b/g,'Sway').replace(/\binvo\b/g,'Sway');}
 function appliquerMarqueSway(racine){
  const scope=racine||document;
