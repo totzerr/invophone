@@ -982,6 +982,7 @@ main{padding-top:24px;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 
 /* Fournisseurs & commandes */
+.cmd-order-controls{display:flex;align-items:center;gap:7px}.cmd-conditionnement{min-height:32px;max-width:112px;border:1px solid var(--line,#ddd);border-radius:9px;background:#fff;color:var(--ink,#16171b);font:600 11px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;padding:0 7px}.cmd-conditionnement:focus{outline:2px solid color-mix(in srgb,var(--blue,#365bd6) 24%,transparent);border-color:var(--blue,#365bd6)}.cmd-conditionnement-note{display:block;margin-top:5px;color:var(--steel-d,#625f68);font-size:10px;line-height:1.35}@media(max-width:620px){.cmd-order-line{align-items:flex-start;flex-direction:column}.cmd-order-controls{width:100%;justify-content:space-between}.cmd-conditionnement{flex:1;max-width:none}}
 .cmd-shell{display:grid;gap:14px}.cmd-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px;border:1px solid color-mix(in srgb,var(--line,#ddd) 75%,#6a84ff);border-radius:20px;background:linear-gradient(130deg,color-mix(in srgb,var(--card,#fff) 86%,#eef2ff),var(--card,#fff))}.cmd-hero h2{font-size:21px;letter-spacing:-.04em;margin:4px 0 6px}.cmd-hero p,.cmd-toolbar small,.cmd-product small,.order-card small,.cmd-create small{display:block;color:var(--steel-d,#625f68);font-size:12px;line-height:1.4}.cmd-supplier-list{display:flex;gap:8px;overflow:auto;padding-bottom:2px}.cmd-supplier{white-space:nowrap;border:1px solid var(--line,#ddd);background:var(--card,#fff);border-radius:999px;padding:8px 11px;color:inherit;font:inherit;font-size:12px}.cmd-supplier small{opacity:.65}.cmd-supplier.on{background:var(--ink,#16171b);color:#fff;border-color:var(--ink,#16171b)}.cmd-supplier.add{border-style:dashed}.cmd-toolbar,.cmd-create{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:14px;border-radius:16px;background:var(--panel,#f4f4f5)}.cmd-toolbar-actions,.order-actions{display:flex;gap:8px;flex-wrap:wrap}.cmd-catalogue{display:grid;gap:8px}.cmd-product{border:1px solid var(--line,#ddd);border-radius:15px;padding:11px;background:var(--card,#fff)}.cmd-product.low{border-color:color-mix(in srgb,var(--red,#ad3b36) 40%,var(--line,#ddd))}.cmd-product-top,.cmd-order-line{display:flex;align-items:center;gap:9px}.cmd-body{min-width:0;flex:1}.cmd-body b{display:block;font-size:13px}.mini-edit{font:inherit;font-size:11px;color:var(--blue,#365bd6);border:0;background:transparent;padding:4px}.cmd-order-line{justify-content:space-between;margin:9px 0 0 33px;font-size:11px;color:var(--steel-d,#625f68)}.cmd-order-line label{display:flex;align-items:center;border:1px solid var(--line,#ddd);border-radius:9px;padding:3px 7px;background:#fff}.cmd-order-line input{width:52px;border:0;background:transparent;text-align:right;font:inherit;font-weight:700;color:inherit;outline:0}.cmd-order-line em{font-style:normal;margin-left:4px}.cmd-create label{font-size:11px;display:grid;gap:4px}.cmd-create input{font:inherit;padding:7px;border:1px solid var(--line,#ddd);border-radius:8px;background:#fff}.cmd-notes{display:grid;gap:8px;padding:14px;border:1px solid var(--line,#ddd);border-radius:16px;background:var(--card,#fff)}.cmd-notes label{display:grid;gap:8px;color:var(--steel-d,#625f68);font-size:11px;line-height:1.4}.cmd-notes textarea{box-sizing:border-box;width:100%;min-height:94px;resize:vertical;padding:10px;border:1px solid var(--line,#ddd);border-radius:11px;background:#fff;color:var(--ink,#16171b);font:inherit;line-height:1.45}.cmd-notes textarea:focus{outline:2px solid color-mix(in srgb,var(--blue,#365bd6) 24%,transparent);border-color:var(--blue,#365bd6)}.cmd-price{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:6px;color:var(--steel-d,#625f68);font-size:10px}.cmd-best,.cmd-best-link{border:0;border-radius:999px;background:#e8edff;color:#294eb8;padding:3px 7px;font:inherit;font-size:10px;font-weight:700}.cmd-best-link{cursor:pointer}.cmd-best-link:hover{background:#dfe6ff}.cmd-orders{display:grid;gap:8px}.order-card{display:grid;grid-template-columns:1fr auto;gap:7px;padding:13px;border:1px solid var(--line,#ddd);border-radius:14px;background:var(--card,#fff)}.order-card b{font-size:13px}.order-status{font-size:10px;padding:4px 7px;border-radius:99px;height:max-content}.order-status.ok{background:#daf2df;color:#155d2c}.order-status.warn{background:#EEF0FF;color:#394BE2}.order-status.info{background:#e7edff;color:#294eb8}.order-status.muted{background:#eee;color:#777}.order-actions{grid-column:1/-1}@media(max-width:620px){.cmd-hero,.cmd-toolbar,.cmd-create{padding:14px;align-items:flex-start;flex-direction:column}.cmd-hero .btn,.cmd-create .btn{width:100%}.cmd-toolbar-actions{width:100%}.cmd-toolbar-actions .btn{flex:1}.cmd-create label{width:100%}.cmd-create input{width:100%;box-sizing:border-box}.cmd-order-line{margin-left:0}.cmd-product-top{align-items:flex-start}.order-card{padding:11px}}
 
 
@@ -4510,12 +4511,14 @@ function qteSuggeree(p){const q=st.stock[p.id]??0;return Math.max(0,Math.ceil((p
 function offresFournisseursProduit(p){const offres=[];const ajouter=function(n,px){n=String(n||'').trim();px=num(px);if(!n)return;const existe=offres.find(function(o){return o.n.toLowerCase()===n.toLowerCase()});if(!existe)offres.push({n:n,px:px});else if(px>0&&(!existe.px||px<existe.px))existe.px=px};ajouter(p&&p.fo,p&&p.px);(p&&p.fournisseurs||[]).forEach(function(o){ajouter(o&&o.n,o&&o.px)});return offres.sort(function(a,b){return(a.px||Infinity)-(b.px||Infinity)||a.n.localeCompare(b.n,'fr')})}
 function offreFournisseurProduit(p,fournisseur){return offresFournisseursProduit(p).find(function(o){return o.n===fournisseur})||null}
 function cleQteCommande(p,fournisseur){return String(fournisseur||'')+'::'+p.id}
-function qteCommande(p,fournisseur){const cle=cleQteCommande(p,fournisseur),v=st.cmdQ&&st.cmdQ[cle];return v!==undefined?num(v):qteSuggeree(p)}
+function conditionnementCommande(p,fournisseur){const cle=cleQteCommande(p,fournisseur),v=st.cmdConditionnement&&st.cmdConditionnement[cle];return v==='carton'?'carton':'unite'}
+function qteCommande(p,fournisseur){const cle=cleQteCommande(p,fournisseur),v=st.cmdQ&&st.cmdQ[cle];return v!==undefined?num(v):(conditionnementCommande(p,fournisseur)==='carton'?0:qteSuggeree(p))}
+function libelleConditionnementCommande(conditionnement,q){return conditionnement==='carton'?fmtQ(q)+' carton'+(num(q)>1?'s':''):fmtQ(q)+' unité'+(num(q)>1?'s':'')}
 /* Une commande conserve la trace de chacune de ses réceptions validées. */
 function quantitesRecuesCommande(commandeId){
- const recues={};
+ const recues={unite:{},carton:{}};
  (st.liv||[]).filter(function(l){return String(l.commandeId||'')===String(commandeId)}).forEach(function(l){
-  (l.lines||[]).forEach(function(x){recues[x.id]=(recues[x.id]||0)+num(x.q)});
+  (l.lines||[]).forEach(function(x){const dest=x.conditionnement==='carton'?recues.carton:recues.unite;dest[x.id]=(dest[x.id]||0)+num(x.conditionnement==='carton'?x.qCarton:x.q)});
  });
  return recues;
 }
@@ -4523,7 +4526,8 @@ function lignesRestantesCommande(commande){
  if(!commande)return[];
  const recues=quantitesRecuesCommande(commande.id);
  return (commande.lines||[]).map(function(l){
-  return{id:l.id,q:Math.max(0,num(l.q)-num(recues[l.id]||0)),px:l.px};
+  const conditionnement=l.conditionnement==='carton'?'carton':'unite',recu=num(recues[conditionnement][l.id]||0);
+  return{id:l.id,q:Math.max(0,num(l.q)-recu),px:l.px,conditionnement:conditionnement};
  }).filter(function(l){return l.id&&l.q>0.000001});
 }
 function commandeComplete(commande){return lignesRestantesCommande(commande).length===0}
@@ -4536,7 +4540,7 @@ function statutCommande(c){
 }
 function texteCommande(c){
  const nl=String.fromCharCode(10),f=fournisseurParNom(c.fournisseur);let txt='COMMANDE INVO'+nl+nl+'Fournisseur : '+c.fournisseur+nl+'Livraison souhaitée : '+dateLocale(c.dateLiv)+nl+nl;
- c.lines.forEach(function(l){const p=prod(l.id);if(p)txt+='• '+p.n+' : '+fmtQ(l.q)+' '+p.u+nl});
+ c.lines.forEach(function(l){const p=prod(l.id);if(p)txt+='• '+p.n+' : '+libelleConditionnementCommande(l.conditionnement,l.q)+nl});
  if(String(c.note||'').trim())txt+=nl+'━━━━━━━━━━━━━━━━━━━━'+nl+'NOTES POUR LE FOURNISSEUR'+nl+'━━━━━━━━━━━━━━━━━━━━'+nl+String(c.note).trim()+nl;
  if(f&&f.mail)txt+=nl+'Contact : '+f.mail;return txt;
 }
@@ -4548,12 +4552,12 @@ function envoyerCommandeFournisseur(id){
 function analyserReception(form){
  const commande=form&&form.commandId?(st.commandes||[]).find(function(c){return c.id===form.commandId}):null;
  const lignes=(form&&form.lines||[]).filter(function(l){return l&&l.id}).map(function(l){
-  const p=prod(l.id),attendu=Math.max(0,num(l.attendu)),recu=Math.max(0,num(l.q));
+  const p=prod(l.id),attendu=Math.max(0,num(l.attendu)),recu=Math.max(0,num(l.q)),conditionnement=l.conditionnement==='carton'?'carton':'unite',recuCommande=conditionnement==='carton'?Math.max(0,num(l.qCarton)):recu;
   const prixCommande=Math.max(0,num(l.prixCommande)),prixRecu=Math.max(0,num(l.px));
-  const manquant=attendu>recu+.0001?attendu-recu:0,surplus=attendu>0&&recu>attendu+.0001?recu-attendu:0;
+  const manquant=attendu>recuCommande+.0001?attendu-recuCommande:0,surplus=attendu>0&&recuCommande>attendu+.0001?recuCommande-attendu:0;
   const hausse=prixCommande>0&&prixRecu>prixCommande+.0001?prixRecu-prixCommande:0;
   const baisse=prixCommande>0&&prixRecu>0&&prixRecu<prixCommande-.0001?prixCommande-prixRecu:0;
-  return{id:l.id,n:p?p.n:'Produit',u:p?p.u:'',attendu:attendu,recu:recu,prixCommande:prixCommande,prixRecu:prixRecu,
+  return{id:l.id,n:p?p.n:'Produit',u:p?p.u:'',attendu:attendu,recu:recu,recuCommande:recuCommande,conditionnement:conditionnement,prixCommande:prixCommande,prixRecu:prixRecu,
    manquant:manquant,surplus:surplus,hausse:hausse,baisse:baisse,inattendu:!!commande&&attendu<=.0001};
  });
  return{commande:commande,fournisseur:form&&form.fo||commande&&commande.fournisseur||'',lignes:lignes,
@@ -4569,8 +4573,8 @@ function ouvrirSignalementFournisseur(nom,objet,texte){
 function controleReceptionHTML(form){
  const r=analyserReception(form);if(!r.commande)return'';
  const lignes=[];
- r.manquants.forEach(function(l){lignes.push('<div class="reception-control-line"><i></i><span><b>Manquant</b> · '+escapeHTML(l.n)+' : '+fmtQ(l.manquant)+' '+escapeHTML(l.u)+' non reçu</span></div>')});
- r.surplus.forEach(function(l){lignes.push('<div class="reception-control-line extra"><i></i><span><b>Quantité en plus</b> · '+escapeHTML(l.n)+' : '+fmtQ(l.surplus)+' '+escapeHTML(l.u)+' au-delà de la commande</span></div>')});
+ r.manquants.forEach(function(l){lignes.push('<div class="reception-control-line"><i></i><span><b>Manquant</b> · '+escapeHTML(l.n)+' : '+libelleConditionnementCommande(l.conditionnement,l.manquant)+' non reçu</span></div>')});
+ r.surplus.forEach(function(l){lignes.push('<div class="reception-control-line extra"><i></i><span><b>Quantité en plus</b> · '+escapeHTML(l.n)+' : '+libelleConditionnementCommande(l.conditionnement,l.surplus)+' au-delà de la commande</span></div>')});
  r.inattendus.forEach(function(l){lignes.push('<div class="reception-control-line extra"><i></i><span><b>Ligne non prévue</b> · '+escapeHTML(l.n)+' sera ajoutée seulement si tu la valides</span></div>')});
  r.hausses.forEach(function(l){const pct=Math.round(l.hausse/l.prixCommande*100);lignes.push('<div class="reception-control-line price"><i></i><span><b>Prix en hausse</b> · '+escapeHTML(l.n)+' : '+fmt(l.prixCommande)+' € → '+fmt(l.prixRecu)+' € (+'+pct+' %)</span></div>')});
  r.baisses.forEach(function(l){const pct=Math.round(l.baisse/l.prixCommande*100);lignes.push('<div class="reception-control-line"><i></i><span><b>Prix en baisse</b> · '+escapeHTML(l.n)+' : '+fmt(l.prixCommande)+' € → '+fmt(l.prixRecu)+' € (-'+pct+' %)</span></div>')});
@@ -4602,8 +4606,9 @@ function renderCommander(){
  const fournisseur=fournisseurParNom(commandeFo),produits=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,commandeFo)}),aujourd=new Date().toISOString().slice(0,10);
  const supplierMenu=noms.length?'<label class="cmd-supplier-select"><span>Fournisseur</span><select id="cmdSupplierSelect" aria-label="Choisir un fournisseur">'+noms.map(function(n){return'<option value="'+escapeHTML(n)+'" '+(n===commandeFo?'selected':'')+'>'+escapeHTML(n)+'</option>'}).join('')+'</select></label>':'<div class="hint">Ajoute ton premier fournisseur pour construire son catalogue.</div>';
  const produitsHTML=produits.length?produits.map(function(p){
-  const dispo=st.stock[p.id]??0,bas=dispo<=p.seuil,sug=qteSuggeree(p),q=qteCommande(p,commandeFo),prev=previsionIndex().map[p.id],badge=prev?badgePrev(prev):null,offres=offresFournisseursProduit(p),offre=offreFournisseurProduit(p,commandeFo),meilleure=offres[0],prix=offre&&offre.px>0?fmt(offre.px)+' €/'+p.u:'Prix à renseigner',choix=offres.length>1?(meilleure&&meilleure.n!==commandeFo?'<button class="cmd-best-link" data-cmdcheapest="'+p.id+'">Meilleur prix · '+escapeHTML(meilleure.n)+' · '+fmt(meilleure.px)+' €</button>':'<span class="cmd-best">Meilleur prix</span>'):'';
-  return'<div class="cmd-product '+(bas?'low':'')+'"><div class="cmd-product-top"><span class="l-ico">'+p.i+'</span><span class="cmd-body"><b>'+escapeHTML(p.n)+'</b><small>Stock '+fmtQ(dispo)+' '+p.u+' · seuil '+fmtQ(p.seuil)+' '+p.u+(badge?' · '+badge.txt:'')+'</small><div class="cmd-price">Chez '+escapeHTML(commandeFo)+' · '+prix+choix+'</div></span><button class="mini-edit" data-cmdedit="'+p.id+'">Modifier</button></div><div class="cmd-order-line"><span>'+(bas?'Suggestion : '+fmtQ(sug)+' '+p.u:'Quantité à commander')+'</span><label><input class="cmd-inp" inputmode="decimal" data-cmd="'+cleQteCommande(p,commandeFo)+'" value="'+q+'"><em>'+p.u+'</em></label></div></div>';
+  const dispo=st.stock[p.id]??0,bas=dispo<=p.seuil,sug=qteSuggeree(p),cle=cleQteCommande(p,commandeFo),conditionnement=conditionnementCommande(p,commandeFo),q=qteCommande(p,commandeFo),prev=previsionIndex().map[p.id],badge=prev?badgePrev(prev):null,offres=offresFournisseursProduit(p),offre=offreFournisseurProduit(p,commandeFo),meilleure=offres[0],prix=offre&&offre.px>0?fmt(offre.px)+' €/'+p.u:'Prix à renseigner',choix=offres.length>1?(meilleure&&meilleure.n!==commandeFo?'<button class="cmd-best-link" data-cmdcheapest="'+p.id+'">Meilleur prix · '+escapeHTML(meilleure.n)+' · '+fmt(meilleure.px)+' €</button>':'<span class="cmd-best">Meilleur prix</span>'):'';
+  const aideCarton=conditionnement==='carton'?'<small class="cmd-conditionnement-note">Le nombre de cartons est saisi par toi. La quantité stock sera vérifiée à la réception.</small>':'';
+  return'<div class="cmd-product '+(bas?'low':'')+'"><div class="cmd-product-top"><span class="l-ico">'+p.i+'</span><span class="cmd-body"><b>'+escapeHTML(p.n)+'</b><small>Stock '+fmtQ(dispo)+' '+p.u+' · seuil '+fmtQ(p.seuil)+' '+p.u+(badge?' · '+badge.txt:'')+'</small><div class="cmd-price">Chez '+escapeHTML(commandeFo)+' · '+prix+choix+'</div></span><button class="mini-edit" data-cmdedit="'+p.id+'">Modifier</button></div><div class="cmd-order-line"><span>'+(conditionnement==='carton'?'Quantité à commander en cartons':(bas?'Suggestion : '+fmtQ(sug)+' '+p.u:'Quantité à commander'))+'</span><div class="cmd-order-controls"><select class="cmd-conditionnement" data-cmdcond="'+cle+'" aria-label="Conditionnement de commande pour '+escapeHTML(p.n)+'"><option value="unite" '+(conditionnement==='unite'?'selected':'')+'>À l’unité</option><option value="carton" '+(conditionnement==='carton'?'selected':'')+'>En carton</option></select><label><input class="cmd-inp" inputmode="decimal" data-cmd="'+cle+'" value="'+(q||'')+'"><em>'+ (conditionnement==='carton'?'carton'+(q>1?'s':''):p.u) +'</em></label></div></div>'+aideCarton+'</div>';
  }).join(''):'<div class="empty"><div class="e-ico">📦</div><p><b>Aucun produit pour ce fournisseur</b><br>Ajoute les produits de son catalogue, puis INVO suivra les seuils.</p></div>';
  const commandes=(st.commandes||[]).filter(function(c){return c.fournisseur===commandeFo}).slice(0,12).map(function(c){
   const s=statutCommande(c),cree=c.cree?String(c.cree).slice(0,10):'';
@@ -4615,11 +4620,11 @@ async function preparerCommande(){
  const fournisseur=commandeFo,dateLiv=document.getElementById('cmdDelivery')?.value||'';
  if(!fournisseur)return toast('Ajoute ou sélectionne un fournisseur.');
  if(!dateLiv)return toast('Choisis une date de livraison prévue.');
- const lines=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,fournisseur)}).map(function(p){const offre=offreFournisseurProduit(p,fournisseur);return{id:p.id,q:qteCommande(p,fournisseur),px:offre&&offre.px>0?offre.px:p.px}}).filter(function(l){return l.q>0});
+ const lines=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,fournisseur)}).map(function(p){const offre=offreFournisseurProduit(p,fournisseur);return{id:p.id,q:qteCommande(p,fournisseur),conditionnement:conditionnementCommande(p,fournisseur),px:offre&&offre.px>0?offre.px:p.px}}).filter(function(l){return l.q>0});
  if(!lines.length)return toast('Ajoute au moins une quantité à commander.');
  const note=String(document.getElementById('cmdNotes')?.value||st.cmdNote||'').trim();
  st.commandes=st.commandes||[];st.commandes.unshift({id:uid('cmd'),fournisseur:fournisseur,dateLiv:dateLiv,cree:new Date().toISOString(),statut:'preparee',lines:lines,note:note});
- st.cmdQ={};st.cmdNote='';await save();renderCommanderScreen();toast('Commande enregistrée. Le stock attendra ta validation à réception.');
+ st.cmdQ={};st.cmdConditionnement={};st.cmdNote='';await save();renderCommanderScreen();toast('Commande enregistrée. Le stock attendra ta validation à réception.');
 }
 function signalerProduitManquant(){
  const nom=prompt('Quel produit manque chez '+(commandeFo||'ce fournisseur')+' ?');
@@ -4658,6 +4663,7 @@ async function retirerFournisseur(){
 
 function bindCommanderActions(){
  document.querySelectorAll('[data-cmd]').forEach(function(i){i.oninput=function(e){st.cmdQ=st.cmdQ||{};st.cmdQ[e.target.dataset.cmd]=e.target.value}});
+ document.querySelectorAll('[data-cmdcond]').forEach(function(s){s.onchange=function(e){st.cmdConditionnement=st.cmdConditionnement||{};st.cmdConditionnement[e.target.dataset.cmdcond]=e.target.value;st.cmdQ=st.cmdQ||{};st.cmdQ[e.target.dataset.cmdcond]='';renderCommanderScreen()}});
  const notes=document.getElementById('cmdNotes');if(notes)notes.oninput=function(e){st.cmdNote=e.target.value};
  document.querySelectorAll('[data-cmdfo]').forEach(function(b){b.onclick=function(){commandeFo=b.dataset.cmdfo;renderCommanderScreen()}});
  document.querySelectorAll('[data-cmdcheapest]').forEach(function(b){b.onclick=function(){const p=prod(b.dataset.cmdcheapest),best=offresFournisseursProduit(p)[0];if(best){commandeFo=best.n;renderCommanderScreen()}}});
@@ -4790,7 +4796,7 @@ function openLiv(commandeId){
  if(commande){
  const restantes=lignesRestantesCommande(commande);
  if(!restantes.length){toast('Cette commande est déjà entièrement réceptionnée.');return}
-  livForm={fo:commande.fournisseur,commandId:commande.id,lines:restantes.map(function(l){return{id:l.id,q:l.q,px:l.px??prod(l.id)?.px??'',attendu:l.q,prixCommande:l.px??prod(l.id)?.px??0}})};
+  livForm={fo:commande.fournisseur,commandId:commande.id,lines:restantes.map(function(l){const conditionnement=l.conditionnement==='carton'?'carton':'unite';return{id:l.id,q:conditionnement==='carton'?'':l.q,qCarton:'',conditionnement:conditionnement,px:l.px??prod(l.id)?.px??'',attendu:l.q,prixCommande:l.px??prod(l.id)?.px??0}})};
  }else livForm={fo:st.prods[0]?.fo||'',lines:[{id:st.prods[0]?.id||'',q:'',px:'',attendu:0,prixCommande:0}]};
  drawLiv();
 }
@@ -4799,12 +4805,13 @@ function drawLiv(){
  const fournis=[...new Set(st.prods.map(p=>p.fo).filter(Boolean))];
  const lignes=livForm.lines.map((l,ix)=>{
   const p=prod(l.id);
+  const commandeCarton=l.conditionnement==='carton'?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px">Commandé : ${fmtQ(l.attendu)} carton${num(l.attendu)>1?'s':''} · Cartons reçus <input data-lcart="${ix}" inputmode="decimal" value="${l.qCarton}" aria-label="Cartons reçus" style="width:42px;margin-left:4px;text-align:center">. Saisis aussi ci-dessus la quantité réellement entrée en stock (${p?p.u:'unité'}).</div>`:'';
   return `<div class="ing-row" style="grid-template-columns:1fr 58px 62px 34px">
    <select data-lk="${ix}">${st.prods.map(x=>`<option value="${x.id}" ${l.id===x.id?'selected':''}>${x.i} ${x.n}</option>`).join('')}</select>
    <input data-lq="${ix}" inputmode="decimal" value="${l.q}" placeholder="Qté">
    <input data-lp="${ix}" inputmode="decimal" value="${l.px}" placeholder="${p?fmt(p.px):'€'}">
    <button class="ing-x" data-lx="${ix}">×</button></div>
-   ${p?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px">${p.u} · prix actuel ${fmt(p.px)} €/${p.u}</div>`:''}`;
+   ${commandeCarton}${p?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px">${p.u} · prix actuel ${fmt(p.px)} €/${p.u}</div>`:''}`;
  }).join('');
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgL"><div class="sheet">
   <h3>${livForm.commandId?'Vérifier la réception':t('newLiv').replace('+ ','')}</h3><p class="sh-sub">${livForm.commandId?'Quantités réellement reçues : vérifie et ajuste avant validation. Le stock ne sera mis à jour qu’après cette validation.':t('livS')}</p>
@@ -4827,10 +4834,11 @@ function drawLiv(){
   const p=prod(e.target.value);if(p&&!livForm.lines[+s.dataset.lk].px)livForm.lines[+s.dataset.lk].px=p.px;
   drawLiv()});
  document.querySelectorAll('[data-lq]').forEach(i=>i.oninput=e=>{livForm.lines[+i.dataset.lq].q=e.target.value;majTotalLiv()});
+ document.querySelectorAll('[data-lcart]').forEach(i=>i.oninput=e=>{livForm.lines[+i.dataset.lcart].qCarton=e.target.value;majControleLiv()});
  document.querySelectorAll('[data-lp]').forEach(i=>i.oninput=e=>{livForm.lines[+i.dataset.lp].px=e.target.value;majTotalLiv()});
  document.querySelectorAll('[data-lx]').forEach(b=>b.onclick=()=>{livForm.lines.splice(+b.dataset.lx,1);
  if(!livForm.lines.length)livForm.lines.push({id:st.prods[0].id,q:'',px:'',attendu:0,prixCommande:0});drawLiv()});
- document.getElementById('lAdd').onclick=()=>{livForm.lines.push({id:st.prods[0].id,q:'',px:'',attendu:0,prixCommande:0});drawLiv()};
+ document.getElementById('lAdd').onclick=()=>{livForm.lines.push({id:st.prods[0].id,q:'',qCarton:'',conditionnement:'unite',px:'',attendu:0,prixCommande:0});drawLiv()};
  document.getElementById('lCancel').onclick=closeModal;
  document.getElementById('lSave').onclick=saveLiv;
  majControleLiv();
@@ -4855,7 +4863,7 @@ async function saveLiv(){
   }
  });
  st.liv.unshift({id:receptionId,fo:livForm.fo||'Divers',ts:new Date().toISOString(),
-  lines:lines.map(l=>({id:l.id,q:num(l.q),px:num(l.px)})),total,commandeId:livForm.commandId||null,
+  lines:lines.map(l=>({id:l.id,q:num(l.q),qCarton:l.conditionnement==='carton'?num(l.qCarton):undefined,conditionnement:l.conditionnement==='carton'?'carton':'unite',px:num(l.px)})),total,commandeId:livForm.commandId||null,
   controle:{manquants:controle.manquants.map(function(l){return{id:l.id,q:l.manquant}}),hausses:controle.hausses.map(function(l){return{id:l.id,avant:l.prixCommande,apres:l.prixRecu}}),inattendus:controle.inattendus.map(function(l){return{id:l.id}})}});
  if(livForm.commandId){
   const c=(st.commandes||[]).find(function(x){return x.id===livForm.commandId});
