@@ -2927,12 +2927,12 @@ function administrationVierge(){return{
 }}
 
 let st={lang:'fr',who:'Responsable de salle',whoId:'salle',profilMetier:'',stock:{},mv:[],count:{},live:false,modeCaisse:'manuel',modePilote:false,
-lastSync:Date.now(),svc:'soir',serviceActif:null,serviceHist:[],prods:null,carte:null,liv:[],invHist:[],inventory:null,photos:{},fournisseurs:[],commandes:[],legacyTransfers:[],meteo:{ville:'',cache:null},administration:administrationVierge()};
+lastSync:Date.now(),svc:'soir',serviceActif:null,serviceHist:[],prods:null,carte:null,liv:[],invHist:[],inventory:null,photos:{},fournisseurs:[],commandes:[],commandeBrouillons:[],receptionBrouillons:[],legacyTransfers:[],meteo:{ville:'',cache:null},administration:administrationVierge()};
 let panier={},panierMotifs={},motif=null,motifsSelectionnes=[],motifLigneEditee=null,motifsOuverts=false,cat='cCock',screen='dash',seenFeed=0,timer=null,sq='',stockTab='mat',fm=null;
 let msgDec=null,forcerStock=false;   /* retours de validation sur l'écran Déclarer */
 let cartePrix=false,prixEdit={},cartCat='tous';   /* édition groupée des prix de vente */
 let livTab='recep',invTab='count',invZone='all',invOrderMode=false,draggedProductId=null,zoneOrderSaveTimer=null,
-livForm=null,decPhoto=null,commandeFo='',fournisseurForm=null,settingsTab='general',userForm=null,
+livForm=null,decPhoto=null,commandeFo='',commandeBrouillonActif=null,fournisseurForm=null,settingsTab='general',userForm=null,
 adminTab='overview',adminFilters={search:'',supplier:'',status:'',type:''},adminPages={inbox:1,invoices:1,documents:1,contracts:1,compliance:1},adminRenderVersion=0;
 
 const t=k=>(L[st.lang]&&L[st.lang][k])??L.fr[k]??'—';
@@ -3186,6 +3186,8 @@ if(!st.meteo||typeof st.meteo!=='object')st.meteo={ville:'',cache:null};
 if(!st.liv)st.liv=[];if(!st.invHist)st.invHist=[];if(!st.photos)st.photos={};
 if(!Array.isArray(st.fournisseurs))st.fournisseurs=[];
 if(!Array.isArray(st.commandes))st.commandes=[];
+if(!Array.isArray(st.commandeBrouillons))st.commandeBrouillons=[];
+if(!Array.isArray(st.receptionBrouillons))st.receptionBrouillons=[];
 if(!Array.isArray(st.legacyTransfers))st.legacyTransfers=[];
 if(!st.administration||typeof st.administration!=='object')st.administration=administrationVierge();
 else{
@@ -4599,11 +4601,30 @@ function signalerEcartsReception(){
  toast(mode==='mail'?'E-mail prérempli : vérifie-le puis envoie-le toi-même.':'Signalement copié. Ajoute l’e-mail du fournisseur pour l’ouvrir directement.');
  return mode;
 }
+function copierLignesReception(lignes){return(lignes||[]).map(function(l){return Object.assign({},l)})}
+function lignesBrouillonCommande(fournisseur){return(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,fournisseur)}).map(function(p){const offre=offreFournisseurProduit(p,fournisseur);return{id:p.id,q:qteCommande(p,fournisseur),conditionnement:conditionnementCommande(p,fournisseur),px:offre&&offre.px>0?offre.px:p.px}}).filter(function(l){return l.q>0})}
+async function sauvegarderBrouillonCommande(){
+ const fournisseur=commandeFo,dateLiv=document.getElementById('cmdDelivery')?.value||'';
+ if(!fournisseur)return toast('Ajoute ou sélectionne un fournisseur.');
+ const existant=(st.commandeBrouillons||[]).find(function(b){return b.id===commandeBrouillonActif}),maintenant=new Date().toISOString();
+ const brouillon={id:commandeBrouillonActif||uid('cmddraft'),fournisseur:fournisseur,dateLiv:dateLiv,cree:existant?existant.cree:maintenant,modifie:maintenant,lines:lignesBrouillonCommande(fournisseur),note:String(document.getElementById('cmdNotes')?.value||st.cmdNote||'').trim()};
+ st.commandeBrouillons=st.commandeBrouillons||[];
+ const index=st.commandeBrouillons.findIndex(function(b){return b.id===brouillon.id});if(index>=0)st.commandeBrouillons[index]=brouillon;else st.commandeBrouillons.unshift(brouillon);
+ if(st.commandeBrouillons.length>20)st.commandeBrouillons.length=20;
+ commandeBrouillonActif=brouillon.id;await save();renderCommanderScreen();toast('Brouillon de commande enregistré. Aucun envoi ni stock modifié.');
+}
+function ouvrirBrouillonCommande(id){
+ const b=(st.commandeBrouillons||[]).find(function(x){return x.id===id});if(!b)return;
+ commandeFo=b.fournisseur;commandeBrouillonActif=b.id;st.cmdQ={};st.cmdConditionnement={};
+ (b.lines||[]).forEach(function(l){const p=prod(l.id);if(!p)return;const cle=cleQteCommande(p,b.fournisseur);st.cmdQ[cle]=l.q;st.cmdConditionnement[cle]=l.conditionnement==='carton'?'carton':'unite'});
+ st.cmdNote=b.note||'';st.cmdDateLiv=b.dateLiv||'';renderCommanderScreen();toast('Brouillon repris. Vérifie-le avant de préparer la commande.');
+}
+async function supprimerBrouillonCommande(id){if(!confirm('Supprimer ce brouillon de commande ?'))return;st.commandeBrouillons=(st.commandeBrouillons||[]).filter(function(b){return b.id!==id});if(commandeBrouillonActif===id)commandeBrouillonActif=null;await save();renderCommanderScreen();toast('Brouillon supprimé.');}
 function renderCommander(){
  assurerFournisseurs();
  const noms=(st.fournisseurs||[]).map(function(f){return f.n}).filter(Boolean).sort(function(a,b){return a.localeCompare(b,'fr')});
  if(!commandeFo||!noms.includes(commandeFo))commandeFo=noms[0]||'';
- const fournisseur=fournisseurParNom(commandeFo),produits=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,commandeFo)}),aujourd=new Date().toISOString().slice(0,10);
+ const fournisseur=fournisseurParNom(commandeFo),produits=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,commandeFo)}),aujourd=new Date().toISOString().slice(0,10),dateCommande=st.cmdDateLiv||aujourd;
  const supplierMenu=noms.length?'<label class="cmd-supplier-select"><span>Fournisseur</span><select id="cmdSupplierSelect" aria-label="Choisir un fournisseur">'+noms.map(function(n){return'<option value="'+escapeHTML(n)+'" '+(n===commandeFo?'selected':'')+'>'+escapeHTML(n)+'</option>'}).join('')+'</select></label>':'<div class="hint">Ajoute ton premier fournisseur pour construire son catalogue.</div>';
  const produitsHTML=produits.length?produits.map(function(p){
   const dispo=st.stock[p.id]??0,bas=dispo<=p.seuil,sug=qteSuggeree(p),cle=cleQteCommande(p,commandeFo),conditionnement=conditionnementCommande(p,commandeFo),q=qteCommande(p,commandeFo),prev=previsionIndex().map[p.id],badge=prev?badgePrev(prev):null,offres=offresFournisseursProduit(p),offre=offreFournisseurProduit(p,commandeFo),meilleure=offres[0],prix=offre&&offre.px>0?fmt(offre.px)+' €/'+p.u:'Prix à renseigner',choix=offres.length>1?(meilleure&&meilleure.n!==commandeFo?'<button class="cmd-best-link" data-cmdcheapest="'+p.id+'">Meilleur prix · '+escapeHTML(meilleure.n)+' · '+fmt(meilleure.px)+' €</button>':'<span class="cmd-best">Meilleur prix</span>'):'';
@@ -4614,17 +4635,18 @@ function renderCommander(){
   const s=statutCommande(c),cree=c.cree?String(c.cree).slice(0,10):'';
   return'<div class="order-card"><div><b>Commande du '+dateLocale(cree)+'</b><small>Livraison prévue : '+dateLocale(c.dateLiv)+' · '+c.lines.length+' produit'+(c.lines.length>1?'s':'')+(String(c.note||'').trim()?' · notes fournisseur incluses':'')+'</small></div><span class="order-status '+s.cls+'">'+s.txt+'</span><div class="order-actions"><button class="btn btn-2 btn-sm" data-copyorder="'+c.id+'">Copier</button><button class="btn btn-2 btn-sm" data-emailorder="'+c.id+'">Préparer l’e-mail</button>'+(c.statut==='recu'?'':'<button class="btn btn-sm" data-receivecmd="'+c.id+'">'+(c.statut==='partielle'?'Compléter la réception':'Vérifier la réception')+'</button>')+'</div></div>';
  }).join('')||'<div class="hint">Aucune commande enregistrée chez ce fournisseur.</div>';
- return'<div class="cmd-shell"><div class="cmd-supplier-row">'+supplierMenu+'<button class="cmd-supplier add" id="addSupplier">＋ Fournisseur</button></div><div class="cmd-toolbar"><div><b>'+escapeHTML(commandeFo||'Fournisseur')+'</b><small>'+(fournisseur&&fournisseur.mail?escapeHTML(fournisseur.mail):'Aucun e-mail renseigné')+'</small></div><div class="cmd-toolbar-actions"><button class="btn btn-2 btn-sm" id="manageSuppliers">Gérer</button><button class="btn btn-2 btn-sm" id="addSupplierProduct">＋ Produit</button><button class="btn btn-2 btn-sm" id="missingProduct">Signaler un manque</button></div></div><div class="cmd-catalogue"><div class="eyebrow">PRODUITS À COMMANDER</div>'+produitsHTML+'</div><section class="cmd-notes"><div class="eyebrow">NOTES POUR LE FOURNISSEUR</div><label for="cmdNotes">Annotations incluses clairement dans le bon de commande et l’e-mail.<textarea id="cmdNotes" rows="4" maxlength="1200" placeholder="Ex. Livraison impérative avant 10 h. Merci de confirmer les indisponibilités.">'+escapeHTML(st.cmdNote||'')+'</textarea></label></section><div class="cmd-create"><div><b>Créer la commande</b><small>Le stock changera uniquement après réception vérifiée.</small></div><label>Date de livraison prévue<input type="date" id="cmdDelivery" min="'+aujourd+'" value="'+aujourd+'"></label><button class="btn" id="prepareOrder">Préparer la commande</button></div><div class="eyebrow" style="margin-top:22px">COMMANDES ENREGISTRÉES</div><div class="cmd-orders">'+commandes+'</div></div>';
+ const brouillons=(st.commandeBrouillons||[]).filter(function(b){return b.fournisseur===commandeFo}).map(function(b){return'<div class="order-card"><div><b>Brouillon · '+dateLocale(b.dateLiv||String(b.modifie||'').slice(0,10))+'</b><small>'+(b.lines||[]).length+' ligne'+((b.lines||[]).length>1?'s':'')+' · modifié le '+new Date(b.modifie||b.cree).toLocaleDateString("fr-FR")+'</small></div><span class="order-status">Brouillon</span><div class="order-actions"><button class="btn btn-2 btn-sm" data-opencmddraft="'+b.id+'">Reprendre</button><button class="btn btn-2 btn-sm" data-deletecmddraft="'+b.id+'">Supprimer</button></div></div>';}).join('');
+ return'<div class="cmd-shell"><div class="cmd-supplier-row">'+supplierMenu+'<button class="cmd-supplier add" id="addSupplier">＋ Fournisseur</button></div><div class="cmd-toolbar"><div><b>'+escapeHTML(commandeFo||'Fournisseur')+'</b><small>'+(fournisseur&&fournisseur.mail?escapeHTML(fournisseur.mail):'Aucun e-mail renseigné')+'</small></div><div class="cmd-toolbar-actions"><button class="btn btn-2 btn-sm" id="manageSuppliers">Gérer</button><button class="btn btn-2 btn-sm" id="addSupplierProduct">＋ Produit</button><button class="btn btn-2 btn-sm" id="missingProduct">Signaler un manque</button></div></div><div class="cmd-catalogue"><div class="eyebrow">PRODUITS À COMMANDER</div>'+produitsHTML+'</div><section class="cmd-notes"><div class="eyebrow">NOTES POUR LE FOURNISSEUR</div><label for="cmdNotes">Annotations incluses clairement dans le bon de commande et l’e-mail.<textarea id="cmdNotes" rows="4" maxlength="1200" placeholder="Ex. Livraison impérative avant 10 h. Merci de confirmer les indisponibilités.">'+escapeHTML(st.cmdNote||'')+'</textarea></label></section><div class="cmd-create"><div><b>Créer la commande</b><small>Le stock changera uniquement après réception vérifiée.</small></div><label>Date de livraison prévue<input type="date" id="cmdDelivery" min="'+aujourd+'" value="'+dateCommande+'"></label><button class="btn btn-2" id="saveOrderDraft">Enregistrer le brouillon</button><button class="btn" id="prepareOrder">Préparer la commande</button></div>'+(brouillons?'<div class="eyebrow" style="margin-top:22px">BROUILLONS</div><div class="cmd-orders">'+brouillons+'</div>':'')+'<div class="eyebrow" style="margin-top:22px">COMMANDES ENREGISTRÉES</div><div class="cmd-orders">'+commandes+'</div></div>';
 }
 async function preparerCommande(){
- const fournisseur=commandeFo,dateLiv=document.getElementById('cmdDelivery')?.value||'';
+ const fournisseur=commandeFo,dateLiv=document.getElementById('cmdDelivery')?.value||st.cmdDateLiv||'';
  if(!fournisseur)return toast('Ajoute ou sélectionne un fournisseur.');
  if(!dateLiv)return toast('Choisis une date de livraison prévue.');
  const lines=(st.prods||[]).filter(function(p){return!!offreFournisseurProduit(p,fournisseur)}).map(function(p){const offre=offreFournisseurProduit(p,fournisseur);return{id:p.id,q:qteCommande(p,fournisseur),conditionnement:conditionnementCommande(p,fournisseur),px:offre&&offre.px>0?offre.px:p.px}}).filter(function(l){return l.q>0});
  if(!lines.length)return toast('Ajoute au moins une quantité à commander.');
  const note=String(document.getElementById('cmdNotes')?.value||st.cmdNote||'').trim();
  st.commandes=st.commandes||[];st.commandes.unshift({id:uid('cmd'),fournisseur:fournisseur,dateLiv:dateLiv,cree:new Date().toISOString(),statut:'preparee',lines:lines,note:note});
- st.cmdQ={};st.cmdConditionnement={};st.cmdNote='';await save();renderCommanderScreen();toast('Commande enregistrée. Le stock attendra ta validation à réception.');
+ st.cmdQ={};st.cmdConditionnement={};st.cmdNote='';st.cmdDateLiv='';if(commandeBrouillonActif)st.commandeBrouillons=(st.commandeBrouillons||[]).filter(function(b){return b.id!==commandeBrouillonActif});commandeBrouillonActif=null;await save();renderCommanderScreen();toast('Commande enregistrée. Le stock attendra ta validation à réception.');
 }
 function signalerProduitManquant(){
  const nom=prompt('Quel produit manque chez '+(commandeFo||'ce fournisseur')+' ?');
@@ -4665,6 +4687,7 @@ function bindCommanderActions(){
  document.querySelectorAll('[data-cmd]').forEach(function(i){i.oninput=function(e){st.cmdQ=st.cmdQ||{};st.cmdQ[e.target.dataset.cmd]=e.target.value}});
  document.querySelectorAll('[data-cmdcond]').forEach(function(s){s.onchange=function(e){st.cmdConditionnement=st.cmdConditionnement||{};st.cmdConditionnement[e.target.dataset.cmdcond]=e.target.value;st.cmdQ=st.cmdQ||{};st.cmdQ[e.target.dataset.cmdcond]='';renderCommanderScreen()}});
  const notes=document.getElementById('cmdNotes');if(notes)notes.oninput=function(e){st.cmdNote=e.target.value};
+ const delivery=document.getElementById('cmdDelivery');if(delivery)delivery.oninput=function(e){st.cmdDateLiv=e.target.value};
  document.querySelectorAll('[data-cmdfo]').forEach(function(b){b.onclick=function(){commandeFo=b.dataset.cmdfo;renderCommanderScreen()}});
  document.querySelectorAll('[data-cmdcheapest]').forEach(function(b){b.onclick=function(){const p=prod(b.dataset.cmdcheapest),best=offresFournisseursProduit(p)[0];if(best){commandeFo=best.n;renderCommanderScreen()}}});
  const supplierSelect=document.getElementById('cmdSupplierSelect');if(supplierSelect)supplierSelect.onchange=function(e){commandeFo=e.target.value;renderCommanderScreen()};
@@ -4673,10 +4696,13 @@ function bindCommanderActions(){
  const addF=document.getElementById('addSupplier');if(addF)addF.onclick=function(){openFournisseur()};
  const manage=document.getElementById('manageSuppliers');if(manage)manage.onclick=function(){openFournisseur(commandeFo)};
  const prep=document.getElementById('prepareOrder');if(prep)prep.onclick=preparerCommande;
+ const saveDraft=document.getElementById('saveOrderDraft');if(saveDraft)saveDraft.onclick=sauvegarderBrouillonCommande;
  const manque=document.getElementById('missingProduct');if(manque)manque.onclick=signalerProduitManquant;
  document.querySelectorAll('[data-copyorder]').forEach(function(b){b.onclick=function(){const c=(st.commandes||[]).find(function(x){return x.id===b.dataset.copyorder});if(c){copyText(texteCommande(c));toast('Commande copiée. Tu peux la relire puis l’envoyer au fournisseur.')}}});
  document.querySelectorAll('[data-emailorder]').forEach(function(b){b.onclick=function(){envoyerCommandeFournisseur(b.dataset.emailorder)}});
  document.querySelectorAll('[data-receivecmd]').forEach(function(b){b.onclick=function(){openLiv(b.dataset.receivecmd)}});
+ document.querySelectorAll('[data-opencmddraft]').forEach(function(b){b.onclick=function(){ouvrirBrouillonCommande(b.dataset.opencmddraft)}});
+ document.querySelectorAll('[data-deletecmddraft]').forEach(function(b){b.onclick=function(){supprimerBrouillonCommande(b.dataset.deletecmddraft)}});
 }
 function renderCommanderScreen(){
  document.getElementById('s-cmd').innerHTML='<div class="h-title">Commander</div><div class="h-sub">Choisis un fournisseur, ajuste les quantités, puis prépare la commande.</div>'+renderCommander();
@@ -4750,6 +4776,7 @@ function renderLiv(){
     <span class="l-body"><div class="l-nm">${b.fo||t('scSansFournisseur')}</div>
     <div class="l-meta">${b.lines.length} ${t('scLignes')} · ${new Date(b.ts).toLocaleDateString('fr-FR')}</div></span>
     <span class="l-edit">›</span></button>`).join('')}`:'';
+  const brouillonsReception=(st.receptionBrouillons||[]).map(function(b){return'<button class="line" data-openlivdraft="'+b.id+'"><span class="l-ico">📝</span><span class="l-body"><div class="l-nm">Brouillon réception · '+escapeHTML(b.fo||'Sans fournisseur')+'</div><div class="l-meta">'+(b.lines||[]).length+' ligne'+((b.lines||[]).length>1?'s':'')+(b.commandId?' · commande liée':'')+' · modifié le '+new Date(b.modifie||b.cree).toLocaleDateString("fr-FR")+'</div></span><span class="l-edit">›</span></button>';}).join('');
   const commandesEnAttente=(st.commandes||[]).filter(function(c){
    return c&&c.statut!=='recu'&&c.statut!=='annulee'&&lignesRestantesCommande(c).length;
   }).map(function(c){
@@ -4763,6 +4790,7 @@ function renderLiv(){
    <button class="scan-btn" id="newLiv"><span class="sb-i">✍️</span>
     <span class="sb-l">${t('newLiv')}</span></button></div>
    ${commandesEnAttente?'<div class="eyebrow">COMMANDES À RÉCEPTIONNER</div><div class="pending-orders">'+commandesEnAttente+'</div>':''}
+   ${brouillonsReception?'<div class="eyebrow">BROUILLONS DE RÉCEPTION</div>'+brouillonsReception:''}
    ${brouil}
    <div class="eyebrow">${t('histLiv')}</div>${cards}`;
  }else{
@@ -4778,6 +4806,7 @@ function renderLiv(){
  document.querySelectorAll('[data-brou]').forEach(b=>b.onclick=()=>{
   const i=+b.dataset.brou;scan={...st.brouillons[i]};st.brouillons.splice(i,1);save();dessineScan()});
  document.querySelectorAll('[data-receivecmd]').forEach(function(b){b.onclick=function(){openLiv(b.dataset.receivecmd)}});
+ document.querySelectorAll('[data-openlivdraft]').forEach(function(b){b.onclick=function(){ouvrirBrouillonReception(b.dataset.openlivdraft)}});
 
 }
 
@@ -4800,12 +4829,28 @@ function openLiv(commandeId){
  }else livForm={fo:st.prods[0]?.fo||'',lines:[{id:st.prods[0]?.id||'',q:'',px:'',attendu:0,prixCommande:0}]};
  drawLiv();
 }
+function ouvrirBrouillonReception(id){
+ const b=(st.receptionBrouillons||[]).find(function(x){return x.id===id});if(!b)return;
+ livForm={fo:b.fo||'',commandId:b.commandId||null,brouillonId:b.id,lines:copierLignesReception(b.lines)};
+ if(!livForm.lines.length)livForm.lines=[{id:st.prods[0]?.id||'',q:'',px:'',attendu:0,prixCommande:0}];
+ drawLiv();
+}
+async function sauvegarderBrouillonReception(){
+ if(!livForm)return;
+ const existant=(st.receptionBrouillons||[]).find(function(b){return b.id===livForm.brouillonId}),maintenant=new Date().toISOString();
+ const brouillon={id:livForm.brouillonId||uid('livdraft'),fo:String(livForm.fo||'').trim(),commandId:livForm.commandId||null,cree:existant?existant.cree:maintenant,modifie:maintenant,lines:copierLignesReception(livForm.lines)};
+ st.receptionBrouillons=st.receptionBrouillons||[];
+ const index=st.receptionBrouillons.findIndex(function(b){return b.id===brouillon.id});if(index>=0)st.receptionBrouillons[index]=brouillon;else st.receptionBrouillons.unshift(brouillon);
+ if(st.receptionBrouillons.length>20)st.receptionBrouillons.length=20;
+ livForm.brouillonId=brouillon.id;await save();closeModal();renderLiv();toast('Brouillon de réception enregistré. Aucun stock modifié.');
+}
 function drawLiv(){
+ const estCorrection=!!livForm.editId,estCommande=!!livForm.commandId&&!estCorrection;
  const total=livForm.lines.reduce((s,l)=>s+num(l.q)*num(l.px),0);
  const fournis=[...new Set(st.prods.map(p=>p.fo).filter(Boolean))];
  const lignes=livForm.lines.map((l,ix)=>{
   const p=prod(l.id);
-  const commandeAttendue=!livForm.commandId?'':l.conditionnement==='carton'?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px"><b>Commandé : ${fmtQ(l.attendu)} carton${num(l.attendu)>1?'s':''}</b> · Cartons reçus <input data-lcart="${ix}" inputmode="decimal" value="${l.qCarton}" aria-label="Cartons reçus" placeholder="0" style="width:42px;margin-left:4px;text-align:center">. Saisis aussi ci-dessus la quantité réellement entrée en stock (${p?p.u:'unité'}).</div>`:`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px"><b>Attendu : ${fmtQ(l.attendu)} ${p?p.u:'unité'}</b> · Saisis la quantité réellement reçue ci-dessus.</div>`;
+  const commandeAttendue=!estCommande?'':l.conditionnement==='carton'?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px"><b>Commandé : ${fmtQ(l.attendu)} carton${num(l.attendu)>1?'s':''}</b> · Cartons reçus <input data-lcart="${ix}" inputmode="decimal" value="${l.qCarton}" aria-label="Cartons reçus" placeholder="0" style="width:42px;margin-left:4px;text-align:center">. Saisis aussi ci-dessus la quantité réellement entrée en stock (${p?p.u:'unité'}).</div>`:`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px"><b>Attendu : ${fmtQ(l.attendu)} ${p?p.u:'unité'}</b> · Saisis la quantité réellement reçue ci-dessus.</div>`;
   return `<div class="ing-row" style="grid-template-columns:1fr 58px 62px 34px">
    <select data-lk="${ix}">${st.prods.map(x=>`<option value="${x.id}" ${l.id===x.id?'selected':''}>${x.i} ${x.n}</option>`).join('')}</select>
    <input data-lq="${ix}" inputmode="decimal" value="${l.q}" placeholder="Reçu" aria-label="Quantité réellement reçue pour ${p?escapeHTML(p.n):'ce produit'}">
@@ -4814,19 +4859,19 @@ function drawLiv(){
    ${commandeAttendue}${p?`<div style="font-size:10px;color:var(--steel-d,#687386);margin:-4px 0 8px 2px">${p.u} · prix actuel ${fmt(p.px)} €/${p.u}</div>`:''}`;
  }).join('');
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgL"><div class="sheet">
-  <h3>${livForm.commandId?'Contrôler la réception':t('newLiv').replace('+ ','')}</h3><p class="sh-sub">${livForm.commandId?'Compare la commande au bon de livraison, puis saisis uniquement les quantités réellement reçues. Aucun stock ne sera ajouté avant ta validation.':t('livS')}</p>
-  ${livForm.commandId?'<div class="reception-steps"><div class="reception-step on"><b>1 · Comparer</b>Commande et bon</div><div class="reception-step on"><b>2 · Saisir</b>Reçu et prix réel</div><div class="reception-step"><b>3 · Valider</b>Entrée en stock</div></div>':''}
+  <h3>${estCorrection?'Corriger la réception':(estCommande?'Contrôler la réception':'Nouvelle réception')}</h3><p class="sh-sub">${estCorrection?'Vérifie les quantités. Après confirmation, seul l’écart avec la réception initiale ajustera le stock.':(estCommande?'Compare la commande au bon de livraison, puis saisis uniquement les quantités réellement reçues. Aucun stock ne sera ajouté avant ta validation.':t('livS'))}</p>
+  ${estCommande?'<div class="reception-steps"><div class="reception-step on"><b>1 · Comparer</b>Commande et bon</div><div class="reception-step on"><b>2 · Saisir</b>Reçu et prix réel</div><div class="reception-step"><b>3 · Valider</b>Entrée en stock</div></div>':''}
   <div class="fld"><label>${t('fourn')}</label>
    <input id="lFo" value="${livForm.fo}" list="fournList" placeholder="Metro">
    <datalist id="fournList">${fournis.map(f=>`<option value="${f}">`).join('')}</datalist></div>
-  <div class="fld"><label>${livForm.commandId?'Quantité réellement reçue · Prix unitaire réellement facturé':t('qteRecue')+' · '+t('prixU2')}</label></div>
+  <div class="fld"><label>${estCommande?'Quantité réellement reçue · Prix unitaire réellement facturé':t('qteRecue')+' · '+t('prixU2')}</label></div>
   ${lignes}
   <button class="ing-add" id="lAdd">${t('addLine')}</button>
   <div id="livControl">${controleReceptionHTML(livForm)}</div>
   <div class="calc" style="margin-top:14px"><span class="calc-l">${t('totalLiv')}</span>
    <span class="calc-v">${fmt(total)} €</span></div>
-  <div class="sh-actions"><button class="btn btn-2 btn-sm" id="lCancel">${t('cancel')}</button>
-   <button class="btn" id="lSave">${livForm.commandId?'Valider l’entrée en stock':t('validLiv')}</button></div></div></div>`;
+  <div class="sh-actions"><button class="btn btn-2 btn-sm" id="lCancel">${t('cancel')}</button>${estCorrection?'':'<button class="btn btn-2 btn-sm" id="lSaveDraft">Enregistrer le brouillon</button>'}
+   <button class="btn" id="lSave">${estCorrection?'Valider la correction':(estCommande?'Valider l’entrée en stock':t('validLiv'))}</button></div></div></div>`;
  document.getElementById('bgL').onclick=e=>{if(e.target.id==='bgL')closeModal()};
  document.getElementById('lFo').oninput=e=>livForm.fo=e.target.value;
  document.querySelectorAll('[data-lk]').forEach(s=>s.onchange=e=>{
@@ -4841,6 +4886,7 @@ function drawLiv(){
  if(!livForm.lines.length)livForm.lines.push({id:st.prods[0].id,q:'',px:'',attendu:0,prixCommande:0});drawLiv()});
  document.getElementById('lAdd').onclick=()=>{livForm.lines.push({id:st.prods[0].id,q:'',qCarton:'',conditionnement:'unite',px:'',attendu:0,prixCommande:0});drawLiv()};
  document.getElementById('lCancel').onclick=closeModal;
+ const saveDraft=document.getElementById('lSaveDraft');if(saveDraft)saveDraft.onclick=sauvegarderBrouillonReception;
  document.getElementById('lSave').onclick=saveLiv;
  majControleLiv();
 }
@@ -4849,6 +4895,7 @@ function majTotalLiv(){const c=document.querySelector('.calc-v');
 
 async function saveLiv(){
  if(!livForm||livForm.saving)return;
+ if(livForm.editId)return corrigerLivraison();
  const lines=livForm.lines.filter(l=>l.id&&num(l.q)>0);
  if(!lines.length)return toast('Saisis au moins une quantité réellement reçue.');
  livForm.saving=true;
@@ -4873,8 +4920,27 @@ async function saveLiv(){
    c.statut=commandeComplete(c)?'recu':'partielle';
   }
  }
+ if(livForm.brouillonId)st.receptionBrouillons=(st.receptionBrouillons||[]).filter(function(b){return b.id!==livForm.brouillonId});
  if(st.liv.length>60)st.liv.length=60;
  await save();closeModal();renderLiv();toast(t('livSaved'));
+}
+function resumeLignesLivraison(lignes){return(lignes||[]).map(function(l){const p=prod(l.id);return(p?p.n:'Produit')+' : '+fmtQ(num(l.q))+' '+(p?p.u:'')}).join(' · ')||'Aucune ligne';}
+function modifierLivraison(ix){
+ const l=(st.liv||[])[ix];if(!l)return;if(!estResp())return toast('Seuls les profils responsables peuvent corriger une réception.');
+ livForm={editId:l.id,editIndex:ix,fo:l.fo||'',linkedCommandId:l.commandeId||null,lines:copierLignesReception(l.lines)};drawLiv();
+}
+async function corrigerLivraison(){
+ const cible=(st.liv||[]).find(function(l){return String(l.id)===String(livForm.editId)});if(!cible)return toast('Cette réception n’est plus disponible.');
+ const avant=resumeLignesLivraison(cible.lines),nouvelles=livForm.lines.filter(function(l){return l.id&&num(l.q)>=0}).map(function(l){return{id:l.id,q:num(l.q),qCarton:l.conditionnement==='carton'?num(l.qCarton):undefined,conditionnement:l.conditionnement==='carton'?'carton':'unite',px:num(l.px)}}),ids=new Set([...(cible.lines||[]).map(function(l){return l.id}),...nouvelles.map(function(l){return l.id})]);
+ const delta={};ids.forEach(function(id){const ancien=(cible.lines||[]).filter(function(l){return l.id===id}).reduce(function(s,l){return s+num(l.q)},0),nouveau=nouvelles.filter(function(l){return l.id===id}).reduce(function(s,l){return s+num(l.q)},0);delta[id]=nouveau-ancien});
+ const impossible=Array.from(ids).find(function(id){return (st.stock[id]||0)+(delta[id]||0)<-0.00001});
+ if(impossible){const p=prod(impossible);return toast('Correction impossible : le stock de '+(p?p.n:'ce produit')+' deviendrait négatif.');}
+ if(!confirm('Valider cette correction ? Seul l’écart avec la réception initiale ajustera le stock.'))return;
+ Array.from(ids).forEach(function(id){st.stock[id]=(st.stock[id]||0)+(delta[id]||0)});
+ nouvelles.forEach(function(l){const p=prod(l.id);if(p&&l.px>0&&Math.abs(l.px-p.px)>0.0001){p.hist=p.hist||[];p.hist.push({ts:new Date().toISOString(),px:p.px});if(p.hist.length>10)p.hist.shift();p.pxPrev=p.px;p.px=l.px}});
+ cible.fo=livForm.fo||cible.fo;cible.lines=nouvelles;cible.total=nouvelles.reduce(function(s,l){return s+num(l.q)*num(l.px)},0);cible.modifieLe=new Date().toISOString();cible.modifiePar=st.who||'Utilisateur';cible.corrections=cible.corrections||[];cible.corrections.push({ts:cible.modifieLe,par:cible.modifiePar,avant:avant,apres:resumeLignesLivraison(nouvelles)});
+ if(cible.commandeId){const c=(st.commandes||[]).find(function(x){return x.id===cible.commandeId});if(c)c.statut=commandeComplete(c)?'recu':'partielle';}
+ await save();ajouterHistoriqueAudit('Livraison corrigée',cible.fo,avant,resumeLignesLivraison(nouvelles),'Correction humaine : seul l’écart a ajusté le stock.');closeModal();renderLiv();toast('Réception corrigée. Le stock a été ajusté uniquement de l’écart.');
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7165,9 +7231,10 @@ function voirLivraison(ix){
    :(l.docs&&l.docs.length?`<div class="warn dup">${t('scDocPurge')}</div>`:'')}
   <div class="eyebrow">${t('scProduits')} (${l.lines.length})</div>${lignes}
   <div class="tot-box"><div class="tot-l big"><span>${t('scTotal')}</span><span>${fmt(l.total)} €</span></div></div>
-  <div class="sh-actions"><button class="btn" id="lvF">${t('fermer')}</button></div></div></div>`;
+  <div class="sh-actions">${estResp()?'<button class="btn btn-2 btn-sm" id="lvEdit">Corriger la réception</button>':''}<button class="btn" id="lvF">${t('fermer')}</button></div></div></div>`;
  document.getElementById('bgLv').onclick=e=>{if(e.target.id==='bgLv')closeModal()};
  document.getElementById('lvF').onclick=closeModal;
+ const edit=document.getElementById('lvEdit');if(edit)edit.onclick=function(){modifierLivraison(ix)};
 }
 
 /* ═════ PRODUITS : matières + carte ═════ */
