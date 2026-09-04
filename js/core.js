@@ -878,14 +878,16 @@ async function connecter(mail,pwd){
 }
 
 async function connecterEnLigne(mail,pwd){
- const service=window.SwaySupabaseAuth;
- const result=await service.signin({email:normMail(mail),password:pwd});
- if(result.error)return{e:result.error};
- const remote=await service.identity();
- if(!remote)return{e:'Connexion confirmée, mais la session n’est pas encore disponible. Réessayez.'};
- auth={users:{[remote.email]:remote}};
- session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
- return remote.needsWorkspace?{workspace:true}:{ok:true};
+ try{
+  const service=window.SwaySupabaseAuth;
+  const result=await service.signin({email:normMail(mail),password:pwd});
+  if(result.error)return{e:result.error};
+  const remote=await service.identity();
+  if(!remote)return{e:'Connexion confirmée, mais la session n’est pas encore disponible. Réessayez dans quelques secondes.'};
+  auth={users:{[remote.email]:remote}};
+  session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
+  return remote.needsWorkspace?{workspace:true}:{ok:true};
+ }catch(error){return{e:'La connexion est validée, mais Sway ne peut pas encore préparer votre espace. '+String(error&&error.message||'Réessayez ou contactez-nous si le problème persiste.')}}
 }
 
 async function creerCompteEnLigne(nom,mail,etab,pwd,pwd2){
@@ -918,13 +920,15 @@ async function definirNouveauMotDePasse(pwd,pwd2){
 
 async function creerEspaceEnLigne(nom,etab){
  if(!nom.trim()||!etab.trim())return{e:t('aChamps')};
- const result=await window.SwaySupabaseAuth.finalizeWorkspace({fullName:nom.trim(),organizationName:etab.trim(),establishmentName:etab.trim()});
- if(result.error)return{e:result.error};
- const remote=await window.SwaySupabaseAuth.identity();
- if(!remote||remote.needsWorkspace)return{e:'Votre espace n’a pas encore été créé. Réessayez.'};
- auth={users:{[remote.email]:remote}};
- session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:false,userId:remote.userId};
- return{ok:true};
+ try{
+  const result=await window.SwaySupabaseAuth.finalizeWorkspace({fullName:nom.trim(),organizationName:etab.trim(),establishmentName:etab.trim()});
+  if(result.error)return{e:result.error};
+  const remote=await window.SwaySupabaseAuth.identity();
+  if(!remote||remote.needsWorkspace)return{e:'Votre espace n’a pas encore été créé. Réessayez.'};
+  auth={users:{[remote.email]:remote}};
+  session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:false,userId:remote.userId};
+  return{ok:true};
+ }catch(error){return{e:'Impossible de créer l’espace pour le moment. '+String(error&&error.message||'Réessayez.')}}
 }
 
 /* ── Réinitialisation par code de secours ── */

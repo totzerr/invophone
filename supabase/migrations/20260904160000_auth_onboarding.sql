@@ -13,7 +13,7 @@ create policy "Account can join its initial workspace" on public.memberships for
 create or replace function private.audit_initial_membership() returns trigger language plpgsql security definer set search_path = public, private as $$
 begin
  if new.user_id = (select auth.uid()) and new.roles @> array['administrateur']::public.app_role[] and exists (select 1 from public.establishments e join public.organizations o on o.id = e.organization_id where e.id = new.establishment_id and o.owner_id = (select auth.uid())) then
-  insert into public.audit_events (organization_id, establishment_id, actor_id, actor_role, action_type, entity_type, entity_id, previous_value, next_value, reason)
+  insert into public.audit_events (organization_id, establishment_id, actor_id, actor_role, action_type, entity_type, entity_id, previous_value, new_value, reason)
   values ((select organization_id from public.establishments where id = new.establishment_id), new.establishment_id, new.user_id, 'administrateur', 'workspace.created', 'workspace', new.establishment_id::text, null, jsonb_build_object('establishment_id', new.establishment_id), 'Initial workspace created by the account owner');
  end if;
  return new;
