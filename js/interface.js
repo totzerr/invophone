@@ -27,10 +27,11 @@ function renderNav(){
     ${x.b?`<span class="workspace-badge">${x.b>99?'99+':x.b}</span>`:''}</button>`).join('')}</div></div>`;};
  document.getElementById('drawer').innerHTML=`
   <div class="workspace-head"><div class="workspace-brand">${logoHTML}</div>
-   <button class="workspace-place" data-reg="1"><span>${st.etabNom||'SP Wallace'}</span><b>⌄</b></button></div>
+   <button class="workspace-place" data-reg="1"><span>${st.organizationName||st.etabNom||'Mon entreprise'}</span><b>⌄</b></button></div>
   <div class="workspace-compose"><button class="workspace-add" data-nav="dec"><span>＋</span>${t('newVente')}</button></div>
   <div class="workspace-content">${groupe('VUE GÉNÉRALE',['dash'])}${groupe('FLUX',['caisse','dec'])}${groupe('STOCK',['liv','cmd','stock','inv'])}${groupe('RAPPORTS',['bil'])}${groupe('DIRECTION',['admin'])}</div>
   <div class="workspace-bottom"><button class="workspace-settings" data-reg="1"><span>⚙</span>${t('reglages')}</button>
+   <button class="workspace-settings workspace-signout" data-signout="1"><span>↪</span>${t('seDeconnecter')}</button>
    <p>${t('slogan')}</p></div>`;
  const tabs=items;
  document.getElementById('nav').innerHTML=`${tabs.map(x=>`<button class="tab-item ${screen===x.id?'on':''}" data-nav="${x.id}">
@@ -38,6 +39,7 @@ function renderNav(){
   <button class="tab-item tab-more" data-menu="1"><span class="tab-icon">•••</span><span>Plus</span></button>`;
  document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{screen=b.dataset.nav;sq='';fermerMenu();go()});
  document.querySelectorAll('[data-reg]').forEach(b=>b.onclick=()=>{fermerMenu();openReglages()});
+ document.querySelectorAll('[data-signout]').forEach(b=>b.onclick=async()=>{fermerMenu();if(confirm('Se déconnecter de Sway ?'))await deconnecter()});
  document.querySelectorAll('[data-menu]').forEach(b=>b.onclick=()=>basculerMenu());
 }
 
@@ -496,7 +498,7 @@ function ouvrirTraitementAnalyse(action){
 function mettreAJourMarqueEtablissement(){
  const marque=document.getElementById('topBrand');
  if(!marque)return;
- const nom=String(st&&st.etabNom===undefined?'SP Wallace':(st&&st.etabNom)||'').trim();
+ const nom=String(st&&(st.organizationName||st.etabNom)||'').trim();
  let nomAffiche=marque.querySelector('.top-company');
  if(!nom){if(nomAffiche)nomAffiche.remove();marque.removeAttribute('aria-label');return}
  if(!nomAffiche){
@@ -521,6 +523,10 @@ async function bootApp(){
  if(session&&auth.users[session.email]){
   const u=auth.users[session.email],poste=POSTES.find(p=>p.id===rolePrincipalUtilisateur(u));
   if(poste){st.whoId=poste.id;st.who=u.nom||poste.n}
+  st.etabId=u.etabId||st.etabId||'';
+  st.etabNom=u.etabNom||st.etabNom||'';
+  st.organizationId=u.organizationId||st.organizationId||'';
+  st.organizationName=u.organizationName||st.organizationName||st.etabNom||'';
  }
  const topBrandTpl=document.getElementById('invoLogo');
  if(topBrandTpl&&!document.getElementById('topBrand')){
