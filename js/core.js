@@ -797,7 +797,11 @@ const loadAuth=async()=>{
   try{
    const remote=await service.identity();
    if(remote){
-    auth={users:{[remote.email]:remote}};
+    const cached=auth.users[remote.email]||{};
+    remote.profilMetier=PROFILS_METIER_IDS.includes(cached.profilMetier)?cached.profilMetier:'';
+    remote.recapMatin=cached.recapMatin&&typeof cached.recapMatin==='object'?cached.recapMatin:{actif:true,heure:'08:00'};
+    auth={users:{[remote.email]:Object.assign({},cached,remote)}};
+    await Store.set(AUTH_KEY,auth);
     session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,invitationAccepted:!!remote.invitationAccepted,userId:remote.userId};
     return;
    }
@@ -947,7 +951,7 @@ async function deconnecter(){
  if(timer)clearInterval(timer);
  if(session&&session.supabase&&window.SwaySupabaseAuth)await window.SwaySupabaseAuth.signout();
  session=null;await Store.set(SESS_KEY,null);
- st=stVierge();panier={};panierMotifs={};motif=null;motifsSelectionnes=[];screen='caisse';
+ st=stVierge();panier={};panierMotifs={};motif=null;motifsSelectionnes=[];screen='dash';
  closeModal();showAuth('login');
 }
 
@@ -1789,7 +1793,7 @@ function utilisateurDashboardActuel(){
 }
 let recapMatinTimer=null;
 function preferencesRecapMatin(){
- const utilisateur=utilisateurDashboardActuel(),source=utilisateur?utilisateur.recapMatin:st.recapMatin||{};
+ const utilisateur=utilisateurDashboardActuel(),source=utilisateur&&utilisateur.recapMatin&&typeof utilisateur.recapMatin==='object'?utilisateur.recapMatin:(st.recapMatin&&typeof st.recapMatin==='object'?st.recapMatin:{});
  const heure=/^([01]\d|2[0-3]):[0-5]\d$/.test(String(source.heure||''))?source.heure:'08:00';
  return{actif:source.actif!==false,heure:heure};
 }
