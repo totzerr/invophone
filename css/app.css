@@ -2203,3 +2203,48 @@ body.invo-modal-open #cartbar{display:none!important}
   #drawer.drawer{display:flex!important;visibility:visible!important;opacity:1!important;position:fixed!important;inset:0 auto 0 0!important;height:100dvh!important;transform:translateX(-102%)!important}
   #drawer.drawer.on{transform:translateX(0)!important}
 }
+
+/* SWAY PHONE · correctif iPhone : aucun écran ne doit dépasser horizontalement.
+   Les anciennes règles Desktop ne peuvent plus imposer de colonnes ou de boutons hors cadre. */
+@media screen and (max-width:767px){
+  html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+  body{overscroll-behavior-x:none!important}
+  .app{width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
+  #modal,.sheet-bg,.settings-overlay,.settings-sheet,.settings-layout,.settings-content{box-sizing:border-box!important;min-width:0!important;max-width:100%!important}
+
+  /* Tiroir : fond clair et éléments lisibles, sans cartes Desktop qui débordent. */
+  #drawer.drawer{width:min(86vw,340px)!important;max-width:340px!important;overflow-x:hidden!important;background:#FFF!important;color:#172033!important}
+  #drawer.drawer .workspace-head,#drawer.drawer .workspace-compose,#drawer.drawer .workspace-content,#drawer.drawer .workspace-bottom{background:#FFF!important;color:#172033!important}
+  #drawer.drawer .workspace-head{border-bottom:1px solid #E6EAF0!important}
+  #drawer.drawer .workspace-bottom{border-top:1px solid #E6EAF0!important}
+  #drawer.drawer .workspace-label{color:#758197!important}
+  #drawer.drawer .workspace-link{min-width:0!important;min-height:44px!important;margin:0!important;padding:10px!important;border:0!important;background:transparent!important;color:#253047!important;box-shadow:none!important}
+  #drawer.drawer .workspace-link.on{border:1px solid #C9D6FF!important;background:#EEF2FF!important;color:#2849D9!important}
+  #drawer.drawer .workspace-add{background:#315CF6!important;color:#FFF!important}
+  #drawer.drawer .workspace-add span{color:inherit!important}
+  #drawer.drawer .workspace-settings{color:#253047!important}
+  #drawer.drawer .workspace-badge{background:#315CF6!important}
+
+  /* Réglages : feuille plein écran bas, catégories sans glissement horizontal. */
+  .settings-overlay{display:flex!important;align-items:flex-end!important;padding:0!important;overflow:hidden!important}
+  .settings-sheet{display:flex!important;flex-direction:column!important;width:100vw!important;min-width:0!important;max-width:100vw!important;height:92dvh!important;max-height:92dvh!important;margin:0!important;border-radius:24px 24px 0 0!important;overflow:hidden!important}
+  .settings-header{flex:0 0 auto!important;min-width:0!important;padding:18px 18px 15px!important}
+  .settings-header>div{min-width:0!important}
+  .settings-header h3{font-size:28px!important;line-height:1.05!important}
+  .settings-header p{font-size:12px!important;line-height:1.35!important;white-space:normal!important}
+  .settings-layout{display:flex!important;flex:1 1 0!important;flex-direction:column!important;width:100%!important;height:auto!important;min-height:0!important;overflow:hidden!important}
+  .settings-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;max-width:100%!important;gap:7px!important;padding:10px 12px!important;overflow:hidden!important;border-right:0!important;border-bottom:1px solid #E3E6EC!important}
+  .settings-nav-label{display:none!important}
+  .settings-nav button{display:flex!important;min-width:0!important;width:100%!important;height:42px!important;padding:8px 9px!important;gap:7px!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important}
+  .settings-nav button span:last-child{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .settings-content{flex:1 1 0!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;padding:14px 12px 24px!important;overflow-y:auto!important;overflow-x:hidden!important}
+  .settings-group,.settings-card{width:100%!important;min-width:0!important;max-width:100%!important}
+  .settings-field-row,.settings-status-row,.settings-mini-action,.settings-static-row{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;min-width:0!important;gap:9px!important;padding:12px!important}
+  .settings-field-label,.settings-mini-action>span:first-child,.settings-static-row>span:first-child{width:100%!important;min-width:0!important}
+  .settings-field-label small,.settings-mini-action small,.settings-static-row small{overflow-wrap:anywhere!important}
+  .settings-inline-input,.settings-inline-select{width:100%!important;min-width:0!important;max-width:100%!important}
+  .settings-choice,.settings-action-grid{grid-template-columns:1fr!important;width:auto!important;min-width:0!important}
+  .settings-choice{gap:7px!important;margin:10px 12px!important}
+  .settings-choice button,.settings-action-button{min-width:0!important;white-space:normal!important}
+  .settings-text-button{width:100%!important;min-width:0!important;justify-content:space-between!important}
+}
