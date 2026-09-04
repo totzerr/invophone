@@ -135,6 +135,8 @@ $$;
 revoke all on function private.create_profile_for_new_user() from public, anon, authenticated;
 revoke all on function private.is_establishment_member(uuid) from public, anon, authenticated;
 revoke all on function private.has_establishment_role(uuid, public.app_role[]) from public, anon, authenticated;
+grant execute on function private.is_establishment_member(uuid) to authenticated;
+grant execute on function private.has_establishment_role(uuid, public.app_role[]) to authenticated;
 
 drop trigger if exists profiles_touch_updated_at on public.profiles;
 create trigger profiles_touch_updated_at before update on public.profiles
