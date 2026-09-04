@@ -35,14 +35,19 @@
   const membershipResult=await client.from('memberships').select('establishment_id,roles').eq('user_id',user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
   if(profileResult.error||membershipResult.error)throw new Error(errorMessage(profileResult.error||membershipResult.error));
   const membership=membershipResult.data;
-  let establishment=null;
+  let establishment=null,organization=null;
   if(membership&&membership.establishment_id){
    const establishmentResult=await client.from('establishments').select('name,organization_id').eq('id',membership.establishment_id).maybeSingle();
    if(establishmentResult.error)throw new Error(errorMessage(establishmentResult.error));
    establishment=establishmentResult.data;
+   if(establishment&&establishment.organization_id){
+    const organizationResult=await client.from('organizations').select('name').eq('id',establishment.organization_id).maybeSingle();
+    if(organizationResult.error)throw new Error(errorMessage(organizationResult.error));
+    organization=organizationResult.data;
+   }
   }
   const remoteRoles=(membership&&Array.isArray(membership.roles)?membership.roles:[]).map(function(role){return roleMap[role]}).filter(Boolean);
-  return {email:user.email||'',nom:(profileResult.data&&profileResult.data.display_name)||(user.user_metadata&&user.user_metadata.full_name)||user.email||'',etabId:membership&&membership.establishment_id||'',etabNom:establishment&&establishment.name||'',organizationId:establishment&&establishment.organization_id||'',roles:remoteRoles,role:remoteRoles[0]||'gestion',supabase:true,needsWorkspace:!membership,userId:user.id,invitationAccepted};
+  return {email:user.email||'',nom:(profileResult.data&&profileResult.data.display_name)||(user.user_metadata&&user.user_metadata.full_name)||user.email||'',etabId:membership&&membership.establishment_id||'',etabNom:establishment&&establishment.name||'',organizationId:establishment&&establishment.organization_id||'',organizationName:organization&&organization.name||'',roles:remoteRoles,role:remoteRoles[0]||'gestion',supabase:true,needsWorkspace:!membership,userId:user.id,invitationAccepted};
  };
  const signup=async values=>{
   if(!client)return {error:'Le service de connexion est momentanément indisponible.'};
