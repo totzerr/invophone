@@ -2248,3 +2248,5 @@ body.invo-modal-open #cartbar{display:none!important}
   .settings-choice button,.settings-action-button{min-width:0!important;white-space:normal!important}
   .settings-text-button{width:100%!important;min-width:0!important;justify-content:space-between!important}
 }
+
+.workspace-signout{margin-top:3px!important;color:#B42318!important}
