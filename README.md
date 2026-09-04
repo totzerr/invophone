@@ -9,5 +9,6 @@
 - `js/catalogue.js` : produits, fiches techniques, inventaire et bilan.
 - `js/interface.js` : navigation, réglages, prévisions, historique et démarrage de l’application.
 - `assets/` : logos et images.
+- `supabase/migrations/` : évolution versionnée de la base de données partagée. La première migration crée le socle sécurisé multi-établissements, les rôles et le journal d'audit.
 
 Les fichiers JavaScript sont chargés dans cet ordre. Ne déplace pas une fonction d’un fichier à un autre sans vérifier les écrans concernés.
