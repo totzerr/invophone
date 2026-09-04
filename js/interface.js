@@ -99,6 +99,7 @@ function utilisateursEtablissement(){
 }
 function dateUtilisateur(ts){return ts?new Date(ts).toLocaleDateString('fr-FR'):'—'}
 function dessinerUtilisateurs(){
+ if(session&&session.supabase)return '<div class="auth-msg info"><b>Comptes Sway connectés.</b><br>La connexion e-mail est sécurisée par Supabase. L’invitation d’employés et l’attribution des rôles seront reliées au serveur dans la prochaine étape ; elles ne sont volontairement pas simulées ici.</div>';
  const autorise=peutGererRoles(),users=utilisateursEtablissement();
  const cards=users.map(u=>{
   const roles=rolesUtilisateur(u),libelles=roles.map(id=>{const p=POSTES.find(x=>x.id===id);return p?p.n:id}).join(' · '),self=!!(session&&session.email===u.mail);
@@ -217,6 +218,10 @@ function openReglages(){
     <div class="settings-choice" role="group" aria-label="Statut du récapitulatif"><button class="${recapMatin.actif?'on':''}" data-recap-active="1">Activer</button><button class="${!recapMatin.actif?'on':''}" data-recap-active="0">Mettre en pause</button></div>
     <div class="settings-mini-action"><span>${settingsIcon('profile')}<span><b>Contenu personnalisé</b><small>Profil actuel : ${escapeHTML((PROFILS_METIER.find(function(p){return p.id===profilMetierActuel()})||POSTES.find(function(p){return p.id===st.whoId})||{n:st.who}).n)}.</small></span></span><button class="settings-text-button" id="recapPreview">Voir${settingsIcon('arrow')}</button></div>
    </div>
+  </section>
+  <section class="settings-group">
+   <div class="settings-group-title">${settingsIcon('users')}<span>Compte</span></div>
+   <div class="settings-card"><div class="settings-mini-action"><span>${settingsIcon('users')}<span><b>${session&&session.supabase?'Compte Sway connecté':'Connexion Sway'}</b><small>${session&&session.supabase?'Connexion e-mail active pour '+escapeHTML(session.email)+'.':'Activez la connexion sécurisée par e-mail et mot de passe.'}</small></span></span><button class="settings-text-button" id="swayAuthAction">${session&&session.supabase?'Se déconnecter':'Se connecter'}${settingsIcon('arrow')}</button></div></div>
   </section>`;
  const outils=`<section class="settings-group">
    <div class="settings-group-title">${settingsIcon('hardware')}<span>Matériel</span></div>
@@ -298,6 +303,10 @@ function openReglages(){
  const recapTime=document.getElementById('recapTime');if(recapTime)recapTime.onchange=async function(){await enregistrerPreferencesRecapMatin({heure:recapTime.value});toast('Heure du récapitulatif enregistrée.');};
  document.querySelectorAll('[data-recap-active]').forEach(function(b){b.onclick=async function(){await enregistrerPreferencesRecapMatin({actif:b.dataset.recapActive==='1'});openReglages('general');};});
  const recapPreview=document.getElementById('recapPreview');if(recapPreview)recapPreview.onclick=ouvrirRecapMatin;
+ const swayAuthAction=document.getElementById('swayAuthAction');if(swayAuthAction)swayAuthAction.onclick=async function(){
+  if(session&&session.supabase){if(confirm('Se déconnecter de Sway ?'))await deconnecter();return}
+  authMode='online';session=null;await Store.set(SESS_KEY,null);closeModal();showAuth('login');
+ };
  document.querySelectorAll('[data-dos]').forEach(b=>b.onclick=async()=>{
   st.doseurs.actif=b.dataset.dos==='1';await save();openReglages();
   if(screen==='bil')renderBil()});
@@ -494,6 +503,7 @@ async function bootApp(){
  document.body.classList.remove('locked');
  document.getElementById('auth').classList.remove('on');
  await loadAuth();
+ if(session&&session.needsWorkspace){showAuth('workspace');return}
  await load();
  if(session&&auth.users[session.email]){
   const u=auth.users[session.email],poste=POSTES.find(p=>p.id===rolePrincipalUtilisateur(u));

@@ -785,11 +785,24 @@ const rolesTemporairesDisponibles=()=>{const u=utilisateurConnecte(),roles=roles
    ═════════════════════════════════════════════ */
 const AUTH_KEY='invo_auth_v1', SESS_KEY='invo_sess_v1';
 let auth={users:{}}, session=null, authVue='login', authMsg=null, authCode=null;
+let authMode='online';
 
-const dataKey=()=>'invo_v5';  /* clé unique tant qu'il n'y a pas de comptes */
+const dataKey=()=>session&&session.supabase&&session.etabId?'sway_data_'+session.etabId:'invo_v5';
 const loadAuth=async()=>{
  auth=(await Store.get(AUTH_KEY))||{users:{}};session=await Store.get(SESS_KEY);
  if(!auth.users||typeof auth.users!=='object')auth.users={};
+ const service=window.SwaySupabaseAuth;
+ if(service&&service.available&&service.available()){
+  authMode='online';
+  try{
+   const remote=await service.identity();
+   if(remote){
+    auth={users:{[remote.email]:remote}};
+    session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
+    return;
+   }
+  }catch(error){console.warn('Session Sway indisponible :',error)}
+ }else authMode='local';
  let changed=false;
  Object.values(auth.users).forEach(u=>{
  const roles=rolesUtilisateur(u);if(!Array.isArray(u.roles)||u.roles.join('|')!==roles.join('|')){u.roles=roles;changed=true}
@@ -864,6 +877,56 @@ async function connecter(mail,pwd){
  return{ok:true};
 }
 
+async function connecterEnLigne(mail,pwd){
+ const service=window.SwaySupabaseAuth;
+ const result=await service.signin({email:normMail(mail),password:pwd});
+ if(result.error)return{e:result.error};
+ const remote=await service.identity();
+ if(!remote)return{e:'Connexion confirmée, mais la session n’est pas encore disponible. Réessayez.'};
+ auth={users:{[remote.email]:remote}};
+ session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
+ return remote.needsWorkspace?{workspace:true}:{ok:true};
+}
+
+async function creerCompteEnLigne(nom,mail,etab,pwd,pwd2){
+ mail=normMail(mail);
+ if(!nom.trim()||!mail||!etab.trim()||!pwd)return{e:t('aChamps')};
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail))return{e:t('aMailInvalide')};
+ if(pwd.length<8)return{e:t('aPwdCourt')};
+ if(pwd!==pwd2)return{e:t('aPwdDiff')};
+ const result=await window.SwaySupabaseAuth.signup({fullName:nom.trim(),email:mail,organizationName:etab.trim(),establishmentName:etab.trim(),password:pwd});
+ if(result.error)return{e:result.error};
+ if(result.confirmation)return{confirmation:true};
+ const remote=await window.SwaySupabaseAuth.identity();
+ if(remote){auth={users:{[remote.email]:remote}};session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};}
+ return remote&&remote.needsWorkspace?{workspace:true}:{ok:true};
+}
+
+async function envoyerLienReinitialisation(mail){
+ mail=normMail(mail);
+ if(!mail)return{e:t('aMailInvalide')};
+ const result=await window.SwaySupabaseAuth.reset(mail);
+ return result.error?{e:result.error}:{ok:true};
+}
+
+async function definirNouveauMotDePasse(pwd,pwd2){
+ if(pwd.length<8)return{e:t('aPwdCourt')};
+ if(pwd!==pwd2)return{e:t('aPwdDiff')};
+ const result=await window.SwaySupabaseAuth.updatePassword(pwd);
+ return result.error?{e:result.error}:{ok:true};
+}
+
+async function creerEspaceEnLigne(nom,etab){
+ if(!nom.trim()||!etab.trim())return{e:t('aChamps')};
+ const result=await window.SwaySupabaseAuth.finalizeWorkspace({fullName:nom.trim(),organizationName:etab.trim(),establishmentName:etab.trim()});
+ if(result.error)return{e:result.error};
+ const remote=await window.SwaySupabaseAuth.identity();
+ if(!remote||remote.needsWorkspace)return{e:'Votre espace n’a pas encore été créé. Réessayez.'};
+ auth={users:{[remote.email]:remote}};
+ session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:false,userId:remote.userId};
+ return{ok:true};
+}
+
 /* ── Réinitialisation par code de secours ── */
 async function reinit(mail,code,pwd,pwd2){
  mail=normMail(mail);
@@ -878,6 +941,7 @@ async function reinit(mail,code,pwd,pwd2){
 
 async function deconnecter(){
  if(timer)clearInterval(timer);
+ if(session&&session.supabase&&window.SwaySupabaseAuth)await window.SwaySupabaseAuth.signout();
  session=null;await Store.set(SESS_KEY,null);
  st=stVierge();panier={};panierMotifs={};motif=null;motifsSelectionnes=[];screen='caisse';
  closeModal();showAuth('login');
@@ -892,6 +956,7 @@ function showAuth(vue,msg){
 }
 
 function dessineAuth(){
+ if(authVue==='login'&&window.SwaySupabaseAuth&&window.SwaySupabaseAuth.isRecovery&&window.SwaySupabaseAuth.isRecovery())authVue='new-password';
  const logo=document.querySelector('.logo-img')?.outerHTML||'';
  const compte=session&&session.email&&auth.users?auth.users[session.email]:null;
  const etablissement=String((compte&&compte.etabNom)||st.etabNom||'Votre établissement').trim()||'Votre établissement';
@@ -906,7 +971,7 @@ function dessineAuth(){
   <button class="btn" id="aGo">${t('aSeConnecter')}</button>
   <button class="auth-link" id="aOubli">${t('aOubli')}</button>
   <div class="auth-sep">${t('aOu')}</div>
-  <button class="btn btn-2" id="aVersCreer">${t('aCreerCompte')}</button>`;
+  <button class="btn btn-2" id="aVersCreer">${t('aCreerCompte')}</button>${authMode==='online'?'<p class="auth-note">Connexion sécurisée par Sway. Votre mot de passe n’est jamais stocké dans l’application.</p>':'<button class="auth-link" id="aVersOnline">Utiliser la connexion Sway sécurisée</button>'}`;
  }else if(authVue==='signup'){
   corps=`<div class="auth-h">${t('aCreerCompte')}</div>
   <div class="auth-s">${t('aCreerS')}</div>${msg}
@@ -917,6 +982,18 @@ function dessineAuth(){
   <div class="fld"><label>${t('aPwd2')}</label><input id="aP2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
   <button class="btn" id="aGo">${t('aCreer')}</button>
   <button class="auth-link" id="aVersLogin">${t('aDejaCompte')}</button>`;
+ }else if(authVue==='workspace'){
+  corps=`<div class="auth-h">Créez votre espace</div>
+  <div class="auth-s">Votre adresse e-mail est confirmée. Donnez un nom à votre premier établissement.</div>${msg}
+  <div class="fld"><label>${t('aNom')}</label><input id="aN" autocomplete="name" placeholder="Thomas Martin"></div>
+  <div class="fld"><label>${t('aEtab')}</label><input id="aE" placeholder="Le Wallace Paris"></div>
+  <button class="btn" id="aGo">Créer mon espace</button>`;
+ }else if(authVue==='new-password'){
+  corps=`<div class="auth-h">Nouveau mot de passe</div>
+  <div class="auth-s">Choisissez un nouveau mot de passe sécurisé.</div>${msg}
+  <div class="fld"><label>${t('aNouveauPwd')}</label><input id="aP" type="password" autocomplete="new-password" placeholder="8 caractères minimum"></div>
+  <div class="fld"><label>${t('aPwd2')}</label><input id="aP2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
+  <button class="btn" id="aGo">Enregistrer le mot de passe</button>`;
  }else if(authVue==='code'){
   corps=`<div class="auth-h">${t('aCodeTitre')}</div>
   <div class="auth-s">${t('aCodeS')}</div>
@@ -927,10 +1004,8 @@ function dessineAuth(){
   corps=`<div class="auth-h">${t('aOubliTitre')}</div>
   <div class="auth-s">${t('aOubliS')}</div>${msg}
   <div class="fld"><label>${t('aMail')}</label><input id="aM" type="email" inputmode="email" placeholder="thomas@restaurant.fr"></div>
-  <div class="fld"><label>${t('aCode')}</label><input id="aC" placeholder="XXXX-XXXX" style="text-transform:uppercase"></div>
-  <div class="fld"><label>${t('aNouveauPwd')}</label><input id="aP" type="password" placeholder="8 caractères minimum"></div>
-  <div class="fld"><label>${t('aPwd2')}</label><input id="aP2" type="password" placeholder="••••••••"></div>
-  <button class="btn" id="aGo">${t('aReinit')}</button>
+  ${authMode==='online'?'':'<div class="fld"><label>'+t('aCode')+'</label><input id="aC" placeholder="XXXX-XXXX" style="text-transform:uppercase"></div><div class="fld"><label>'+t('aNouveauPwd')+'</label><input id="aP" type="password" placeholder="8 caractères minimum"></div><div class="fld"><label>'+t('aPwd2')+'</label><input id="aP2" type="password" placeholder="••••••••"></div>'}
+  <button class="btn" id="aGo">${authMode==='online'?'Envoyer le lien sécurisé':t('aReinit')}</button>
   <button class="auth-link" id="aVersLogin">${t('aRetourConnexion')}</button>`;
  }
  document.getElementById('auth').innerHTML=`<div class="auth-box">
@@ -941,17 +1016,24 @@ function dessineAuth(){
  const go=document.getElementById('aGo');
  const lien=(id,vue)=>{const e=document.getElementById(id);if(e)e.onclick=()=>showAuth(vue)};
  lien('aVersCreer','signup');lien('aVersLogin','login');lien('aOubli','reset');
+ const online=document.getElementById('aVersOnline');if(online)online.onclick=()=>{authMode='online';showAuth('login')};
 
  if(authVue==='login'&&go)go.onclick=async()=>{
-  go.disabled=true;const r=await connecter(V('aM'),V('aP'));go.disabled=false;
-  if(r.e)showAuth('login',{type:'err',txt:r.e});else{document.getElementById('auth').classList.remove('on');await bootApp()}};
+  go.disabled=true;const r=authMode==='online'?await connecterEnLigne(V('aM'),V('aP')):await connecter(V('aM'),V('aP'));go.disabled=false;
+  if(r.e)showAuth('login',{type:'err',txt:r.e});else if(r.workspace)showAuth('workspace');else{document.getElementById('auth').classList.remove('on');await bootApp()}};
  if(authVue==='signup'&&go)go.onclick=async()=>{
-  go.disabled=true;const r=await creerCompte(V('aN'),V('aM'),V('aE'),V('aP'),V('aP2'));go.disabled=false;
-  if(r.e)showAuth('signup',{type:'err',txt:r.e});else{authCode=r.code;showAuth('code')}};
+  go.disabled=true;const r=authMode==='online'?await creerCompteEnLigne(V('aN'),V('aM'),V('aE'),V('aP'),V('aP2')):await creerCompte(V('aN'),V('aM'),V('aE'),V('aP'),V('aP2'));go.disabled=false;
+  if(r.e)showAuth('signup',{type:'err',txt:r.e});else if(r.confirmation)showAuth('login',{type:'ok',txt:'Compte créé. Vérifiez votre e-mail, puis connectez-vous pour créer votre espace.'});else if(r.workspace)showAuth('workspace');else if(authMode==='online'){document.getElementById('auth').classList.remove('on');await bootApp()}else{authCode=r.code;showAuth('code')}};
  if(authVue==='reset'&&go)go.onclick=async()=>{
-  go.disabled=true;const r=await reinit(V('aM'),V('aC'),V('aP'),V('aP2'));go.disabled=false;
+  go.disabled=true;const r=authMode==='online'?await envoyerLienReinitialisation(V('aM')):await reinit(V('aM'),V('aC'),V('aP'),V('aP2'));go.disabled=false;
   if(r.e)showAuth('reset',{type:'err',txt:r.e});
-  else showAuth('login',{type:'ok',txt:t('aReinitOk')})};
+  else showAuth('login',{type:'ok',txt:authMode==='online'?'Si cette adresse est enregistrée, un lien sécurisé vient d’être envoyé.':t('aReinitOk')})};
+ if(authVue==='new-password'&&go)go.onclick=async()=>{
+  go.disabled=true;const r=await definirNouveauMotDePasse(V('aP'),V('aP2'));go.disabled=false;
+  if(r.e)showAuth('new-password',{type:'err',txt:r.e});else showAuth('login',{type:'ok',txt:'Mot de passe mis à jour. Vous pouvez vous connecter.'})};
+ if(authVue==='workspace'&&go)go.onclick=async()=>{
+  go.disabled=true;const r=await creerEspaceEnLigne(V('aN'),V('aE'));go.disabled=false;
+  if(r.e)showAuth('workspace',{type:'err',txt:r.e});else{document.getElementById('auth').classList.remove('on');await bootApp()}};
  const ent=document.getElementById('aEntrer');
  if(ent)ent.onclick=async()=>{document.getElementById('auth').classList.remove('on');await bootApp()};
 }
