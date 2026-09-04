@@ -99,7 +99,7 @@ function utilisateursEtablissement(){
 }
 function dateUtilisateur(ts){return ts?new Date(ts).toLocaleDateString('fr-FR'):'—'}
 function dessinerUtilisateurs(){
- if(session&&session.supabase)return '<div class="auth-msg info"><b>Comptes Sway connectés.</b><br>La connexion e-mail est sécurisée par Supabase. L’invitation d’employés et l’attribution des rôles seront reliées au serveur dans la prochaine étape ; elles ne sont volontairement pas simulées ici.</div>';
+ if(session&&session.supabase)return peutGererRoles()?'<button class="btn" id="addUser" style="margin-bottom:12px">+ Inviter un employé</button><div class="auth-msg info"><b>Équipe Sway sécurisée.</b><br>L’administrateur choisit l’e-mail et les rôles. L’employé crée son mot de passe depuis le lien reçu ; son accès reste limité à cet établissement.</div>':'<div class="auth-msg info">La gestion des rôles et des invitations est réservée à l’administrateur.</div>';
  const autorise=peutGererRoles(),users=utilisateursEtablissement();
  const cards=users.map(u=>{
   const roles=rolesUtilisateur(u),libelles=roles.map(id=>{const p=POSTES.find(x=>x.id===id);return p?p.n:id}).join(' · '),self=!!(session&&session.email===u.mail);
@@ -135,14 +135,15 @@ async function retirerUtilisateur(mail){
 }
 function openAjouterUtilisateur(){
  if(!peutGererRoles())return;
+ const enLigne=!!(session&&session.supabase);
  userForm={nom:'',mail:'',roles:['serveur']};
  document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgU"><div class="sheet">
-  <h3>Ajouter un utilisateur</h3><p class="sh-sub">Créez un accès dans le registre INVO existant.</p>
+  <h3>${enLigne?'Inviter un employé':'Ajouter un utilisateur'}</h3><p class="sh-sub">${enLigne?'Un e-mail sécurisé lui permettra de choisir son mot de passe et d’accéder uniquement à cet établissement.':'Créez un accès dans le registre INVO existant.'}</p>
   <div class="fld"><label>Nom et prénom</label><input id="uNom" autocomplete="name" placeholder="Camille Martin"></div>
   <div class="fld"><label>Adresse e-mail</label><input id="uMail" type="email" inputmode="email" autocomplete="email" placeholder="camille@restaurant.fr"></div>
   <div class="fld"><label>Rôles</label><div class="role-checks">${POSTES.map(p=>`<label><input type="checkbox" value="${p.id}" data-new-role ${p.id==='serveur'?'checked':''}> <span>${p.i}</span> ${p.n}</label>`).join('')}</div></div>
   <div class="auth-msg err" id="uErr" style="display:none"></div>
-  <div class="sh-actions"><button class="btn btn-2 btn-sm" id="uCancel">Annuler</button><button class="btn" id="uSave">Ajouter</button></div>
+  <div class="sh-actions"><button class="btn btn-2 btn-sm" id="uCancel">Annuler</button><button class="btn" id="uSave">${enLigne?'Envoyer l’invitation':'Ajouter'}</button></div>
  </div></div>`;
  document.getElementById('bgU').onclick=e=>{if(e.target.id==='bgU')openReglages('users')};
  document.getElementById('uCancel').onclick=()=>openReglages('users');
@@ -153,8 +154,19 @@ async function ajouterUtilisateur(){
  const err=document.getElementById('uErr'),fail=msg=>{err.textContent=msg;err.style.display='block'};
  if(!nom||!mail)return fail('Renseignez le nom et l’adresse e-mail.');
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail))return fail('L’adresse e-mail n’est pas valide.');
- if(auth.users[mail])return fail('Un utilisateur possède déjà cette adresse e-mail.');
  if(!roles.length)return fail('Sélectionnez au moins un rôle valide.');
+ if(session&&session.supabase){
+  const save=document.getElementById('uSave');save.disabled=true;
+  try{
+   const service=window.SwaySupabaseAuth;
+   const result=await service.workspaceMembers('invite',{establishmentId:session.etabId,fullName:nom,email:mail,roles:roles.map(r=>r==='admin'?'administrateur':r),redirectTo:location.origin+location.pathname});
+   if(result.error){save.disabled=false;return fail(result.error)}
+   document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgUC"><div class="sheet"><h3>Invitation envoyée</h3><p class="sh-sub">${escapeHTML(nom)} recevra un e-mail à l’adresse ${escapeHTML(mail)}. Ses rôles seront appliqués uniquement après la création de son mot de passe.</p><div class="sh-actions"><button class="btn" id="uDone">Terminer</button></div></div></div>`;
+   document.getElementById('uDone').onclick=()=>{toast('Invitation envoyée.');openReglages('users')};
+  }catch(error){save.disabled=false;fail('Impossible d’envoyer cette invitation pour le moment.');}
+  return;
+ }
+ if(auth.users[mail])return fail('Un utilisateur possède déjà cette adresse e-mail.');
  const salt=rnd(16),code=rnd(4)+'-'+rnd(4),etabId=(session&&session.etabId)||'local';
  auth.users[mail]={mail,nom,role:roles[0],roles,profilMetier:'',recapMatin:{actif:true,heure:'08:00'},etabId,etabNom:st.etabNom||'SP Wallace',salt,hash:await hashPwd(code,salt),
   codeHash:await hashPwd(code,salt),cree:Date.now(),statut:'invite'};
@@ -504,6 +516,7 @@ async function bootApp(){
  document.getElementById('auth').classList.remove('on');
  await loadAuth();
  if(session&&session.needsWorkspace){showAuth('workspace');return}
+ if(session&&session.invitationAccepted){session.invitationAccepted=false;await saveSess();showAuth('new-password',{type:'ok',txt:'Invitation acceptée. Choisissez maintenant votre mot de passe.'});return}
  await load();
  if(session&&auth.users[session.email]){
   const u=auth.users[session.email],poste=POSTES.find(p=>p.id===rolePrincipalUtilisateur(u));

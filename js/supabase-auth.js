@@ -7,6 +7,8 @@
  const key='sb_publishable_I6LooCk90KSTO6pbmogRlg_bZAQAFit';
  const roleMap={administrateur:'admin',gestion:'gestion',direction:'direction',barman:'barman',serveur:'serveur',cuisine:'cuisine'};
  let client=null,recovery=String(location.hash||'').includes('type=recovery');
+ const inviteToken=new URLSearchParams(location.search).get('invite');
+ let invitationHandled=false,invitationAccepted=false;
  try{
   if(window.supabase&&typeof window.supabase.createClient==='function'){
    client=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});
@@ -14,11 +16,21 @@
   }
  }catch(error){console.warn('Connexion Sway indisponible :',error)}
  const errorMessage=error=>String((error&&error.message)||'Connexion impossible. Réessayez.');
+ const acceptInvitation=async authSession=>{
+  if(!client||!inviteToken||invitationHandled||!authSession)return false;
+  invitationHandled=true;
+  const result=await workspaceMembers('accept_invitation',{inviteToken:inviteToken});
+  if(result.error)throw new Error(result.error);
+  invitationAccepted=true;
+  const clean=new URL(location.href);clean.searchParams.delete('invite');history.replaceState({},'',clean.pathname+(clean.search||'')+(clean.hash||''));
+  return true;
+ };
  const identity=async()=>{
   if(!client)return null;
   const result=await client.auth.getSession();
   if(result.error||!result.data.session)return null;
   const authSession=result.data.session,user=authSession.user;
+  await acceptInvitation(authSession);
   const profileResult=await client.from('profiles').select('display_name').eq('id',user.id).maybeSingle();
   const membershipResult=await client.from('memberships').select('establishment_id,roles').eq('user_id',user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
   if(profileResult.error||membershipResult.error)throw new Error(errorMessage(profileResult.error||membershipResult.error));
@@ -30,7 +42,7 @@
    establishment=establishmentResult.data;
   }
   const remoteRoles=(membership&&Array.isArray(membership.roles)?membership.roles:[]).map(function(role){return roleMap[role]}).filter(Boolean);
-  return {email:user.email||'',nom:(profileResult.data&&profileResult.data.display_name)||(user.user_metadata&&user.user_metadata.full_name)||user.email||'',etabId:membership&&membership.establishment_id||'',etabNom:establishment&&establishment.name||'',organizationId:establishment&&establishment.organization_id||'',roles:remoteRoles,role:remoteRoles[0]||'gestion',supabase:true,needsWorkspace:!membership,userId:user.id};
+  return {email:user.email||'',nom:(profileResult.data&&profileResult.data.display_name)||(user.user_metadata&&user.user_metadata.full_name)||user.email||'',etabId:membership&&membership.establishment_id||'',etabNom:establishment&&establishment.name||'',organizationId:establishment&&establishment.organization_id||'',roles:remoteRoles,role:remoteRoles[0]||'gestion',supabase:true,needsWorkspace:!membership,userId:user.id,invitationAccepted};
  };
  const signup=async values=>{
   if(!client)return {error:'Le service de connexion est momentanément indisponible.'};
@@ -71,5 +83,13 @@
   }
   return {ok:true};
  };
- window.SwaySupabaseAuth={available:function(){return !!client},identity:identity,signup:signup,signin:signin,reset:reset,updatePassword:updatePassword,finalizeWorkspace:finalizeWorkspace,isRecovery:function(){return recovery},signout:async function(){if(client)await client.auth.signOut()}};
+ const workspaceMembers=async(action,payload)=>{
+  if(!client)return {error:'Le service de connexion est momentanément indisponible.'};
+  const sessionResult=await client.auth.getSession(),authSession=sessionResult.data&&sessionResult.data.session;
+  if(!authSession)return {error:'Votre session a expiré. Reconnectez-vous.'};
+  const response=await fetch(url+'/functions/v1/workspace-members',{method:'POST',headers:{Authorization:'Bearer '+authSession.access_token,apikey:key,'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:action},payload||{}))});
+  const data=await response.json().catch(()=>({}));
+  return response.ok?data:{error:data.error||'Action impossible pour le moment.'};
+ };
+ window.SwaySupabaseAuth={available:function(){return !!client},identity:identity,signup:signup,signin:signin,reset:reset,updatePassword:updatePassword,finalizeWorkspace:finalizeWorkspace,workspaceMembers:workspaceMembers,isRecovery:function(){return recovery},isInviteFlow:function(){return invitationAccepted||String(location.hash||'').includes('type=invite')},signout:async function(){if(client)await client.auth.signOut()}};
 })();

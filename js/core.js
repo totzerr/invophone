@@ -798,7 +798,7 @@ const loadAuth=async()=>{
    const remote=await service.identity();
    if(remote){
     auth={users:{[remote.email]:remote}};
-    session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
+    session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,invitationAccepted:!!remote.invitationAccepted,userId:remote.userId};
     return;
    }
   }catch(error){console.warn('Session Sway indisponible :',error)}
@@ -885,7 +885,7 @@ async function connecterEnLigne(mail,pwd){
   const remote=await service.identity();
   if(!remote)return{e:'Connexion confirmée, mais la session n’est pas encore disponible. Réessayez dans quelques secondes.'};
   auth={users:{[remote.email]:remote}};
-  session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};
+  session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,invitationAccepted:!!remote.invitationAccepted,userId:remote.userId};
   return remote.needsWorkspace?{workspace:true}:{ok:true};
  }catch(error){return{e:'La connexion est validée, mais Sway ne peut pas encore préparer votre espace. '+String(error&&error.message||'Réessayez ou contactez-nous si le problème persiste.')}}
 }
@@ -900,7 +900,7 @@ async function creerCompteEnLigne(nom,mail,etab,pwd,pwd2){
  if(result.error)return{e:result.error};
  if(result.confirmation)return{confirmation:true};
  const remote=await window.SwaySupabaseAuth.identity();
- if(remote){auth={users:{[remote.email]:remote}};session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,userId:remote.userId};}
+ if(remote){auth={users:{[remote.email]:remote}};session={email:remote.email,etabId:remote.etabId,supabase:true,needsWorkspace:remote.needsWorkspace,invitationAccepted:!!remote.invitationAccepted,userId:remote.userId};}
  return remote&&remote.needsWorkspace?{workspace:true}:{ok:true};
 }
 
