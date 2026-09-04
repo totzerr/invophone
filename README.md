@@ -1,0 +1,13 @@
+# Structure de SWAY Phone
+
+`index.html` est volontairement court : il contient uniquement la structure de la page et charge les fichiers ci-dessous.
+
+- `css/app.css` : couleurs, mise en page et design.
+- `js/core.js` : données, connexion, sauvegarde, tableau de bord et sorties.
+- `js/operations.js` : commandes, réceptions et fournisseurs.
+- `js/scanner.js` : scanner de bons, contrôle et administration.
+- `js/catalogue.js` : produits, fiches techniques, inventaire et bilan.
+- `js/interface.js` : navigation, réglages, prévisions, historique et démarrage de l’application.
+- `assets/` : logos et images.
+
+Les fichiers JavaScript sont chargés dans cet ordre. Ne déplace pas une fonction d’un fichier à un autre sans vérifier les écrans concernés.
