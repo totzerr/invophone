@@ -788,6 +788,14 @@ let auth={users:{}}, session=null, authVue='login', authMsg=null, authCode=null;
 let authMode='online';
 
 const dataKey=()=>session&&session.supabase&&session.etabId?'sway_data_'+session.etabId:'invo_v5';
+const peutSynchroniserEspace=()=>{const u=utilisateurConnecte(),roles=rolesUtilisateur(u);return !!(session&&session.supabase&&session.etabId&&session.userId&&roles.some(r=>['admin','gestion','direction'].includes(r)));};
+let syncEspaceTimer=null,syncEspaceEnCours=false;
+async function synchroniserEspaceSway(){
+ if(!peutSynchroniserEspace()||syncEspaceEnCours||!window.SwaySupabaseAuth)return;
+ syncEspaceEnCours=true;
+ try{const copie=JSON.parse(JSON.stringify(st));delete copie.cloudUpdatedAt;const resultat=await window.SwaySupabaseAuth.saveWorkspaceState(session.etabId,copie,session.userId);if(resultat.error)console.warn('Synchronisation Sway différée :',resultat.error)}catch(error){console.warn('Synchronisation Sway différée :',error)}finally{syncEspaceEnCours=false}
+}
+function programmerSynchronisationSway(){if(!peutSynchroniserEspace())return;clearTimeout(syncEspaceTimer);syncEspaceTimer=setTimeout(synchroniserEspaceSway,900)}
 const loadAuth=async()=>{
  auth=(await Store.get(AUTH_KEY))||{users:{}};session=await Store.get(SESS_KEY);
  if(!auth.users||typeof auth.users!=='object')auth.users={};
@@ -1047,6 +1055,7 @@ function dessineAuth(){
 }
 
 async function load(){const s=await Store.get(dataKey());if(s)st=Object.assign(st,s);
+if(!s&&peutSynchroniserEspace()&&window.SwaySupabaseAuth){try{const distant=await window.SwaySupabaseAuth.loadWorkspaceState(session.etabId);if(distant.error)console.warn('Chargement Sway différé :',distant.error);else if(distant.state&&typeof distant.state==='object'){st=Object.assign(st,distant.state,{cloudUpdatedAt:distant.updatedAt||''});await Store.set(dataKey(),st)}}catch(error){console.warn('Chargement Sway différé :',error)}}
 /* Fin du flux fictif : INVO démarre désormais toujours en caisse manuelle. */
 if(!s||s.modeCaisse!=='manuel'){st.modeCaisse='manuel';st.live=false;}
 /* Aucun flux fictif ne peut survivre hors du parcours de démonstration explicite. */
@@ -1093,7 +1102,7 @@ if(migrationInventaireEmplacements())ordreMigre=true;
 if(!Object.keys(st.stock).length)st.prods.forEach(p=>st.stock[p.id]=p.s);
 assurerFournisseurs();
 if(ordreMigre)await Store.set(dataKey(),st)}
-const save=()=>Store.set(dataKey(),st);
+const save=()=>{const resultat=Store.set(dataKey(),st);programmerSynchronisationSway();return resultat};
 /* ── Sauvegarde locale : aucun envoi réseau, uniquement un fichier INVO. ── */
 const BACKUP_MAX=120*1024*1024;
 const obj=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
