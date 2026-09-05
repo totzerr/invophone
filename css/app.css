@@ -2264,6 +2264,18 @@ body.invo-modal-open #cartbar{display:none!important}
 
 /* SWAY · direction dashboard : coque claire, rail sombre, cartes pastel. */
 @media(min-width:769px){
+ #drawer.drawer{top:42px!important;bottom:42px!important;left:42px!important;width:78px!important;max-width:78px!important;border-radius:20px 0 0 20px!important;box-shadow:none!important}
+ #drawer.drawer .workspace-brand{display:none!important}
+ #drawer.drawer .workspace-content{padding-top:14px!important}
+ #drawer.drawer .workspace-link{color:#E5E9F0!important}
+ #drawer.drawer .workspace-link svg{width:21px!important;height:21px!important;stroke:currentColor!important;stroke-width:2.2!important}
+ #drawer.drawer .workspace-link:hover{background:rgba(255,255,255,.11)!important;color:#FFF!important}
+ .app{width:calc(100% - 84px)!important;margin:42px!important;border-radius:28px!important;padding-left:78px!important}
+ .top,main{margin-left:0!important}
+ .top-brand{display:flex!important;min-width:0!important}
+ .top-brand .logo-img{width:auto!important;height:32px!important;object-fit:contain!important;filter:none!important}
+ .top-company{display:inline-flex!important}
+}
  html,body{min-height:100%;background:#EAF5FF!important}
  body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(125deg,transparent 32%,rgba(101,174,232,.16) 32.1%,transparent 32.25%),linear-gradient(90deg,rgba(255,255,255,.52),transparent 48%)}
  #drawer.drawer{display:flex!important;visibility:visible!important;position:fixed!important;z-index:210!important;top:42px!important;bottom:42px!important;left:42px!important;width:78px!important;max-width:78px!important;padding:17px 10px!important;overflow:hidden!important;transform:none!important;border:0!important;border-radius:25px!important;background:#17191D!important;box-shadow:0 18px 40px rgba(20,31,45,.24)!important}
