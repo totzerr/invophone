@@ -315,6 +315,7 @@ function openReglages(){
    <div class="settings-card">
     <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('exportSauvegarde')}</b><small>${t('sauvegardeS')}</small></span></span><button class="settings-text-button" id="bkExport">Exporter${settingsIcon('arrow')}</button></div>
     <div class="settings-mini-action"><span>${settingsIcon('backup')}<span><b>${t('importSauvegarde')}</b><small>${t('importAide')}</small></span></span><button class="settings-text-button" id="bkImportBtn">Importer${settingsIcon('arrow')}</button><input id="bkImport" type="file" accept=".json,application/json" style="display:none"></div>
+    ${session&&session.supabase&&peutGererRoles()?`<div class="settings-mini-action"><span>${settingsIcon('data')}<span><b>Préparer le catalogue Supabase</b><small>${(st.prods||[]).length} produits détectés. Aucun stock n’est modifié : vous confirmez avant l’envoi.</small></span></span><button class="settings-text-button" id="catalogueSwayImport">Prévisualiser${settingsIcon('arrow')}</button></div>`:''}
    </div>
   </section>${transfertDonneesHTML()}`;
  const users=`<section class="settings-group settings-users-group"><div class="settings-group-title">${settingsIcon('users')}<span>Utilisateurs</span></div><div class="settings-card settings-users-card">${dessinerUtilisateurs()}</div></section>`;
@@ -326,6 +327,7 @@ function openReglages(){
  document.getElementById('rFerm').onclick=closeModal;
  document.querySelectorAll('[data-settings]').forEach(b=>b.onclick=()=>openReglages(b.dataset.settings));
  const transferStart=document.getElementById('transferStart');if(transferStart)transferStart.onclick=ouvrirTransfertDonnees;
+ const catalogueSwayImport=document.getElementById('catalogueSwayImport');if(catalogueSwayImport)catalogueSwayImport.onclick=async()=>{const produits=st.prods||[],resume=produits.slice(0,6).map(p=>p.n||p.name).filter(Boolean).join(', ');if(!confirm(`Importer ${produits.length} produits dans Supabase ?\n\nAucun stock ne sera modifié. Aperçu : ${resume}${produits.length>6?'…':''}`))return;catalogueSwayImport.disabled=true;const resultat=await window.SwaySupabaseAuth.importProductCatalogue(session.etabId,session.userId,produits);catalogueSwayImport.disabled=false;toast(resultat.error||`${resultat.count} produits préparés dans Supabase.`)};
  const transferSource=document.getElementById('transferSource');if(transferSource)transferSource.onclick=()=>toast('Cette connexion nécessite l’API de l’ancien logiciel ou un connecteur partenaire.');
  document.querySelectorAll('[data-transfer-review]').forEach(b=>b.onclick=()=>ouvrirRevueTransfert(b.dataset.transferReview));
  const addUser=document.getElementById('addUser');if(addUser)addUser.onclick=openAjouterUtilisateur;
