@@ -2000,20 +2000,19 @@ function renderDashboardGeneral(){
  commandesEnCours.filter(function(c){return !commandesARecevoir.some(function(a){return a.id===c.id})}).slice(0,1).forEach(function(c){actions.push('<button data-dashgo="cmd"><span>Commande en cours · '+escapeHTML(c.fournisseur||'Fournisseur')+'</span><i>›</i></button>')});
  const actionRows=actions.length?actions.slice(0,3).join(''):'<div class="dash-actions-empty">Rien à faire maintenant.</div>';
  const date=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}),heure=maintenant.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
- const titre=priorite.etat==='clear'?'Bonjour.':'À traiter maintenant.';
- const demo='';
- document.getElementById('s-dash').innerHTML=demo+'<div class="dashboard-new">'
- +performanceHebdomadaire
- +meteoAccueilHTML()
- +recapMatinHTML()
- +'<section class="dash-head"><div><div class="dash-eyebrow"><i></i>VUE D’ENSEMBLE · '+date.toUpperCase()+'</div><h1>'+titre+'</h1><p>'+escapeHTML(priorite.detail)+'</p><button class="dash-main-action" '+attr+'>'+priorite.action+' <i>›</i></button></div><aside class="dash-sales"><small>VENTES AUJOURD’HUI</small><b>'+fmt(caJour)+' €</b><span>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+' enregistrée'+(ventesJour.length>1?'s':'')+'</span><time>Actualisé · '+heure+'</time></aside></section>'
- +'<section class="dash-kpis" aria-label="Raccourcis de suivi">'
- +'<button class="dash-kpi '+(ruptures.length?'critical':'clear')+'" data-dashgo="stock"><small>RUPTURES</small><b>'+ruptures.length+'</b><span>'+(ruptures.length?'À traiter':'Stock stable')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(sousSeuil.length?'watch':'clear')+'" data-dashgo="cmd"><small>SOUS SEUIL</small><b>'+sousSeuil.length+'</b><span>'+(sousSeuil.length?'À anticiper':'Rien à commander')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(commandesARecevoir.length?'pending':'clear')+'" data-dashgo="liv"><small>RÉCEPTIONS</small><b>'+commandesARecevoir.length+'</b><span>'+(commandesARecevoir.length?'À contrôler':'Aucune prévue')+'<i>›</i></span></button>'
- +'<button class="dash-kpi '+(aVerifier.length?'review':'clear')+'" data-dashgo="caisse"><small>À CLASSER</small><b>'+aVerifier.length+'</b><span>'+(aVerifier.length?'Caisse à vérifier':'Caisse à jour')+'<i>›</i></span></button></section>'
- +'<section class="dash-grid"><section class="dash-panel"><header class="dash-panel-head"><div><small>STOCK</small><b>À surveiller</b></div><button data-dashgo="stock">Voir le stock</button></header><div class="dash-list">'+stockRows+'</div></section><aside class="dash-side"><section class="dash-actions"><small>PROCHAINES ACTIONS</small><b>À faire</b>'+actionRows+'</section></aside></section>'
- +'<section class="dash-cash"><div class="dash-cash-copy"><i>€</i><div><small>CAISSE</small><b>'+fmt(caJour)+' € aujourd’hui</b><span>'+aVerifier.length+' mouvement'+(aVerifier.length>1?'s':'')+' à classer</span></div></div><button data-dashgo="caisse">Ouvrir la caisse</button></section>'+adminWidgetAccueil()+'</div>';
+ const resumeActions=actions.length?actionRows:'<div class="sway-home-empty">Aucune action urgente pour le moment.</div>';
+ document.getElementById('s-dash').innerHTML='<div class="sway-home">'
+ +'<header class="sway-home-head"><div><span>VUE GÉNÉRALE · '+date.toUpperCase()+'</span><h1>Bonjour.</h1><p>Les informations utiles pour votre service, sans surcharge.</p></div><aside><small>VENTES AUJOURD’HUI</small><b>'+fmt(caJour)+' €</b><span>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+' · actualisé '+heure+'</span></aside></header>'
+ +'<section class="sway-home-priority '+priorite.etat+'"><div class="sway-home-priority-dot"></div><div><small>À FAIRE MAINTENANT</small><b>'+escapeHTML(priorite.titre)+'</b><span>'+escapeHTML(priorite.detail)+'</span></div><button '+attr+'>'+priorite.action+' <i>›</i></button></section>'
+ +'<section class="sway-home-metrics" aria-label="État de l’établissement">'
+ +'<button class="critical" data-dashgo="stock"><small>RUPTURES</small><b>'+ruptures.length+'</b><span>'+(ruptures.length?'À traiter':'Tout va bien')+'</span></button>'
+ +'<button class="watch" data-dashgo="cmd"><small>À COMMANDER</small><b>'+sousSeuil.length+'</b><span>'+(sousSeuil.length?'À prévoir':'Rien à prévoir')+'</span></button>'
+ +'<button class="pending" data-dashgo="liv"><small>RÉCEPTIONS</small><b>'+commandesARecevoir.length+'</b><span>'+(commandesARecevoir.length?'À contrôler':'Aucune prévue')+'</span></button>'
+ +'<button class="review" data-dashgo="caisse"><small>À VÉRIFIER</small><b>'+aVerifier.length+'</b><span>'+(aVerifier.length?'Caisse à classer':'Caisse à jour')+'</span></button></section>'
+ +'<section class="sway-home-grid"><section class="sway-home-panel"><header><div><small>STOCK</small><b>À surveiller</b></div><button data-dashgo="stock">Tout voir</button></header><div class="dash-list">'+stockRows+'</div></section><section class="sway-home-panel"><header><div><small>SUIVI</small><b>Prochaines actions</b></div></header><div class="sway-home-actions">'+resumeActions+'</div></section></section>'
+ +'<section class="sway-home-cash"><div><small>CAISSE</small><b>'+fmt(caJour)+' € enregistrés aujourd’hui</b><span>'+aVerifier.length+' mouvement'+(aVerifier.length>1?'s':'')+' à classer</span></div><button data-dashgo="caisse">Ouvrir la caisse</button></section>'
+ +'<details class="sway-home-more"><summary>Voir les tendances et le récapitulatif <i>⌄</i></summary><div>'+performanceHebdomadaire+meteoAccueilHTML()+recapMatinHTML()+'</div></details>'
+ +adminWidgetAccueil()+'</div>';
  document.querySelectorAll('[data-dashgo]').forEach(function(b){b.onclick=function(){screen=b.dataset.dashgo;sq='';go()}});
  document.querySelectorAll('[data-dashreceive]').forEach(function(b){b.onclick=function(){screen='liv';sq='';go();openLiv(b.dataset.dashreceive)}});
  document.querySelectorAll('[data-open-recap]').forEach(function(b){b.onclick=ouvrirRecapMatin});
