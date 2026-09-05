@@ -95,13 +95,37 @@ const p=POSTES.find(x=>x.id===b.dataset.w),u=utilisateurConnecte();if(!p)return;
 await synchroniserProfilMetierAvecVue(p.id);await save();closeModal();renderAll()})}
 /* ═════ RÉGLAGES · COMPTE · MATÉRIEL CONNECTÉ ═════ */
 const roleEstAutorise=id=>id==='admin';
+let equipeEnLigne={etat:'idle',membres:[],invitations:[],erreur:''};
+const rolesServeurVersApp=roles=>(Array.isArray(roles)?roles:[]).map(role=>role==='administrateur'?'admin':role).filter(role=>POSTES.some(p=>p.id===role));
+const rolesAppVersServeur=roles=>roles.map(role=>role==='admin'?'administrateur':role);
+function libellesRolesSway(roles){return rolesServeurVersApp(roles).map(id=>{const poste=POSTES.find(p=>p.id===id);return poste?poste.n:id}).join(' · ')||'Sans rôle';}
+async function chargerEquipeEnLigne(){
+ if(!(session&&session.supabase&&session.etabId)||!peutGererRoles()||equipeEnLigne.etat==='loading'||equipeEnLigne.etat==='ready')return;
+ equipeEnLigne.etat='loading';equipeEnLigne.erreur='';
+ try{
+  const resultat=await window.SwaySupabaseAuth.workspaceMembers('list',{establishmentId:session.etabId});
+  if(resultat.error)throw new Error(resultat.error);
+  equipeEnLigne={etat:'ready',membres:Array.isArray(resultat.members)?resultat.members:[],invitations:Array.isArray(resultat.invitations)?resultat.invitations:[],erreur:''};
+ }catch(error){equipeEnLigne={etat:'error',membres:[],invitations:[],erreur:String(error&&error.message||'Impossible de charger l’équipe.')};}
+ if(document.querySelector('.settings-users-group'))openReglages('users');
+}
 function utilisateursEtablissement(){
  const tous=Object.values(auth.users||{}),etabId=session&&session.etabId;
  return tous.filter(u=>!etabId||!u.etabId||u.etabId===etabId).sort((a,b)=>(a.nom||a.mail).localeCompare(b.nom||b.mail,'fr'));
 }
 function dateUtilisateur(ts){return ts?new Date(ts).toLocaleDateString('fr-FR'):'—'}
 function dessinerUtilisateurs(){
- if(session&&session.supabase)return peutGererRoles()?'<button class="btn" id="addUser" style="margin-bottom:12px">+ Inviter un employé</button><div class="auth-msg info"><b>Équipe Sway sécurisée.</b><br>L’administrateur choisit l’e-mail et les rôles. L’employé crée son mot de passe depuis le lien reçu ; son accès reste limité à cet établissement.</div>':'<div class="auth-msg info">La gestion des rôles et des invitations est réservée à l’administrateur.</div>';
+ if(session&&session.supabase){
+  if(!peutGererRoles())return '<div class="auth-msg info">La gestion des rôles et des invitations est réservée à l’administrateur.</div>';
+  if(equipeEnLigne.etat==='loading'||equipeEnLigne.etat==='idle')return '<button class="btn" id="addUser" style="margin-bottom:12px">+ Inviter un employé</button><div class="auth-msg info">Chargement sécurisé de l’équipe…</div>';
+  if(equipeEnLigne.etat==='error')return '<button class="btn" id="addUser" style="margin-bottom:12px">+ Inviter un employé</button><div class="auth-msg err">'+escapeHTML(equipeEnLigne.erreur)+'</div>';
+  const membres=equipeEnLigne.membres.map(membre=>{
+   const estMoi=session&&session.userId===membre.userId,roles=libellesRolesSway(membre.roles),nom=String(membre.name||membre.email||'Membre');
+   return '<div class="user-card"><div><div class="user-name">'+escapeHTML(nom)+(estMoi?' · vous':'')+'</div><div class="user-mail">'+escapeHTML(membre.email||'')+'</div><div class="user-meta"><span class="user-status">Actif</span><span class="user-date">Ajouté le '+dateUtilisateur(membre.createdAt)+'</span></div></div><div class="user-actions"><button class="user-role" data-online-user-roles="'+escapeHTML(membre.id)+'" aria-label="Rôles de '+escapeHTML(nom)+'">'+escapeHTML(roles)+' ›</button>'+(estMoi?'':'<button class="user-remove" data-online-user-remove="'+escapeHTML(membre.id)+'" title="Retirer" aria-label="Retirer '+escapeHTML(nom)+'">×</button>')+'</div></div>';
+  }).join('');
+  const invitations=equipeEnLigne.invitations.map(invitation=>'<div class="user-card"><div><div class="user-name">Invitation en attente</div><div class="user-mail">'+escapeHTML(invitation.invited_email||'')+'</div><div class="user-meta"><span class="user-status invite">Invitation</span><span class="user-date">Expire le '+dateUtilisateur(invitation.expires_at)+'</span></div></div><div class="user-actions"><span class="pill-etat off">'+escapeHTML(libellesRolesSway(invitation.roles))+'</span></div></div>').join('');
+  return '<button class="btn" id="addUser" style="margin-bottom:12px">+ Inviter un employé</button><div class="user-list">'+(membres||'<div class="zone-empty">Aucun membre actif pour cet établissement.</div>')+invitations+'</div><div class="auth-msg info"><b>Équipe Sway sécurisée.</b><br>Les rôles, invitations et retraits sont enregistrés côté serveur. Les employés ne peuvent pas les modifier.</div>';
+ }
  const autorise=peutGererRoles(),users=utilisateursEtablissement();
  const cards=users.map(u=>{
   const roles=rolesUtilisateur(u),libelles=roles.map(id=>{const p=POSTES.find(x=>x.id===id);return p?p.n:id}).join(' · '),self=!!(session&&session.email===u.mail);
@@ -115,6 +139,17 @@ function dessinerUtilisateurs(){
   '<div class="auth-msg info">La gestion des rôles est réservée à l’administrateur.</div>'}
   <div class="user-list">${cards||'<div class="zone-empty">Aucun utilisateur enregistré pour cet espace.</div>'}</div>
   <div class="auth-msg info">Les comptes utilisent le registre d’accès INVO existant. En mode test, l’écran de connexion reste désactivé.</div>`;
+}
+function ouvrirRolesMembreEnLigne(memberId){
+ const membre=equipeEnLigne.membres.find(m=>m.id===memberId);if(!membre||!peutGererRoles())return;
+ const roles=rolesServeurVersApp(membre.roles),nom=String(membre.name||membre.email||'Membre');
+ document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgRoles"><div class="sheet"><h3>Rôles de ${escapeHTML(nom)}</h3><p class="sh-sub">Un utilisateur peut cumuler plusieurs rôles. Les accès sont mis à jour dans son espace Sway.</p><div class="role-checks">${POSTES.map(p=>`<label><input type="checkbox" value="${p.id}" data-role-check ${roles.includes(p.id)?'checked':''}> <span>${p.i}</span> ${p.n}</label>`).join('')}</div><div class="auth-msg err" id="rolesErr" style="display:none"></div><div class="sh-actions"><button class="btn btn-2 btn-sm" id="rolesCancel">Annuler</button><button class="btn" id="rolesSave">Enregistrer</button></div></div></div>`;
+ document.getElementById('bgRoles').onclick=e=>{if(e.target.id==='bgRoles')openReglages('users')};document.getElementById('rolesCancel').onclick=()=>openReglages('users');document.getElementById('rolesSave').onclick=async()=>{const roles=rolesValides([...document.querySelectorAll('[data-role-check]:checked')].map(x=>x.value)),err=document.getElementById('rolesErr');if(!roles.length){err.textContent='Sélectionnez au moins un rôle.';err.style.display='block';return}const save=document.getElementById('rolesSave');save.disabled=true;const resultat=await window.SwaySupabaseAuth.workspaceMembers('update_roles',{establishmentId:session.etabId,memberId:memberId,roles:rolesAppVersServeur(roles)});if(resultat.error){save.disabled=false;err.textContent=resultat.error;err.style.display='block';return}equipeEnLigne.etat='idle';toast('Rôles mis à jour.');openReglages('users');};
+}
+async function retirerMembreEnLigne(memberId){
+ const membre=equipeEnLigne.membres.find(m=>m.id===memberId);if(!membre||!peutGererRoles()||!confirm(`Retirer ${membre.name||membre.email||'ce membre'} de cet établissement ?`))return;
+ const resultat=await window.SwaySupabaseAuth.workspaceMembers('remove',{establishmentId:session.etabId,memberId:memberId});
+ if(resultat.error){toast(resultat.error);return}equipeEnLigne.etat='idle';toast('Accès retiré.');openReglages('users');
 }
 function ouvrirRolesUtilisateur(mail){
  const u=auth.users[mail];if(!u||!peutGererRoles())return;const roles=rolesUtilisateur(u);
@@ -164,7 +199,7 @@ async function ajouterUtilisateur(){
    const result=await service.workspaceMembers('invite',{establishmentId:session.etabId,fullName:nom,email:mail,roles:roles.map(r=>r==='admin'?'administrateur':r),redirectTo:location.origin+location.pathname});
    if(result.error){save.disabled=false;return fail(result.error)}
    document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgUC"><div class="sheet"><h3>Invitation envoyée</h3><p class="sh-sub">${escapeHTML(nom)} recevra un e-mail à l’adresse ${escapeHTML(mail)}. Ses rôles seront appliqués uniquement après la création de son mot de passe.</p><div class="sh-actions"><button class="btn" id="uDone">Terminer</button></div></div></div>`;
-   document.getElementById('uDone').onclick=()=>{toast('Invitation envoyée.');openReglages('users')};
+   document.getElementById('uDone').onclick=()=>{equipeEnLigne.etat='idle';toast('Invitation envoyée.');openReglages('users')};
   }catch(error){save.disabled=false;fail('Impossible d’envoyer cette invitation pour le moment.');}
   return;
  }
@@ -295,6 +330,9 @@ function openReglages(){
  const addUser=document.getElementById('addUser');if(addUser)addUser.onclick=openAjouterUtilisateur;
  document.querySelectorAll('[data-user-roles]').forEach(b=>b.onclick=()=>ouvrirRolesUtilisateur(b.dataset.userRoles));
  document.querySelectorAll('[data-user-remove]').forEach(b=>b.onclick=()=>retirerUtilisateur(b.dataset.userRemove));
+ document.querySelectorAll('[data-online-user-roles]').forEach(b=>b.onclick=()=>ouvrirRolesMembreEnLigne(b.dataset.onlineUserRoles));
+ document.querySelectorAll('[data-online-user-remove]').forEach(b=>b.onclick=()=>retirerMembreEnLigne(b.dataset.onlineUserRemove));
+ if(settingsTab==='users'&&session&&session.supabase&&peutGererRoles())chargerEquipeEnLigne();
  const bkOut=document.getElementById('bkExport'),bkBtn=document.getElementById('bkImportBtn'),bkIn=document.getElementById('bkImport');
  if(bkOut)bkOut.onclick=async()=>{bkOut.disabled=true;try{await exporterSauvegarde();toast(t('backupOk'))}catch(e){toast(t('backupRead'))}bkOut.disabled=false};
  if(bkBtn&&bkIn)bkBtn.onclick=()=>bkIn.click();
