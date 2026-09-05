@@ -2251,6 +2251,77 @@ body.invo-modal-open #cartbar{display:none!important}
 
 .workspace-signout{margin-top:3px!important;color:#B42318!important}
 
+/* SWAY · socle minimal — informations denses, lecture immédiate.
+   Cette couche ne déplace aucun flux : elle unifie uniquement la présentation. */
+:root{
+  --sway-page:#F8FAFC;
+  --sway-surface:#FFFFFF;
+  --sway-line:#E5EAF1;
+  --sway-ink:#172033;
+  --sway-muted:#66758A;
+  --sway-blue:#315CF6;
+  --sway-blue-soft:#F0F4FF;
+  --sway-radius:14px;
+}
+html,body,.app{background:var(--sway-page)!important;color:var(--sway-ink)!important}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;letter-spacing:-.012em!important}
+.top{background:rgba(255,255,255,.96)!important;border-bottom:1px solid var(--sway-line)!important;box-shadow:none!important}
+.lang,.who-pill,.gear,.burger{background:#FFF!important;border-color:var(--sway-line)!important;color:var(--sway-ink)!important;box-shadow:none!important}
+.gear:hover,.lang:hover,.who-pill:hover,.burger:hover{border-color:#B9C8FF!important;background:var(--sway-blue-soft)!important;color:var(--sway-blue)!important}
+main{max-width:1480px!important}
+.h-title,.dash-hero h1,.dashboard-new .dash-head h1,#s-caisse .sales-head h1,.declare-hero h1,.profile-dashboard h1,.admin-head h1{
+  color:var(--sway-ink)!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  font-weight:650!important;letter-spacing:-.045em!important
+}
+.h-sub,.dash-hero p,.dashboard-new .dash-head p{color:var(--sway-muted)!important}
+.eyebrow,.set-sec{color:var(--sway-blue)!important}
+.card,.conn,.kpi,.split-cell,.inv-head,.panier,.motif,.cmd-card,.cmd-product,.order-card,.work-card,.liv-card,.pending-order-card,.settings-card,.settings-group,.admin-data-card{
+  background:var(--sway-surface)!important;border:1px solid var(--sway-line)!important;border-radius:var(--sway-radius)!important;
+  box-shadow:0 1px 2px rgba(15,23,42,.025)!important
+}
+.card:hover,.motif:hover{transform:none!important;border-color:#CED8E7!important;box-shadow:0 2px 7px rgba(15,23,42,.045)!important}
+.btn,.scan-btn.primary,.sales-new,.dash-main-action,.cartbar-in,.admin-row-actions button.primary{
+  background:var(--sway-blue)!important;border-color:var(--sway-blue)!important;color:#FFF!important;
+  border-radius:11px!important;box-shadow:none!important;font-weight:700!important
+}
+.btn:hover:not(:disabled),.scan-btn.primary:hover:not(:disabled),.sales-new:hover:not(:disabled),.dash-main-action:hover:not(:disabled),.cartbar-in:hover:not(:disabled){background:#244CE0!important;box-shadow:0 5px 12px rgba(49,92,246,.16)!important}
+.btn-2,.photo-btn,.ing-add,.admin-link-btn,.workspace-link,.workspace-add,.workspace-settings{
+  background:#FFF!important;border-color:var(--sway-line)!important;color:var(--sway-ink)!important;box-shadow:none!important
+}
+.btn-2:hover:not(:disabled),.photo-btn:hover,.ing-add:hover,.admin-link-btn:hover{background:var(--sway-blue-soft)!important;border-color:#B9C8FF!important;color:var(--sway-blue)!important}
+.svc,.seg,.subtabs{background:#F3F6FA!important;border:1px solid var(--sway-line)!important;padding:4px!important;box-shadow:none!important}
+.svc button.on,.seg button.on,.subtabs button.on{background:#FFF!important;color:var(--sway-blue)!important;box-shadow:0 1px 3px rgba(15,23,42,.08)!important}
+.cat.on,.zchip.on,.opt.on{background:var(--sway-blue-soft)!important;border-color:#B9C8FF!important;color:#244CE0!important}
+.search,.iv-inp,.dos-in{background:#FFF!important;border-color:var(--sway-line)!important;box-shadow:none!important}
+.search:focus,.iv-inp:focus,.dos-in:focus{border-color:var(--sway-blue)!important;box-shadow:0 0 0 3px rgba(49,92,246,.12)!important}
+.dashboard-new{max-width:1180px!important;gap:16px!important}
+.dashboard-new .dash-head{padding-bottom:20px!important;border-color:var(--sway-line)!important}
+.dashboard-new .dash-head h1{font-size:clamp(31px,3vw,42px)!important;line-height:1.05!important}
+.dashboard-new .dash-sales,.dashboard-new .dash-kpi,.dashboard-new .dash-panel,.dashboard-new .dash-actions,.dashboard-new .dash-cash,.dashboard-new .dash-performance-banner{
+  border-color:var(--sway-line)!important;box-shadow:none!important
+}
+.dashboard-new .dash-sales,.dashboard-new .dash-kpi,.dashboard-new .dash-panel,.dashboard-new .dash-actions,.dashboard-new .dash-performance-banner{background:#FFF!important}
+.dashboard-new .dash-kpi{border-left-width:3px!important}
+.dashboard-new .dash-panel-head,.dashboard-new .dash-list-row{border-color:var(--sway-line)!important}
+.dashboard-new .dash-cash{background:var(--sway-blue-soft)!important}
+.dashboard-new .dash-performance-banner{padding:16px!important}
+#nav{background:rgba(255,255,255,.96)!important;border-color:var(--sway-line)!important;box-shadow:none!important}
+#nav .tab-item{color:var(--sway-muted)!important;box-shadow:none!important}
+#nav .tab-item.on{background:var(--sway-blue)!important;border-color:var(--sway-blue)!important;color:#FFF!important;box-shadow:none!important}
+@media(max-width:767px){
+  html,body,.app{background:#F8FAFC!important}
+  main{padding-left:14px!important;padding-right:14px!important}
+  .top{background:rgba(255,255,255,.98)!important}
+  #drawer.drawer{background:#FFF!important;box-shadow:14px 0 32px rgba(15,23,42,.16)!important}
+  #drawer.drawer .workspace-link{border:0!important;background:transparent!important;box-shadow:none!important}
+  #drawer.drawer .workspace-link.on{background:var(--sway-blue-soft)!important;border:1px solid #B9C8FF!important;color:#244CE0!important}
+  .settings-sheet{background:#F8FAFC!important}
+  .settings-header,.settings-nav{background:#FFF!important;border-color:var(--sway-line)!important}
+  .settings-nav button.on{background:var(--sway-blue-soft)!important;color:#244CE0!important}
+  .dashboard-new{gap:12px!important}.dashboard-new .dash-head{grid-template-columns:1fr!important;gap:14px!important}
+  .dashboard-new .dash-kpis{grid-template-columns:1fr 1fr!important}.dashboard-new .dash-kpi{min-height:92px!important}
+}
+
 /* SWAY PHONE · coque de navigation et réglages réellement tactiles.
    Le tiroir et la feuille restent entièrement dans la largeur de l’iPhone. */
 .workspace-close{display:none}
@@ -2273,4 +2344,16 @@ body.invo-modal-open #cartbar{display:none!important}
   .settings-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:9px 10px!important}
   .settings-nav button{height:40px!important;min-width:0!important;padding:8px!important;font-size:11px!important}
   .settings-content{padding:14px 12px calc(24px + env(safe-area-inset-bottom))!important}
+}
+
+/* Priorité finale mobile : même langage minimal, sans débordement. */
+@media screen and (max-width:767px){
+  .top{background:rgba(255,255,255,.98)!important;border-bottom:1px solid var(--sway-line)!important}
+  #drawer.drawer{background:#FFF!important}
+  #drawer.drawer .workspace-link{background:transparent!important;border:0!important;box-shadow:none!important}
+  #drawer.drawer .workspace-link.on{background:var(--sway-blue-soft)!important;border:1px solid #B9C8FF!important;color:#244CE0!important}
+  #drawer.drawer .workspace-add{background:var(--sway-blue)!important;box-shadow:none!important}
+  .settings-sheet{background:#F8FAFC!important}
+  .settings-header,.settings-nav{background:#FFF!important;border-color:var(--sway-line)!important}
+  .settings-nav button.on{background:var(--sway-blue-soft)!important;color:#244CE0!important}
 }
