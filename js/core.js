@@ -796,6 +796,10 @@ async function synchroniserEspaceSway(){
  try{const copie=JSON.parse(JSON.stringify(st));delete copie.cloudUpdatedAt;const resultat=await window.SwaySupabaseAuth.saveWorkspaceState(session.etabId,copie,session.userId);if(resultat.error)console.warn('Synchronisation Sway différée :',resultat.error)}catch(error){console.warn('Synchronisation Sway différée :',error)}finally{syncEspaceEnCours=false}
 }
 function programmerSynchronisationSway(){if(!peutSynchroniserEspace())return;clearTimeout(syncEspaceTimer);syncEspaceTimer=setTimeout(synchroniserEspaceSway,900)}
+function demarrerSynchronisationDirecteSway(){
+ if(!peutSynchroniserEspace()||!window.SwaySupabaseAuth||!window.SwaySupabaseAuth.watchWorkspaceState)return;
+ window.SwaySupabaseAuth.watchWorkspaceState(session.etabId,payload=>{const distant=payload&&payload.new;if(!distant||distant.updated_by===session.userId||!distant.state||typeof distant.state!=='object')return;st=Object.assign(st,distant.state,{cloudUpdatedAt:distant.updated_at||''});Store.set(dataKey(),st);if(typeof renderAll==='function')renderAll();if(typeof toast==='function')toast('Mise à jour reçue de l’équipe.');});
+}
 const loadAuth=async()=>{
  auth=(await Store.get(AUTH_KEY))||{users:{}};session=await Store.get(SESS_KEY);
  if(!auth.users||typeof auth.users!=='object')auth.users={};
@@ -1101,7 +1105,7 @@ if(migrerUnitesBoissons())ordreMigre=true;
 if(migrationInventaireEmplacements())ordreMigre=true;
 if(!Object.keys(st.stock).length)st.prods.forEach(p=>st.stock[p.id]=p.s);
 assurerFournisseurs();
-if(ordreMigre)await Store.set(dataKey(),st)}
+if(ordreMigre)await Store.set(dataKey(),st);demarrerSynchronisationDirecteSway()}
 const save=()=>{const resultat=Store.set(dataKey(),st);programmerSynchronisationSway();return resultat};
 /* ── Sauvegarde locale : aucun envoi réseau, uniquement un fichier INVO. ── */
 const BACKUP_MAX=120*1024*1024;
