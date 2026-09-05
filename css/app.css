@@ -2251,6 +2251,17 @@ body.invo-modal-open #cartbar{display:none!important}
 
 .workspace-signout{margin-top:3px!important;color:#B42318!important}
 
+/* SWAY · système de boutons unifié */
+:root{--sway-blue:#315CF6;--sway-ink:#172033;--sway-line:#E1E7F0;--sway-soft:#F5F7FB}
+.btn,.scan-btn.primary,.sales-new,.dash-main-action,.cartbar-in{border:1px solid var(--sway-blue)!important;border-radius:12px!important;background:var(--sway-blue)!important;color:#fff!important;box-shadow:0 6px 16px rgba(49,92,246,.18)!important;font-weight:700!important;transition:transform .16s ease,box-shadow .16s ease,background .16s ease!important}
+.btn:hover:not(:disabled),.scan-btn.primary:hover:not(:disabled),.sales-new:hover:not(:disabled),.dash-main-action:hover:not(:disabled),.cartbar-in:hover:not(:disabled){background:#244CE0!important;box-shadow:0 10px 22px rgba(49,92,246,.24)!important;transform:translateY(-1px)!important}
+.btn:active:not(:disabled),.scan-btn.primary:active:not(:disabled),.sales-new:active:not(:disabled),.dash-main-action:active:not(:disabled),.cartbar-in:active:not(:disabled){transform:scale(.985)!important;box-shadow:0 3px 8px rgba(49,92,246,.16)!important}
+.btn-2,.settings-action-button,.settings-text-button,.photo-btn,.ing-add{border:1px solid var(--sway-line)!important;border-radius:12px!important;background:#fff!important;color:var(--sway-ink)!important;box-shadow:0 1px 2px rgba(15,23,42,.03)!important}
+.btn-2:hover:not(:disabled),.settings-action-button:hover,.settings-text-button:hover,.photo-btn:hover,.ing-add:hover{border-color:#BFCBFF!important;background:#F7F8FF!important;color:#244CE0!important}
+.btn-del,.user-remove{border-color:#FFD9DF!important;background:#FFF7F8!important;color:#B42338!important;box-shadow:none!important}
+.btn:disabled,.btn-2:disabled,.settings-action-button:disabled,.settings-text-button:disabled{background:#F0F2F6!important;border-color:#F0F2F6!important;color:#98A2B3!important;box-shadow:none!important;transform:none!important}
+.btn:focus-visible,.btn-2:focus-visible,.settings-action-button:focus-visible,.settings-text-button:focus-visible{outline:3px solid rgba(49,92,246,.22)!important;outline-offset:2px!important}
+
 /* SWAY PHONE · coque de navigation et réglages réellement tactiles.
    Le tiroir et la feuille restent entièrement dans la largeur de l’iPhone. */
 .workspace-close{display:none}
