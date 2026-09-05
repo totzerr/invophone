@@ -2263,7 +2263,7 @@ body.invo-modal-open #cartbar{display:none!important}
 .btn:focus-visible,.btn-2:focus-visible,.settings-action-button:focus-visible,.settings-text-button:focus-visible{outline:3px solid rgba(49,92,246,.22)!important;outline-offset:2px!important}
 
 /* SWAY · direction dashboard : coque claire, rail sombre, cartes pastel. */
-@media(min-width:900px){
+@media(min-width:769px){
  html,body{min-height:100%;background:#EAF5FF!important}
  body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(125deg,transparent 32%,rgba(101,174,232,.16) 32.1%,transparent 32.25%),linear-gradient(90deg,rgba(255,255,255,.52),transparent 48%)}
  #drawer.drawer{display:flex!important;visibility:visible!important;position:fixed!important;z-index:210!important;top:42px!important;bottom:42px!important;left:42px!important;width:78px!important;max-width:78px!important;padding:17px 10px!important;overflow:hidden!important;transform:none!important;border:0!important;border-radius:25px!important;background:#17191D!important;box-shadow:0 18px 40px rgba(20,31,45,.24)!important}
