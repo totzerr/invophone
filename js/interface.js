@@ -27,6 +27,7 @@ function renderNav(){
     ${x.b?`<span class="workspace-badge">${x.b>99?'99+':x.b}</span>`:''}</button>`).join('')}</div></div>`;};
  document.getElementById('drawer').innerHTML=`
   <div class="workspace-head"><div class="workspace-brand">${logoHTML}</div>
+   <button class="workspace-close" type="button" data-menu="1" aria-label="Fermer le menu">×</button>
    <button class="workspace-place" data-reg="1"><span>${st.organizationName||st.etabNom||'Mon entreprise'}</span><b>⌄</b></button></div>
   <div class="workspace-compose"><button class="workspace-add" data-nav="dec"><span>＋</span>${t('newVente')}</button></div>
   <div class="workspace-content">${groupe('VUE GÉNÉRALE',['dash'])}${groupe('FLUX',['caisse','dec'])}${groupe('STOCK',['liv','cmd','stock','inv'])}${groupe('RAPPORTS',['bil'])}${groupe('DIRECTION',['admin'])}</div>
