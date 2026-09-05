@@ -2262,6 +2262,28 @@ body.invo-modal-open #cartbar{display:none!important}
 .btn:disabled,.btn-2:disabled,.settings-action-button:disabled,.settings-text-button:disabled{background:#F0F2F6!important;border-color:#F0F2F6!important;color:#98A2B3!important;box-shadow:none!important;transform:none!important}
 .btn:focus-visible,.btn-2:focus-visible,.settings-action-button:focus-visible,.settings-text-button:focus-visible{outline:3px solid rgba(49,92,246,.22)!important;outline-offset:2px!important}
 
+/* SWAY · direction dashboard : coque claire, rail sombre, cartes pastel. */
+@media(min-width:900px){
+ html,body{min-height:100%;background:#EAF5FF!important}
+ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(125deg,transparent 32%,rgba(101,174,232,.16) 32.1%,transparent 32.25%),linear-gradient(90deg,rgba(255,255,255,.52),transparent 48%)}
+ #drawer.drawer{display:flex!important;visibility:visible!important;position:fixed!important;z-index:210!important;top:42px!important;bottom:42px!important;left:42px!important;width:78px!important;max-width:78px!important;padding:17px 10px!important;overflow:hidden!important;transform:none!important;border:0!important;border-radius:25px!important;background:#17191D!important;box-shadow:0 18px 40px rgba(20,31,45,.24)!important}
+ #drawer.drawer .workspace-head{padding:0!important;display:grid!important;place-items:center!important;border:0!important;background:transparent!important}
+ #drawer.drawer .workspace-brand .logo{background:#FFF8DC!important;padding:9px!important;border-radius:12px!important}
+ #drawer.drawer .workspace-brand .logo-img{width:26px!important;height:26px!important;object-fit:contain!important;filter:none!important}
+ #drawer.drawer .workspace-place,#drawer.drawer .workspace-compose,#drawer.drawer .workspace-label,#drawer.drawer .workspace-name,#drawer.drawer .workspace-badge,#drawer.drawer .workspace-bottom p,#drawer.drawer .workspace-settings span{display:none!important}
+ #drawer.drawer .workspace-content{display:grid!important;gap:9px!important;overflow:visible!important;padding:52px 0 0!important;background:transparent!important}
+ #drawer.drawer .workspace-group{margin:0!important}.workspace-list{display:grid!important;gap:9px!important}
+ #drawer.drawer .workspace-link{display:grid!important;place-items:center!important;width:48px!important;min-height:48px!important;padding:0!important;border-radius:14px!important;color:#C2C7D0!important;background:transparent!important}
+ #drawer.drawer .workspace-link.on{color:#2438D7!important;background:#FFF!important;box-shadow:0 7px 16px rgba(0,0,0,.2)!important}
+ #drawer.drawer .workspace-icon{width:auto!important;font-size:20px!important}.workspace-close{display:none!important}
+ #drawer.drawer .workspace-bottom{margin-top:auto!important;padding:0!important;border:0!important;background:transparent!important}.workspace-signout{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;color:#C2C7D0!important}
+ .app{position:relative!important;z-index:1!important;width:calc(100% - 182px)!important;min-height:calc(100vh - 84px)!important;margin:42px 42px 42px 140px!important;overflow:hidden!important;border:10px solid #17191D!important;border-radius:30px!important;background:#FFF!important;box-shadow:0 18px 40px rgba(20,31,45,.16)!important}
+ .top{height:70px!important;padding:0 34px!important;background:#FFF!important;border:0!important;box-shadow:none!important}.top-brand{display:none!important}.top-right{margin-left:auto!important}
+ #nav{display:none!important}main{padding:24px 34px 42px!important;background:#FFF!important}
+ .card,.dash-panel,.work-block,.activity-block,.cmd-shell,.stock-shell{border-radius:18px!important;border-color:#E8ECF2!important;box-shadow:none!important}
+ .kpi:nth-child(1),.dash-kpi:nth-child(1){background:#E4F2FF!important}.kpi:nth-child(2),.dash-kpi:nth-child(2){background:#EEE8FF!important}.kpi:nth-child(3),.dash-kpi:nth-child(3){background:#E8F7EA!important}.kpi:nth-child(4),.dash-kpi:nth-child(4){background:#FFF7D9!important}
+}
+
 /* SWAY PHONE · coque de navigation et réglages réellement tactiles.
    Le tiroir et la feuille restent entièrement dans la largeur de l’iPhone. */
 .workspace-close{display:none}
