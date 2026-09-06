@@ -35,6 +35,11 @@ function renderNav(){
    <button class="workspace-settings workspace-signout" data-signout="1"><span>↪</span>${t('seDeconnecter')}</button>
    <p>${t('slogan')}</p></div>`;
  const tabs=items;
+ const desktop=document.getElementById('desktopNav');
+ if(desktop){
+  desktop.innerHTML=tabs.map(x=>`<button class="desktop-tab ${screen===x.id?'on':''}" data-nav="${x.id}" aria-current="${screen===x.id?'page':'false'}">
+   <span class="desktop-tab-icon">${x.i}</span><span>${x.l}</span>${x.b?`<i>${x.b>99?'99+':x.b}</i>`:''}</button>`).join('');
+ }
  document.getElementById('nav').innerHTML=`${tabs.map(x=>`<button class="tab-item ${screen===x.id?'on':''}" data-nav="${x.id}">
   <span class="tab-icon">${x.i}</span><span>${x.l}</span>${x.b?`<i>${x.b>99?'99+':x.b}</i>`:''}</button>`).join('')}
   <button class="tab-item tab-more" data-menu="1"><span class="tab-icon">•••</span><span>Plus</span></button>`;
