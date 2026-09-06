@@ -1990,7 +1990,10 @@ function renderDashboardGeneral(){
  const ventesJour=mouvements.filter(function(m){return m.motif==='vente'&&new Date(m.ts)>=debutJour});
  const caJour=ventesJour.reduce(function(s,m){return s+pvMv(m)},0);
  const date=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}),heure=maintenant.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
- const performance=blocPerformanceHebdomadaireDashboard(maintenant);
+ let performance='<section class="wb-empty">Les ventes enregistrées alimenteront les tendances ici.</section>';
+ try{performance=blocPerformanceHebdomadaireDashboard(maintenant)}catch(e){console.warn('Performance indisponible',e)}
+ let complements='';
+ try{complements=meteoAccueilHTML()+recapMatinHTML()+adminWidgetAccueil()}catch(e){console.warn('Compléments du tableau de bord indisponibles',e)}
  const decisions=[];
  if(ruptures.length)decisions.push({title:ruptures.length+' rupture'+(ruptures.length>1?'s':''),detail:ruptures.slice(0,2).map(function(p){return p.n}).join(' · '),action:'Voir le stock',screen:'stock',tone:'critical'});
  if(sousSeuil.length)decisions.push({title:sousSeuil.length+' produit'+(sousSeuil.length>1?'s':'')+' sous le seuil',detail:sousSeuil.slice(0,2).map(function(p){return p.n}).join(' · '),action:'Préparer la commande',screen:'cmd',tone:'watch'});
@@ -2005,11 +2008,11 @@ function renderDashboardGeneral(){
   +'<section class="wb-focus"><header><div><small>À TRAITER</small><b>Ce qui demande une décision</b></div><span>'+decisions.length+' élément'+(decisions.length>1?'s':'')+'</span></header><div class="wb-decision-list">'+decisionRows+'</div></section>'
   +'<section class="wb-overview"><section class="wb-performance">'+performance+'</section><section class="wb-stock"><header><div><small>STOCK</small><b>Niveaux à surveiller</b></div><button data-dashgo="stock">Tout voir</button></header><div class="wb-stock-list">'+stockRows+'</div></section></section>'
   +'<section class="wb-ledger"><header><div><small>ACTIVITÉ DU JOUR</small><b>Ventes enregistrées</b></div><button data-dashgo="caisse">Ouvrir les ventes</button></header><div class="wb-ledger-line"><span>Chiffre d’affaires issu des ventes enregistrées</span><b>'+fmt(caJour)+' €</b><em>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+'</em></div></section>'
-  +meteoAccueilHTML()+recapMatinHTML()+adminWidgetAccueil()+'</div>';
+  +complements+'</div>';
  document.querySelectorAll('[data-dashgo]').forEach(function(b){b.onclick=function(){screen=b.dataset.dashgo;sq='';go()}});
  document.querySelectorAll('[data-open-recap]').forEach(function(b){b.onclick=ouvrirRecapMatin});
  lierWidgetAdministration(document.getElementById('s-dash'));
- actualiserMeteoAccueil();
+ try{actualiserMeteoAccueil()}catch(e){console.warn('Météo indisponible',e)}
 }
 function renderDashboardGeneralLegacy(){
  const produits=st.prods||[],mouvements=st.mv||[],commandes=st.commandes||[];
