@@ -1978,7 +1978,7 @@ function renderDashboardErreur(erreur){
 }
 
 /* ═════ TABLEAU DE BORD · vue générale et données réellement enregistrées ═════ */
-+function renderDashboardGeneral(){
+function renderDashboardGeneral(){
  const produits=st.prods||[],mouvements=st.mv||[],commandes=st.commandes||[];
  const ruptures=produits.filter(function(p){return(st.stock[p.id]??0)<=0});
  const sousSeuil=produits.filter(function(p){const q=st.stock[p.id]??0;return q>0&&q<=p.seuil});
