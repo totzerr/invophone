@@ -2357,3 +2357,9 @@ main{max-width:1480px!important}
   .settings-header,.settings-nav{background:#FFF!important;border-color:var(--sway-line)!important}
   .settings-nav button.on{background:var(--sway-blue-soft)!important;color:#244CE0!important}
 }
+
+/* Motif SVG discret : identité SWAY sans gêner le logo ni la navigation. */
+.top{isolation:isolate!important;overflow:hidden!important}
+.top:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:url("../assets/sway-header-blob.svg") right 44%/460px auto no-repeat;opacity:.065}
+.top>*{position:relative;z-index:1}
+@media(max-width:767px){.top:before{background-size:330px auto;opacity:.045}}
