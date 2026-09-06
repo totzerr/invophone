@@ -1,21 +1,35 @@
-# Structure de SWAY Phone
+# SWAY Phone — structure du code
 
-`index.html` est volontairement court : il contient uniquement la structure de la page et charge les fichiers ci-dessous.
+`index.html` contient uniquement le squelette de la page et un point d’entrée. Il reste sous 50 lignes.
 
-- `css/app.css` : couleurs, mise en page et design.
-- `js/core.js` : données, connexion, sauvegarde, tableau de bord et sorties.
-- `js/operations.js` : commandes, réceptions et fournisseurs.
-- `js/scanner.js` : scanner de bons, contrôle et administration.
-- `js/catalogue.js` : produits, fiches techniques, inventaire et bilan.
-- `js/interface.js` : navigation, réglages, prévisions, historique et démarrage de l’application.
-- `assets/` : logos et images.
-- `supabase/migrations/` : évolution versionnée de la base de données partagée. La première migration crée le socle sécurisé multi-établissements, les rôles et le journal d'audit.
+## Démarrage
 
-Les fichiers JavaScript sont chargés dans cet ordre. Ne déplace pas une fonction d’un fichier à un autre sans vérifier les écrans concernés.
-# Sway Phone
+- `js/bootstrap.js` charge tous les modules dans le bon ordre.
+- `css/sway.css` charge les styles dans le bon ordre.
 
-## Connexion sécurisée
+## JavaScript
 
-La connexion e-mail / mot de passe utilise Supabase Auth. Les clés privilégiées ne figurent pas dans cette application : seul l’identifiant public du projet est chargé par le navigateur et les règles RLS de Supabase contrôlent les données.
+- `js/foundation/` : stockage local, traductions, données de départ, rôles et règles communes.
+- `js/auth/` : comptes, session et connexion Supabase.
+- `js/workspace/` : sauvegarde, restauration, import depuis un ancien logiciel.
+- `js/stock/` : catalogue matière et mouvements de stock.
+- `js/orders/` : commandes, fournisseurs et réceptions.
+- `js/inventory/` : emplacements et comptage d’inventaire.
+- `js/catalogue/` : fiches techniques et recettes.
+- `js/sales/` : caisse et déclaration de sorties.
+- `js/dashboard/` et `js/analytics/` : vue générale et analyses.
+- `js/administration/` : documents, factures, contrats et suivi administratif.
+- `js/scanner/` : préparation d’image, OCR, contrôle humain et validation.
+- `js/interface/` : navigation, réglages, alertes et démarrage de l’application.
 
-Après inscription, l’utilisateur confirme son adresse e-mail puis crée son premier espace et établissement. Les données métier restent encore locales dans cette étape ; leur synchronisation Phone/Desktop est la prochaine migration fonctionnelle.
+## Styles
+
+Les styles suivent la même organisation : fondations, connexion, navigation, scanner, composants, écrans métier, réglages et adaptations téléphone/ordinateur. Ne pas ajouter de règles dans un fichier « fourre-tout » : la règle va dans le dossier de l’écran ou du composant concerné.
+
+## Données partagées
+
+- `assets/` : logos et ressources visuelles.
+- `supabase/migrations/` : évolutions versionnées de la base de données.
+- `tests/` : contrôles de syntaxe, architecture et règles métier.
+
+La connexion e-mail / mot de passe utilise Supabase Auth. Les clés privilégiées ne sont jamais dans le navigateur ; seules les clés publiques et les règles RLS sont utilisées côté application.
