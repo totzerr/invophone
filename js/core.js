@@ -1978,7 +1978,40 @@ function renderDashboardErreur(erreur){
 }
 
 /* ═════ TABLEAU DE BORD · vue générale et données réellement enregistrées ═════ */
-function renderDashboardGeneral(){
++function renderDashboardGeneral(){
+ const produits=st.prods||[],mouvements=st.mv||[],commandes=st.commandes||[];
+ const ruptures=produits.filter(function(p){return(st.stock[p.id]??0)<=0});
+ const sousSeuil=produits.filter(function(p){const q=st.stock[p.id]??0;return q>0&&q<=p.seuil});
+ const commandesEnCours=commandes.filter(function(c){return c&&c.statut!=='recu'&&c.statut!=='annulee'});
+ const maintenant=new Date(),jourISO=maintenant.toISOString().slice(0,10);
+ const commandesARecevoir=commandesEnCours.filter(function(c){return c.dateLiv&&c.dateLiv<=jourISO});
+ const aVerifier=mouvements.filter(function(m){return MOTIFS_PRIMAIRES.includes(m.motif)&&resteATracer(m.id)>0});
+ const debutJour=new Date();debutJour.setHours(0,0,0,0);
+ const ventesJour=mouvements.filter(function(m){return m.motif==='vente'&&new Date(m.ts)>=debutJour});
+ const caJour=ventesJour.reduce(function(s,m){return s+pvMv(m)},0);
+ const date=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}),heure=maintenant.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+ const performance=blocPerformanceHebdomadaireDashboard(maintenant);
+ const decisions=[];
+ if(ruptures.length)decisions.push({title:ruptures.length+' rupture'+(ruptures.length>1?'s':''),detail:ruptures.slice(0,2).map(function(p){return p.n}).join(' · '),action:'Voir le stock',screen:'stock',tone:'critical'});
+ if(sousSeuil.length)decisions.push({title:sousSeuil.length+' produit'+(sousSeuil.length>1?'s':'')+' sous le seuil',detail:sousSeuil.slice(0,2).map(function(p){return p.n}).join(' · '),action:'Préparer la commande',screen:'cmd',tone:'watch'});
+ if(commandesARecevoir.length)decisions.push({title:commandesARecevoir.length+' réception'+(commandesARecevoir.length>1?'s':''),detail:'Quantités à contrôler avant l’entrée en stock',action:'Réceptionner',screen:'liv',tone:'receive'});
+ if(aVerifier.length)decisions.push({title:aVerifier.length+' sortie'+(aVerifier.length>1?'s':'')+' à classer',detail:'Offert, perte ou annulation à rattacher à une vente',action:'Traiter',screen:'caisse',tone:'review'});
+ const decisionRows=decisions.length?decisions.slice(0,4).map(function(d){return '<button class="wb-decision '+d.tone+'" data-dashgo="'+d.screen+'"><span class="wb-decision-mark"></span><span><b>'+escapeHTML(d.title)+'</b><small>'+escapeHTML(d.detail)+'</small></span><em>'+d.action+'</em><i>›</i></button>'}).join(''):'<div class="wb-empty">Aucune action urgente. Les données disponibles sont à jour.</div>';
+ const stockRows=ruptures.concat(sousSeuil).slice(0,5).map(function(p){const q=st.stock[p.id]??0,etat=q<=0?'Rupture':'Sous seuil';return '<button class="wb-stock-row" data-dashgo="stock"><span>'+escapeHTML(p.i||'□')+'</span><b>'+escapeHTML(p.n)+'</b><small>'+fmtQ(q)+' '+escapeHTML(p.u||'')+'</small><em class="'+(q<=0?'critical':'watch')+'">'+etat+'</em><i>›</i></button>'}).join('')||'<div class="wb-empty">Aucun produit à surveiller.</div>';
+ const service=st.serviceActif&&st.serviceActif.id?st.serviceActif:null;
+ const serviceTexte=service?'Service '+(service.type==='midi'?'du midi':'du soir')+' ouvert':'Aucun service ouvert';
+ document.getElementById('s-dash').innerHTML='<div class="workbench">'
+  +'<header class="wb-head"><div><small>OPÉRATIONS</small><h1>Bonjour</h1><p>'+date.charAt(0).toUpperCase()+date.slice(1)+' · mise à jour à '+heure+'</p></div><button class="wb-service" data-dashgo="dec"><i></i><span>'+serviceTexte+'</span><b>Ouvrir</b></button></header>'
+  +'<section class="wb-focus"><header><div><small>À TRAITER</small><b>Ce qui demande une décision</b></div><span>'+decisions.length+' élément'+(decisions.length>1?'s':'')+'</span></header><div class="wb-decision-list">'+decisionRows+'</div></section>'
+  +'<section class="wb-overview"><section class="wb-performance">'+performance+'</section><section class="wb-stock"><header><div><small>STOCK</small><b>Niveaux à surveiller</b></div><button data-dashgo="stock">Tout voir</button></header><div class="wb-stock-list">'+stockRows+'</div></section></section>'
+  +'<section class="wb-ledger"><header><div><small>ACTIVITÉ DU JOUR</small><b>Ventes enregistrées</b></div><button data-dashgo="caisse">Ouvrir les ventes</button></header><div class="wb-ledger-line"><span>Chiffre d’affaires issu des ventes enregistrées</span><b>'+fmt(caJour)+' €</b><em>'+ventesJour.length+' vente'+(ventesJour.length>1?'s':'')+'</em></div></section>'
+  +meteoAccueilHTML()+recapMatinHTML()+adminWidgetAccueil()+'</div>';
+ document.querySelectorAll('[data-dashgo]').forEach(function(b){b.onclick=function(){screen=b.dataset.dashgo;sq='';go()}});
+ document.querySelectorAll('[data-open-recap]').forEach(function(b){b.onclick=ouvrirRecapMatin});
+ lierWidgetAdministration(document.getElementById('s-dash'));
+ actualiserMeteoAccueil();
+}
+function renderDashboardGeneralLegacy(){
  const produits=st.prods||[],mouvements=st.mv||[],commandes=st.commandes||[];
  const ruptures=produits.filter(function(p){return(st.stock[p.id]??0)<=0});
  const sousSeuil=produits.filter(function(p){const q=st.stock[p.id]??0;return q>0&&q<=p.seuil});
