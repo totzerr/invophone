@@ -1,19 +1,36 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
+import {join} from 'node:path';
 import vm from 'node:vm';
 
-const path='index.html';
-const source=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+const path='architecture';
+const root=new URL('../',import.meta.url);
+const rootPath=root.pathname;
+function filesIn(directory,extension){
+ const absolute=join(rootPath,directory);
+ return readdirSync(absolute,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()
+  ?filesIn(join(directory,entry.name),extension)
+  :(entry.name.endsWith(extension)?[join(directory,entry.name)]:[]));
+}
+const appScripts=filesIn('js','.js').filter(file=>!file.endsWith('bootstrap.js'));
+const appStyles=filesIn('css','.css');
+const source=[
+ readFileSync(new URL('../index.html',import.meta.url),'utf8'),
+ ...appScripts.map(file=>readFileSync(join(rootPath,file),'utf8')),
+ ...appStyles.map(file=>readFileSync(join(rootPath,file),'utf8'))
+].join('\n');
 
-test('le script intégré reste syntaxiquement valide',()=>{
-  const scripts=[...source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(match=>match[1]).filter(Boolean);
-  assert.ok(scripts.length,'la page doit contenir un script applicatif');
-  scripts.forEach((script,index)=>assert.doesNotThrow(()=>new vm.Script(script,{filename:path+'#script-'+index})));
+test('les modules JavaScript et les feuilles de style sont séparés et valides',()=>{
+  assert.match(source,/js\/bootstrap\.js/);
+  assert.match(source,/css\/sway\.css/);
+  assert.ok(appScripts.length>=20,'l’application doit être découpée en modules');
+  assert.ok(appStyles.length>=15,'les styles doivent être découpés par responsabilité');
+  appScripts.forEach(file=>assert.doesNotThrow(()=>new vm.Script(readFileSync(join(rootPath,file),'utf8'),{filename:file})));
 });
 
 test('Invophone conserve son identité et le scan mobile des bons de livraison',()=>{
- assert.match(source,/<title>INVO — Phone<\/title>/);
+ assert.match(source,/<title>Sway — Phone<\/title>/);
  assert.match(source,/--invo-version:"INVO PHONE"/);
  assert.match(source,/id="scanLiv"/);
  assert.match(source,/const sc=document\.getElementById\('scanLiv'\);if\(sc\)sc\.onclick=nouveauScan/);
@@ -262,7 +279,7 @@ test(path+' intègre Administration à la navigation, au dashboard et aux sauveg
  assert.match(source,/data:application\/pdf/);
  const postes=source.match(/const POSTES=\[[\s\S]*?\];/)?.[0]||'';
  assert.ok(postes);
- assert.doesNotMatch(postes,/id:'admin'/);
+ assert.match(postes,/id:'admin'/);
 });
 
 test(path+' calcule les contrats et rassemble les échéances administratives',()=>{
@@ -370,7 +387,7 @@ test(path+' aligne l’en-tête Compté avec les zones de saisie de l’inventai
 });
 
 test(path+' réserve les quantités attendues et écarts d’inventaire aux seuls profils autorisés',()=>{
- assert.match(source,/const peutVoirEcartsInventaire=\(\)=>\['gestion','salle'\]\.includes\(st\.whoId\)/);
+ assert.match(source,/const peutVoirEcartsInventaire=\(\)=>\['admin','gestion','salle'\]\.includes\(st\.whoId\)/);
  const inventory=source.match(/function renderInv\(\)\{[\s\S]*?\n\}\n\nasync function validerInv/)?.[0]||'';
  const history=source.match(/function renderInvHist\(sub\)\{[\s\S]*?\n\}\n\nfunction openHist/)?.[0]||'';
  const detail=source.match(/function openHist\(ix\)\{[\s\S]*?\n\}\n\nfunction dlCsv/)?.[0]||'';
