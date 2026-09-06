@@ -1,3 +1,333 @@
+/* SWAY · catalogue */
+
+/* ═════ PRODUITS : matières + carte ═════ */
+function renderStock(){
+/* Les prévisions sont calculées une seule fois, même avec une longue liste. */
+const pvMap=stockTab==='mat'?previsionIndex().map:{};
+const sub=`<div class="subtabs">
+<button class="${stockTab==='mat'?'on':''}" data-sub2="mat">📦 ${t('tabMat')} (${st.prods.length})</button>
+<button class="${stockTab==='carte'?'on':''}" data-sub2="carte">🍽️ ${t('tabCarte')} (${st.carte.length})</button></div>`;
+
+let body='';
+if(stockTab==='mat'){
+const rows=st.prods.filter(p=>p.n.toLowerCase().includes(sq.toLowerCase())).map(p=>{
+const q=st.stock[p.id]??p.s??0;const cls=q<=0?'out':(q<=p.seuil?'low':'');
+const cont=p.bottle?` · ${fmtQ(p.ct)} ${p.ctu||'cl'} / bouteille`:(p.ct?` · ${fmtQ(p.ct)} ${p.u}`:'');
+const R=estResp();
+const pvx=pvMap[p.id];
+const bd=pvx&&q>0&&(pvx.type==='perte'||(pvx.type==='rupture'&&pvx.quand<7))?badgePrev(pvx):null;
+const qq=bd?{txt:bd.txt,cls:bd.cls}:null;
+const meta=(R?`${fmt(p.px)} €/${p.u}${cont} · ${zLabel(p.z||'reserve')}${p.pxPrev&&p.px>p.pxPrev?' · ▲':''}`
+:`${cont?(p.bottle?fmtQ(p.ct)+' '+(p.ctu||'cl')+' / bouteille':fmtQ(p.ct)+' '+p.u)+' · ':''}${zLabel(p.z||'reserve')}`)
++(qq?` · <b style="color:${qq.cls==='rouge'?'var(--red,#C2414A)':'var(--amber,#4355F5)'}">${qq.txt}</b>`:'');
+return `<button class="line" ${R?`data-editmat="${p.id}"`:'style="cursor:default"'}><span class="l-ico">${p.i}</span>
+<span class="l-body"><div class="l-nm">${p.n}</div>
+<div class="l-meta">${meta}</div></span>
+<span class="l-val"><div class="l-qty ${cls}">${fmtQ(q)}</div><div class="l-unit">${p.u}</div></span>
+${R?'<span class="l-edit">›</span>':''}</button>`}).join('');
+body=`${estResp()?`<div class="stock-actions"><button class="btn btn-2" id="addMat">+ ${t('addMat')}</button></div>`:''}
+<input class="search" id="sqi" placeholder="${t('search')}" value="${sq}"><div>${rows}</div>`;
+}else{
+const R=estResp();
+const vus=st.carte.filter(c=>c.n.toLowerCase().includes(sq.toLowerCase())
+ &&(cartCat==='tous'||c.c===cartCat));
+
+if(R&&cartePrix){
+ /* ── Édition rapide des prix de vente ── */
+ const chips=['tous',...CATS].map(k=>
+  `<button class="cat ${cartCat===k?'on':''}" data-ccat="${k}">${k==='tous'?t('pvTous'):t(k)}</button>`).join('');
+ const lignes=vus.map(c=>{
+  const cr=coutMat(c.id,1);
+  const pv=(prixEdit[c.id]!==undefined)?num(prixEdit[c.id]):c.pv;
+  const r=pv>0?(cr/pv*100):0;
+  const modif=prixEdit[c.id]!==undefined&&Math.abs(num(prixEdit[c.id])-c.pv)>0.001;
+  return `<div class="pv-row ${modif?'modif':''}">
+   <span class="pv-ico">${c.i}</span>
+   <span class="pv-body"><div class="pv-n">${c.n}</div>
+    <div class="pv-m">${t('pvCout')} ${fmt(cr)} €
+     <b style="color:${r>35?'var(--red,#C2414A)':'var(--green,#235A34)'}">· ${r.toFixed(0)} %</b>
+     ${modif?` · <i>${t('pvAvant')} ${fmt(c.pv)} €</i>`:''}</div></span>
+   <span class="pv-in"><input inputmode="decimal" data-pv="${c.id}"
+    value="${prixEdit[c.id]!==undefined?prixEdit[c.id]:fmt(c.pv)}"><span>€</span></span>
+  </div>`}).join('');
+ const nbModif=Object.keys(prixEdit).filter(id=>{
+  const c=item(id);return c&&Math.abs(num(prixEdit[id])-c.pv)>0.001}).length;
+ body=`<div class="hint">${t('pvAide')}</div>
+  <div class="cats">${chips}</div>
+  <input class="search" id="sqi" placeholder="${t('search')}" value="${sq}">
+  <div class="pv-masse">
+   <span class="pv-masse-l">${t('pvAppliquer').replace('%n',vus.length)}</span>
+   <div class="pv-masse-b">
+    <button class="vl-act" data-pct="-10">−10 %</button>
+    <button class="vl-act" data-pct="-5">−5 %</button>
+    <button class="vl-act" data-pct="5">+5 %</button>
+    <button class="vl-act" data-pct="10">+10 %</button>
+   </div></div>
+  ${lignes||`<p class="vl-help">${t('pvAucun')}</p>`}
+  <div class="pv-actions">
+   <button class="btn btn-2 btn-sm" id="pvAnnuler">${t('cancel')}</button>
+   <button class="btn" id="pvEnr" ${nbModif?'':'disabled'}>
+    ${nbModif?t('pvEnregistrer').replace('%n',nbModif):t('pvRien')}</button></div>`;
+}else{
+ const rows=vus.map(c=>{
+  const cr=coutMat(c.id,1);const r=c.pv>0?(cr/c.pv*100):0;
+  return `<button class="line" ${R?`data-editcarte="${c.id}"`:'style="cursor:default"'}><span class="l-ico">${c.i}</span>
+  <span class="l-body"><div class="l-nm">${c.n}</div>
+  <div class="l-meta">${t(c.c)} · ${c.sv==='tous'?t('svTous'):(c.sv==='midi'?t('midi'):t('soir'))} · ${c.k==='food'?t('tFood'):t('tDrink')}</div></span>
+  ${R?`<span class="l-val"><div class="l-qty">${fmt(c.pv)} €</div>
+  <div class="l-unit" style="color:${r>35?'var(--red,#C2414A)':'var(--green,#235A34)'}">${r.toFixed(0)} %</div></span>
+  <span class="l-edit">›</span>`:''}</button>`}).join('');
+ const chips=['tous',...CATS].map(k=>
+  `<button class="cat ${cartCat===k?'on':''}" data-ccat="${k}">${k==='tous'?t('pvTous'):t(k)}</button>`).join('');
+ body=`${R?`<div class="scan-actions">
+   <button class="scan-btn" id="addCarte"><span class="sb-i">➕</span><span class="sb-l">${t('addCarte')}</span></button>
+   <button class="scan-btn primary" id="modPrix"><span class="sb-i">💶</span><span class="sb-l">${t('pvModifier')}</span></button>
+  </div>`:''}
+  <div class="cats">${chips}</div>
+  <input class="search" id="sqi" placeholder="${t('search')}" value="${sq}"><div>${rows}</div>`;
+}
+}
+document.getElementById('s-stock').innerHTML=`
+<div class="h-title">${t('stockT')}</div><div class="h-sub">${t('stockS')}</div>${sub}${body}`;
+document.querySelectorAll('[data-sub2]').forEach(b=>b.onclick=()=>{stockTab=b.dataset.sub2;sq='';renderStock()});
+const i=document.getElementById('sqi');
+if(i)i.oninput=e=>{sq=e.target.value;renderStock();const el=document.getElementById('sqi');
+el.focus();el.setSelectionRange(el.value.length,el.value.length)};
+const am=document.getElementById('addMat');if(am)am.onclick=()=>openMat(null);
+const ac=document.getElementById('addCarte');if(ac)ac.onclick=()=>openCarte(null);
+document.querySelectorAll('[data-editmat]').forEach(b=>b.onclick=()=>openMat(b.dataset.editmat));
+document.querySelectorAll('[data-editcarte]').forEach(b=>b.onclick=()=>openCarte(b.dataset.editcarte));
+document.querySelectorAll('[data-ccat]').forEach(b=>b.onclick=()=>{cartCat=b.dataset.ccat;renderStock()});
+const mp=document.getElementById('modPrix');
+if(mp)mp.onclick=()=>{cartePrix=true;prixEdit={};renderStock()};
+const pa=document.getElementById('pvAnnuler');
+if(pa)pa.onclick=()=>{cartePrix=false;prixEdit={};renderStock()};
+document.querySelectorAll('[data-pv]').forEach(inp=>{
+ inp.oninput=e=>{prixEdit[inp.dataset.pv]=e.target.value};
+ inp.onblur=()=>renderStock();
+});
+document.querySelectorAll('[data-pct]').forEach(b=>b.onclick=()=>{
+ const p=num(b.dataset.pct);
+ st.carte.filter(c=>c.n.toLowerCase().includes(sq.toLowerCase())
+  &&(cartCat==='tous'||c.c===cartCat)).forEach(c=>{
+   const base=prixEdit[c.id]!==undefined?num(prixEdit[c.id]):c.pv;
+   prixEdit[c.id]=fmt(Math.max(0,Math.round(base*(1+p/100)*100)/100));
+  });
+ renderStock();
+});
+const pe=document.getElementById('pvEnr');
+if(pe)pe.onclick=async()=>{
+ let n=0;
+ Object.entries(prixEdit).forEach(([id,v])=>{
+  const c=item(id);if(!c)return;
+  const nv=num(v);
+  if(nv>=0&&Math.abs(nv-c.pv)>0.001){c.pvPrev=c.pv;c.pv=nv;n++}
+ });
+ await save();
+ cartePrix=false;prixEdit={};
+ renderStock();
+ toast(t('pvEnregistres').replace('%n',n));
+};}
+
+/* ── Formulaire MATIÈRE ── */
+function openMat(id,fournisseurDefaut){
+const p=id?prod(id):null;
+fm=p?{...p,mode:p.bottle?'bottle':(p.ct?'cont':'direct'),ctu:p.ctu||'cl',stock:st.stock[p.id]??p.s??0}
+:{id:null,n:'',i:'📦',u:'kg',ct:'',ctu:'cl',pc:'',px:'',seuil:'',stock:'',mode:'direct',fo:fournisseurDefaut||''};
+drawMat()}
+
+function drawMat(){
+const isNew=!fm.id;
+const calc=(fm.mode==='cont'||fm.mode==='bottle')&&parseFloat(fm.ct)>0&&parseFloat(fm.pc)>=0
+?parseFloat(fm.pc)/parseFloat(fm.ct):null;
+const uniteStock=fm.mode==='bottle'?'btl':fm.u;
+const used=fm.id?st.carte.filter(c=>c.f&&c.f[fm.id]!==undefined).length:0;
+document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgM"><div class="sheet">
+<h3>${isNew?t('addMat'):t('editMat')}</h3>
+<p class="sh-sub">${isNew?'':(used?t('usedIn').replace('%s',used):'')}</p>
+<div class="f3">
+ <div class="fld"><label>${t('fIcone')}</label><input id="mI" value="${fm.i}" maxlength="4" style="text-align:center;font-size:20px"></div>
+ <div class="fld"><label>${t('fNom')}</label><input id="mN" value="${fm.n.replace(/"/g,'&quot;')}" placeholder="Gin Beefeater"></div>
+</div>
+<div class="fld"><label>${t('fUnite')}</label>${fm.mode==='bottle'
+?`<select id="mU" disabled><option>btl</option></select><small>Le stock et l’inventaire sont suivis en bouteilles.</small>`
+:`<select id="mU">${UNITES.map(u=>`<option ${fm.u===u?'selected':''}>${u}</option>`).join('')}</select><small>kg pour la cuisine, L pour les fûts, u à la pièce.</small>`}</div>
+<div class="fld"><label>${t('fAchat')}</label></div>
+<div class="seg">
+ <button class="${fm.mode==='bottle'?'on':''}" data-mode="bottle">🍾 Bouteille</button>
+ <button class="${fm.mode==='cont'?'on':''}" data-mode="cont">📦 ${t('achCont')}</button>
+ <button class="${fm.mode==='direct'?'on':''}" data-mode="direct">⚖️ ${t('achDirect')}</button></div>
+${fm.mode==='bottle'?`<div class="f2">
+ <div class="fld"><label>${t('fContenance')}</label><div style="display:flex;gap:8px"><input id="mCt" inputmode="decimal" value="${fm.ct}" placeholder="70"><select id="mCtU" style="max-width:82px"><option ${fm.ctu==='cl'?'selected':''}>cl</option><option ${fm.ctu==='ml'?'selected':''}>ml</option></select></div></div>
+ <div class="fld"><label>Prix par bouteille (€)</label><input id="mPc" inputmode="decimal" value="${fm.pc}" placeholder="15,40"></div></div>
+ ${calc!==null?`<div class="calc"><span class="calc-l">Équivalent au volume</span><span class="calc-v">${fmt(calc)} €/${fm.ctu||'cl'}</span></div>`:''}
+ <div class="hint">Dans les fiches techniques de boissons, cette bouteille pourra être dosée en cl ou ml. INVO convertira automatiquement chaque vente en fraction de bouteille.</div>`
+:fm.mode==='cont'?`<div class="f2">
+ <div class="fld"><label>${t('fContenance')} (${fm.u})</label><input id="mCt" inputmode="decimal" value="${fm.ct}" placeholder="70"></div>
+ <div class="fld"><label>${t('fPrixCont')} (€)</label><input id="mPc" inputmode="decimal" value="${fm.pc}" placeholder="15,40"></div></div>
+ ${calc!==null?`<div class="calc"><span class="calc-l">${t('fPrixU')}</span>
+ <span class="calc-v">${fmt(calc)} €/${fm.u}</span></div>`:''}`
+:`<div class="fld"><label>${t('fPrixU')} (€/${fm.u})</label><input id="mPx" inputmode="decimal" value="${fm.px}" placeholder="16,50"></div>`}
+<div class="f2">
+ <div class="fld"><label>${t('fStock')} (${uniteStock})</label><input id="mS" inputmode="decimal" value="${fm.stock}" placeholder="0"></div>
+ <div class="fld"><label>${t('fSeuil')} (${uniteStock})</label><input id="mSe" inputmode="decimal" value="${fm.seuil}" placeholder="0"></div></div>
+<div class="fld"><label>${t('fDlc')}</label><input id="mD" inputmode="numeric" value="${fm.dlc===undefined?'':fm.dlc}" placeholder="4">
+<small>${t('fDlcAide')}</small></div>
+<div class="f2">
+ <div class="fld"><label>${t('zone')}</label><select id="mZ">
+  ${ZONES_L.map(z=>`<option value="${z}" ${(fm.z||'reserve')===z?'selected':''}>${zLabel(z)}</option>`).join('')}</select></div>
+ <div class="fld"><label>${t('fourn')}</label><input id="mFo" value="${(fm.fo||'').replace(/"/g,'&quot;')}" placeholder="Metro"></div></div>
+<div class="fld"><label>Fournisseurs alternatifs (facultatif)</label><textarea id="mFos" rows="3" placeholder="Nom du fournisseur | Prix d’achat&#10;Ex. France Boissons | 1,25">${(fm.fournisseurs||[]).filter(o=>o&&o.n).map(o=>escapeHTML(o.n)+' | '+fmt(o.px)).join('&#10;')}</textarea><small>Un fournisseur et son prix par ligne. INVO indiquera la meilleure offre dans Commandes.</small></div>
+<div class="sh-actions">
+ ${isNew?'':`<button class="btn btn-del btn-sm" id="mDel">🗑️ ${t('del')}</button>`}
+ <button class="btn btn-2 btn-sm" id="mCancel">${t('cancel')}</button>
+ <button class="btn" id="mSave">${t('save2')}</button></div>
+</div></div>`;
+document.getElementById('bgM').onclick=e=>{if(e.target.id==='bgM')closeModal()};
+const bind=(el,key)=>{const n=document.getElementById(el);if(n)n.oninput=e=>{fm[key]=e.target.value;
+ if(key==='ct'||key==='pc')updCalc()}};
+bind('mN','n');bind('mI','i');bind('mCt','ct');bind('mPc','pc');bind('mPx','px');
+bind('mS','stock');bind('mSe','seuil');bind('mD','dlc');bind('mFo','fo');
+const altFos=document.getElementById('mFos');if(altFos)altFos.oninput=e=>fm.fournisseursTexte=e.target.value;
+const zSel=document.getElementById('mZ');if(zSel)zSel.onchange=e=>fm.z=e.target.value;
+const uSel=document.getElementById('mU');if(uSel&&!uSel.disabled)uSel.onchange=e=>{fm.u=e.target.value;drawMat()};
+const ctuSel=document.getElementById('mCtU');if(ctuSel)ctuSel.onchange=e=>{fm.ctu=e.target.value;drawMat()};
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{fm.mode=b.dataset.mode;drawMat()});
+function updCalc(){const c=document.querySelector('.calc-v');
+ const v=parseFloat(String(fm.ct).replace(',','.')),pc=parseFloat(String(fm.pc).replace(',','.'));
+ if(c&&v>0&&pc>=0)c.textContent=fmt(pc/v)+' €/'+(fm.mode==='bottle'?(fm.ctu||'cl'):fm.u)}
+document.getElementById('mCancel').onclick=closeModal;
+document.getElementById('mSave').onclick=saveMat;
+const d=document.getElementById('mDel');if(d)d.onclick=delMat}
+
+const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isNaN(x)?0:x};
+
+async function saveMat(){
+if(!fm.n.trim())return;
+const px=fm.mode==='bottle'?num(fm.pc):(fm.mode==='cont'?(num(fm.ct)>0?num(fm.pc)/num(fm.ct):0):num(fm.px));
+const ancien=fm.id?prod(fm.id):null,nouvelleZone=fm.z||'reserve';
+const emplacements=Array.isArray(fm.emplacements)&&fm.emplacements.length?[...new Set(fm.emplacements)]:[nouvelleZone];
+const obj={id:fm.id||uid('m'),n:fm.n.trim(),i:fm.i||'📦',u:fm.mode==='bottle'?'btl':fm.u,px,
+ seuil:num(fm.seuil),s:num(fm.stock),dlc:num(fm.dlc),z:emplacements[0],emplacements,
+ invCategory:fm.invCategory||inventaireCategorieParDefaut(fm),fo:(fm.fo||'Divers').trim(),
+ displayOrder:ancien&&(ancien.z||'reserve')===nouvelleZone&&Number.isFinite(Number(ancien.displayOrder))
+  ?Number(ancien.displayOrder):prochainePositionZone(nouvelleZone)};
+const texteAlternatives=String(fm.fournisseursTexte!==undefined?fm.fournisseursTexte:(fm.fournisseurs||[]).map(function(o){return String(o.n||'')+' | '+String(o.px??'')}).join(String.fromCharCode(10)));
+const alternatives=texteAlternatives.split(String.fromCharCode(10)).map(function(l){const parts=l.split('|'),n=String(parts.shift()||'').trim(),prix=num(parts.join('|'));return{n:n,px:prix}}).filter(function(o){return o.n&&o.px>0&&o.n.toLowerCase()!==obj.fo.toLowerCase()});
+if(alternatives.length)obj.fournisseurs=alternatives;
+if(fm.pxPrev)obj.pxPrev=fm.pxPrev;if(fm.hist)obj.hist=fm.hist;
+if(fm.mode==='bottle'){
+ obj.bottle=true;obj.bottleVersion=1;obj.bottleRecipeLegacyUnit=fm.bottleRecipeLegacyUnit||'cl';
+ obj.ct=num(fm.ct);obj.ctu=fm.ctu==='ml'?'ml':'cl';obj.pc=num(fm.pc);
+}else if(fm.mode==='cont'){obj.ct=num(fm.ct);obj.pc=num(fm.pc)}
+if(fm.id){const ix=st.prods.findIndex(p=>p.id===fm.id);st.prods[ix]=obj}
+else st.prods.push(obj);
+if(ancien&&(ancien.z||'reserve')!==nouvelleZone)normaliserZone(ancien.z||'reserve');
+normaliserZone(nouvelleZone);
+st.stock[obj.id]=num(fm.stock);assurerFournisseurs();
+await save();closeModal();renderStock();if(screen==='cmd')renderCommanderScreen();toast(t('matSaved'))}
+
+async function delMat(){
+const used=st.carte.filter(c=>c.f&&c.f[fm.id]!==undefined).length;
+if(!confirm(t('confDel')+(used?'\n'+t('usedIn').replace('%s',used):'')))return;
+const ancienneZone=(prod(fm.id)?.z)||'reserve';
+st.prods=st.prods.filter(p=>p.id!==fm.id);delete st.stock[fm.id];delete st.count[fm.id];
+st.carte.forEach(c=>{if(c.f&&c.f[fm.id]!==undefined)delete c.f[fm.id]});
+normaliserZone(ancienneZone);
+await save();closeModal();renderStock();toast(t('matDel'))}
+
+/* ── Formulaire CARTE ── */
+function openCarte(id){
+const c=id?item(id):null;
+fm=c?{...c,f:{...(c.f||{})},fu:{...(c.fu||{})},ing:Object.entries(c.f||{}).map(([k,v])=>({k,v,u:uniteFiche(c,k)}))}
+:{id:null,n:'',i:'🍽️',c:'cPlats',k:'food',sv:'tous',pv:'',ing:[]};
+drawCarte()}
+
+function changerTypeFiche(type){
+ if(type===fm.k)return;
+ fm.ing.forEach(r=>{const p=prod(r.k);if(!p||!p.bottle)return;
+  if(type==='drink'&&r.u==='btl'){
+   r.v=num(r.v)*qteUnite(p.ct,p.ctu||'cl','cl');r.u='cl';
+  }else if(fm.k==='drink'&&(r.u==='cl'||r.u==='ml')){
+   r.v=qteFicheEnStock({k:'drink',fu:{[r.k]:r.u}},r.k,num(r.v));r.u='btl';
+  }
+ });
+ fm.k=type;drawCarte();
+}
+
+function drawCarte(){
+const isNew=!fm.id;
+const cr=fm.ing.reduce((s,r)=>{const p=prod(r.k),fiche={k:fm.k,fu:{[r.k]:r.u}};return s+(p?qteFicheEnStock(fiche,r.k,num(r.v))*p.px:0)},0);
+const pv=num(fm.pv);const ratio=pv>0?cr/pv*100:0;
+const ings=fm.ing.map((r,ix)=>{const p=prod(r.k),uStock=p?p.u:'',unites=unitesFiche(fm,p);
+ const uSaisie=unites.includes(r.u)?r.u:(fm.k==='drink'&&p&&p.bottle?(p.ctu||'cl'):uStock);r.u=uSaisie;
+ const fiche={k:fm.k,fu:{[r.k]:uSaisie}},qStock=p?qteFicheEnStock(fiche,r.k,num(r.v)):0;
+ const equivalent=uStock&&uSaisie!==uStock?'<span class="ing-equivalent">≈ '+fmtQ(qStock)+' '+uStock+'</span>':'';
+ return `<div class="ing-row"><select data-ik="${ix}">${st.prods.map(p=>`<option value="${p.id}" ${r.k===p.id?'selected':''}>${p.i} ${p.n} (${p.u})</option>`).join('')}</select><input data-iv="${ix}" inputmode="decimal" value="${r.v}" placeholder="0"><select class="ing-unit" data-iu="${ix}">${unites.map(u=>`<option value="${u}" ${u===uSaisie?'selected':''}>${u}</option>`).join('')}</select><button class="ing-x" data-ix="${ix}">×</button>${equivalent}</div>`}).join('');
+document.getElementById('modal').innerHTML=`<div class="sheet-bg" id="bgC"><div class="sheet">
+<h3>${isNew?t('addCarte'):t('editCarte')}</h3><p class="sh-sub">${t('ficheS')}</p>
+<div class="f3">
+ <div class="fld"><label>${t('fIcone')}</label><input id="cI" value="${fm.i}" maxlength="4" style="text-align:center;font-size:20px"></div>
+ <div class="fld"><label>${t('fNom')}</label><input id="cN" value="${fm.n.replace(/"/g,'&quot;')}" placeholder="Mojito"></div></div>
+<div class="f2">
+ <div class="fld"><label>${t('fCat')}</label><select id="cC">
+ ${CATS.map(x=>`<option value="${x}" ${fm.c===x?'selected':''}>${t(x)}</option>`).join('')}</select></div>
+ <div class="fld"><label>${t('fPV')} (€)</label><input id="cPv" inputmode="decimal" value="${fm.pv}" placeholder="10,00"></div></div>
+<div class="fld"><label>${t('fType')}</label></div>
+<div class="seg">
+ <button class="${fm.k==='food'?'on':''}" data-k="food">🍽️ ${t('tFood')}</button>
+ <button class="${fm.k==='drink'?'on':''}" data-k="drink">🍹 ${t('tDrink')}</button></div>
+<div class="fld"><label>${t('fService')}</label></div>
+<div class="seg">
+ <button class="${fm.sv==='midi'?'on':''}" data-sv="midi">☀️ ${t('midi')}</button>
+ <button class="${fm.sv==='soir'?'on':''}" data-sv="soir">🌙 ${t('soir')}</button>
+ <button class="${fm.sv==='tous'?'on':''}" data-sv="tous">🕐 ${t('svTous')}</button></div>
+<div class="fld"><label>${t('fiche')}</label></div>
+${fm.k==='drink'?`<div class="hint">Les ingrédients stockés en bouteilles se saisissent en cl ou ml. Chaque vente est automatiquement convertie en fraction de bouteille dans le stock et les analyses.</div>`:''}
+${ings||`<p style="font-size:12px;color:var(--steel-d,#687386);margin-bottom:8px">${t('noIng')}</p>`}
+<button class="ing-add" id="cAddIng">${t('addIng')}</button>
+<div class="calc" style="margin-top:14px">
+ <span class="calc-l">${t('coutRev')} · ${t('ratioP')}</span>
+ <span class="calc-v">${fmt(cr)} €<span style="color:${ratio>35?'var(--red,#C2414A)':'var(--green,#235A34)'};font-size:13px"> · ${ratio.toFixed(0)} %</span></span></div>
+<div class="sh-actions">
+ ${isNew?'':`<button class="btn btn-del btn-sm" id="cDel">🗑️ ${t('del')}</button>`}
+ <button class="btn btn-2 btn-sm" id="cCancel">${t('cancel')}</button>
+ <button class="btn" id="cSave">${t('save2')}</button></div>
+</div></div>`;
+document.getElementById('bgC').onclick=e=>{if(e.target.id==='bgC')closeModal()};
+const b=(el,key)=>{const n=document.getElementById(el);if(n)n.oninput=e=>fm[key]=e.target.value};
+b('cN','n');b('cI','i');
+document.getElementById('cPv').oninput=e=>{fm.pv=e.target.value;
+ const c2=document.querySelector('.calc-v');const p=num(fm.pv);
+ const r=p>0?cr/p*100:0;
+ c2.innerHTML=`${fmt(cr)} €<span style="color:${r>35?'var(--red,#C2414A)':'var(--green,#235A34)'};font-size:13px"> · ${r.toFixed(0)} %</span>`};
+document.getElementById('cC').onchange=e=>fm.c=e.target.value;
+document.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>changerTypeFiche(x.dataset.k));
+document.querySelectorAll('[data-sv]').forEach(x=>x.onclick=()=>{fm.sv=x.dataset.sv;drawCarte()});
+document.querySelectorAll('[data-ik]').forEach(s=>s.onchange=e=>{const r=fm.ing[+s.dataset.ik];r.k=e.target.value;const p=prod(r.k);r.u=fm.k==='drink'&&p?.bottle?(p.ctu||'cl'):(p?.u||r.u);drawCarte()});
+document.querySelectorAll('[data-iv]').forEach(inp=>inp.oninput=e=>{fm.ing[+inp.dataset.iv].v=e.target.value});
+document.querySelectorAll('[data-iu]').forEach(sel=>sel.onchange=e=>{fm.ing[+sel.dataset.iu].u=e.target.value;drawCarte()});
+document.querySelectorAll('[data-ix]').forEach(x=>x.onclick=()=>{fm.ing.splice(+x.dataset.ix,1);drawCarte()});
+document.getElementById('cAddIng').onclick=()=>{
+ if(!st.prods.length)return;const p=st.prods[0];fm.ing.push({k:p.id,v:'',u:fm.k==='drink'&&p.bottle?(p.ctu||'cl'):p.u});drawCarte()};
+document.getElementById('cCancel').onclick=closeModal;
+document.getElementById('cSave').onclick=saveCarte;
+const d=document.getElementById('cDel');if(d)d.onclick=delCarte}
+
+async function saveCarte(){
+if(!fm.n.trim())return;
+const f={},fu={};fm.ing.forEach(r=>{if(r.k&&num(r.v)>0){f[r.k]=num(r.v);fu[r.k]=r.u||prod(r.k)?.u||''}});
+const obj={id:fm.id||uid('c'),n:fm.n.trim(),i:fm.i||'🍽️',c:fm.c,k:fm.k,sv:fm.sv,pv:num(fm.pv),f,fu};
+if(fm.k==='drink')obj.beverageUnitsVersion=1;
+if(fm.id){const ix=st.carte.findIndex(x=>x.id===fm.id);st.carte[ix]=obj}
+else st.carte.push(obj);
+await save();closeModal();renderStock();toast(t('carteSaved'))}
+
+async function delCarte(){
+if(!confirm(t('confDel')))return;
+st.carte=st.carte.filter(x=>x.id!==fm.id);delete panier[fm.id];
+await save();closeModal();renderStock();toast(t('carteDel'))}
+
 /* ═════ INVENTAIRE ═════ */
 function renderInv(){
  const voirEcarts=peutVoirEcartsInventaire();
@@ -300,3 +630,119 @@ function ouvrirConfigurationInventaire(){
 }
 
 /* ═════ BILAN ═════ */
+function renderBil(){
+const ventes=st.mv.filter(m=>m.motif==='vente');
+const nv=st.mv.filter(m=>m.motif!=='vente');
+const ca=ventes.reduce((s,m)=>s+pvMv(m),0);
+const matV=ventes.reduce((s,m)=>s+coutMv(m),0);
+const totalNV=nv.reduce((s,m)=>s+coutMv(m),0);
+const autoNV=nv.filter(m=>m.src==='auto').reduce((s,m)=>s+coutMv(m),0);
+const mainNV=nv.filter(m=>m.src==='main').reduce((s,m)=>s+coutMv(m),0);
+const ratio=ca>0?((matV+totalNV)/ca*100):0;
+let ecInv=0;
+st.prods.forEach(p=>{const v=st.count[p.id];if(v===''||v===undefined)return;
+if(Math.abs(parseFloat(v)-(st.stock[p.id]??p.s??0))>0.001)ecInv++});
+const allM=['offClient','offPart','offGroupe','annul','perso','casse','rate','degus','entame'];
+const cols={offClient:'var(--blue,#254A67)',offPart:'var(--teal,#0F4E53)',offGroupe:'var(--purple,#4F3D5E)',annul:'var(--red,#C2414A)',
+perso:'var(--purple,#4F3D5E)',casse:'var(--red,#C2414A)',rate:'var(--red,#C2414A)',degus:'var(--amber,#4355F5)',entame:'var(--amber,#4355F5)'};
+const par={};allM.forEach(k=>par[k]=0);
+nv.forEach(m=>{if(par[m.motif]!==undefined)par[m.motif]+=coutMv(m)});
+const max=Math.max(...Object.values(par),0.01);
+const bars=allM.filter(k=>par[k]>0).map(k=>`
+<div class="bar-row"><div class="bar-top"><span>${t(k)}</span><b>${fmt(par[k])} €</b></div>
+<div class="bar"><i style="width:${par[k]/max*100}%;background:${cols[k]}"></i></div></div>`).join('')
+||`<p style="font-size:13px;color:var(--steel-d,#687386)">${t('videD')}</p>`;
+const jrnl=st.mv.length?st.mv.slice(0,30).map(m=>{const d=new Date(m.ts);
+const hh=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+const jj=d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0');
+return `<div class="feed-row">${m.pk&&st.photos[m.pk]?`<img class="f-thumb" src="${st.photos[m.pk]}" alt="">`:`<span class="f-ico">${m.platI}</span>`}
+<span class="f-body"><div class="f-t">${m.platN}${m.qty>1?' × '+m.qty:''}</div>
+<div class="f-m">${jj} ${hh} · ${m.who} · ${fmt(coutMv(m))} €${
+ m.parent?` · ↩ ${t('trLiee')}`:''}${m.alerte?` · ⚠ ${t('trStockAlerte')}`:''}</div></span>
+<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+<span class="tag ${m.motif}">${t(m.motif).toUpperCase()}</span>
+<span class="src ${m.src}">${m.src==='auto'?t('auto'):t('manuel')}</span></span></div>`}).join('')
+:`<div class="empty"><div class="e-ico">📊</div><p><b>${t('vide')}</b><br>${t('videD')}</p></div>`;
+// Alertes : hausses de prix et plats sous marge
+const hausses=st.prods.filter(p=>p.pxPrev&&p.px>p.pxPrev)
+ .map(p=>({p,var:(p.px-p.pxPrev)/p.pxPrev*100}))
+ .filter(x=>x.var>=5).sort((a,b)=>b.var-a.var).slice(0,6);
+const sousMarge=st.carte.map(c=>({c,r:c.pv>0?coutMat(c.id,1)/c.pv*100:0}))
+ .filter(x=>x.r>35).sort((a,b)=>b.r-a.r).slice(0,6);
+const alertesHtml=(hausses.length||sousMarge.length)?`
+ ${hausses.length?`<div class="mini-note" style="margin:0 0 6px">${t('alertPrix')}</div>`+hausses.map(x=>`
+  <div class="alert-row"><span class="alert-ico">${x.p.i}</span>
+  <span class="alert-b"><div class="alert-n">${x.p.n}</div>
+  <div class="alert-m">${fmt(x.p.pxPrev)} → ${fmt(x.p.px)} €/${x.p.u}</div></span>
+  <span class="alert-v up">+${x.var.toFixed(0)} %</span></div>`).join(''):''}
+ ${sousMarge.length?`<div class="mini-note" style="margin:14px 0 6px">${t('alertMarge')}</div>`+sousMarge.map(x=>`
+  <div class="alert-row"><span class="alert-ico">${x.c.i}</span>
+  <span class="alert-b"><div class="alert-n">${x.c.n}</div>
+  <div class="alert-m">${fmt(coutMat(x.c.id,1))} € / ${fmt(x.c.pv)} €</div></span>
+  <span class="alert-v up">${x.r.toFixed(0)} %</span></div>`).join(''):''}`
+ :`<p class="mini-note">${t('noAlerte')}</p>`;
+
+const anos=anomalies();
+const blocAno=anos.length?`<div class="eyebrow">${t('attention')}</div>
+<div style="margin-bottom:22px">${anos.map(x=>{const action=x.action?` data-analysis-action="${x.action}" aria-label="${escapeHTML(x.t)} · ouvrir le traitement"`:'';return `<${x.action?'button type="button"':'div'} class="ano ${x.n}${x.action?' ano-action':''}"${action}>
+<div class="ano-t">${x.n==='rouge'?'⚠️ ':''}${x.t}</div>
+${x.d?`<div class="ano-d">${x.d}</div>`:''}</${x.action?'button':'div'}>`}).join('')}</div>`
+:`<div class="eyebrow">${t('attention')}</div>
+<div class="ano" style="margin-bottom:22px"><div class="ano-t">${t('rasT')}</div>
+<div class="ano-d">${t('rasD')}</div></div>`;
+
+let blocDos='';
+if(peutVoirEcartsInventaire()&&st.doseurs&&st.doseurs.actif){
+ const th=consoTheorique();
+ const bouteilles=st.prods.filter(p=>p.u==='cl'&&(th[p.id]||0)>0)
+  .sort((a,b)=>(th[b.id]||0)-(th[a.id]||0)).slice(0,12);
+ const lignes=bouteilles.map(p=>{
+  const theo=th[p.id]||0, v=st.doseurs.releves[p.id], has=v!==undefined&&v!=='';
+  const reel=num(v), ec=has&&theo>0?(reel-theo)/theo*100:null;
+  const col=ec===null?'var(--steel-d,#687386)':(Math.abs(ec)>10?'var(--red,#C2414A)':'var(--green,#235A34)');
+  return `<div class="dos-row"><span class="dos-n">${p.i} ${p.n}</span>
+  <span class="dos-th">${fmtQ(Math.round(theo*10)/10)}</span>
+  <input class="dos-in" inputmode="decimal" data-dosr="${p.id}" value="${has?v:''}" placeholder="—">
+  <span class="dos-ec" style="color:${col}">${ec===null?'—':(ec>0?'+':'')+ec.toFixed(0)+' %'}</span></div>`}).join('');
+ blocDos=`<div class="eyebrow" style="margin-top:24px">${t('doseurs')}</div>
+ <div class="auth-msg info">${t('doseursDemo')}</div>
+ ${bouteilles.length?`<div class="dos-h"><span>${t('prod')}</span><span>${t('theo')}</span>
+ <span style="text-align:center">${t('releve')}</span><span>${t('ecart')}</span></div>${lignes}`
+ :`<p style="font-size:13px;color:var(--steel-d,#687386)">${t('videD')}</p>`}`;
+}
+
+document.getElementById('s-bil').innerHTML=`
+<div class="h-title">${t('bilT')}</div><div class="h-sub">${t('bilS')}</div>
+${blocAno}
+<div class="kpis">
+<div class="kpi green"><div class="kpi-v">${fmt(ca)} €</div><div class="kpi-l">${t('kCA')}</div></div>
+<div class="kpi amber"><div class="kpi-v">${fmt(totalNV)} €</div><div class="kpi-l">${t('kNonVendu')}</div></div>
+<div class="kpi ${ratio>34?'red':'green'}"><div class="kpi-v">${ratio.toFixed(1).replace('.',',')} %</div><div class="kpi-l">${t('kRatio')}</div></div>
+${peutVoirEcartsInventaire()?`<div class="kpi ${ecInv?'red':'green'}"><div class="kpi-v">${ecInv}</div><div class="kpi-l">${t('kEcart')}</div></div>`:''}</div>
+<div class="eyebrow">${t('origine')}</div>
+<div class="split">
+<div class="split-cell"><div class="sp-lab a">${t('auto')}</div>
+<div class="sp-v" style="color:var(--blue,#254A67)">${fmt(autoNV)} €</div>
+<div class="sp-d">${t('srcAuto')} — ${t('srcAutoD')}</div></div>
+<div class="split-cell"><div class="sp-lab b">${t('manuel')}</div>
+<div class="sp-v" style="color:var(--amber,#4355F5)">${fmt(mainNV)} €</div>
+<div class="sp-d">${t('srcMain')} — ${t('srcMainD')}</div></div></div>
+<div class="eyebrow">${t('repart')}</div><div style="margin-bottom:24px">${bars}</div>
+<div class="eyebrow">${t('alertes')}</div>${alertesHtml}
+${blocDos}
+<div class="eyebrow" style="margin-top:24px">${t('jrnl')}</div><div>${jrnl}</div>
+<div class="exp-row"><button class="btn btn-2 btn-sm" id="bilCsv">${t('exportCsv')}</button>
+<button class="btn btn-2 btn-sm" id="bilPrint">${t('imprimer')}</button></div>`;
+document.querySelectorAll('[data-dosr]').forEach(inp=>{
+ inp.oninput=e=>{st.doseurs.releves[e.target.dataset.dosr]=e.target.value;save()};
+ inp.onblur=()=>renderBil()});
+document.querySelectorAll('[data-analysis-action]').forEach(b=>b.onclick=()=>ouvrirTraitementAnalyse(b.dataset.analysisAction));
+document.getElementById('bilPrint').onclick=()=>window.print();
+document.getElementById('bilCsv').onclick=()=>{
+ const rows=[['Date','Heure','Produit','Qte','Motif','Source','Cout matiere EUR','Prix vente EUR']];
+ st.mv.forEach(m=>{const d=new Date(m.ts);
+  rows.push([d.toLocaleDateString('fr-FR'),d.toLocaleTimeString('fr-FR').slice(0,5),
+   m.platN,m.qty,t(m.motif),m.src==='auto'?'Caisse':'Manuel',
+   Math.round(coutMv(m)*100)/100,Math.round(pvMv(m)*100)/100])});
+ dlCsv(rows,'bilan_'+new Date().toISOString().slice(0,10)+'.csv')};
+}
