@@ -12,7 +12,7 @@
   'js/stock/catalogue.js','js/catalogue/recipes.js','js/inventory/counting.js','js/analytics/reports.js',
   'js/administration/documents.js','js/administration/domain.js','js/administration/screens.js',
   'js/scanner/image-preparation.js','js/scanner/ocr-analysis.js','js/scanner/workflow.js',
-  'js/interface/navigation.js','js/interface/settings.js','js/interface/forecasts.js','js/interface/application.js'
+  'js/interface/navigation.js','js/interface/settings.js','js/interface/forecasts.js','js/interface/liquid-glass.js','js/interface/application.js'
  ];
  const load=src=>new Promise((resolve,reject)=>{
   const tag=document.createElement('script');
