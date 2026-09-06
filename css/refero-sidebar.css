@@ -29,6 +29,7 @@ main{max-width:none!important;width:100%!important;margin:0!important;padding:38
  #nav .tab-icon{display:grid!important;width:18px;height:18px;place-items:center;color:currentColor!important}.tab-icon svg{width:18px!important;height:18px!important;stroke:currentColor!important;stroke-width:2!important;fill:none!important}.tab-item i{position:absolute!important;top:13px!important;right:12px!important;background:var(--sway-blue)!important;color:#fff!important;border-radius:99px!important;font-size:8px!important}.tab-more{display:none!important}
  main{padding:42px 50px 76px!important}.cartbar{left:276px!important;right:0!important;width:auto!important;max-width:none!important;padding:0 50px!important}
 }
+@media(max-width:899px){#drawer,#drBg{display:block!important}}
 /* Téléphone : le menu garde le même langage, mais s’ouvre dans un panneau sans débordement horizontal. */
 @media(max-width:899px){
  .top{height:68px!important;padding:0 16px!important}.top-brand .logo-img,.top .logo-img{height:25px!important}.lang{display:none!important}.who-pill{height:34px!important;padding:0 10px!important}.gear{width:34px!important;height:34px!important}
