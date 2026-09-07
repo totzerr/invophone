@@ -144,8 +144,7 @@ function openReglages(){
  settingsTab=typeof arguments[0]==='string'?arguments[0]:(settingsTab||'general');
  if(settingsTab==='users'&&!peutGererRoles())settingsTab='general';
  const dos=st.doseurs||{actif:false,releves:{}};
- const textePilote=st.demoParcours?(st.live?'Démo caisse active.':'Démo caisse prête.'):(st.modePilote?t('pilotOn'):t('pilotS')),recapMatin=preferencesRecapMatin();
- const etatPilote=st.demoParcours?(st.live?'Auto':'Démo'):(st.modePilote?'Actif':'Prêt');
+ const recapMatin=preferencesRecapMatin();
  const general=`
   <section class="settings-group">
    <div class="settings-group-title">${settingsIcon('building')}<span>${t('etablissement')}</span></div>
@@ -199,19 +198,15 @@ function openReglages(){
    </div>
   </section>`;
  const donnees=`<section class="settings-group">
-   <div class="settings-group-title">${settingsIcon('pilot')}<span>${t('pilot')} / ${t('reset')}</span></div>
+   <div class="settings-group-title">${settingsIcon('pilot')}<span>Démo caisse</span></div>
    <div class="settings-card">
     <div class="settings-status-row">
-     <span class="settings-field-label">${settingsIcon('pilot')}<span><b>Test pilote</b><small>${textePilote}</small></span></span>
-     <span class="pill-etat ${(st.modePilote||st.demoParcours)?'on':'off'}">${etatPilote}</span>
+     <span class="settings-field-label">${settingsIcon('pilot')}<span><b>${st.demoParcours?'Démo caisse en cours':'Démo caisse'}</b><small>${st.demoParcours?'Les ventes sont simulées. Rien n’est envoyé à une caisse réelle.':'Simule les ventes reçues depuis une caisse. Rien n’est envoyé à une caisse réelle.'}</small></span></span>
+     <span class="pill-etat ${st.demoParcours?'on':'off'}">${st.demoParcours?'Active':'Arrêtée'}</span>
     </div>
     <div class="settings-action-grid">
-     <button class="settings-action-button" id="pilotAutoStart">${settingsIcon('pilot')}<span>Lancer la démo caisse</span></button>
-     ${st.modePilote?'':`<button class="settings-action-button" id="pilotStart">${settingsIcon('pilot')}<span>${t('pilotStart')}</span></button>`}
-     <button class="settings-action-button" id="resetDemo">${settingsIcon('general')}<span>${t('reset')}</span></button>
+     ${st.demoParcours?`<button class="settings-action-button" id="pilotAutoStop">${settingsIcon('general')}<span>Arrêter la démo caisse</span></button>`:`<button class="settings-action-button" id="pilotAutoStart">${settingsIcon('pilot')}<span>Lancer la démo caisse</span></button>`}
     </div>
-    ${st.demoParcours?`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Démo caisse</b><small>Simule les ventes reçues depuis une caisse. Rien n’est envoyé à la caisse réelle.</small></span></span><button class="settings-text-button" id="pilotAutoPause">${st.live?'Mettre en pause':'Reprendre'}${settingsIcon('arrow')}</button></div>`:''}
-   ${st.modePilote?'':`<div class="settings-mini-action"><span>${settingsIcon('pilot')}<span><b>Démo caisse</b><small>${t('pilotDemoS')}</small></span></span><button class="settings-text-button" id="pilotDemoLoad">${t('pilotDemoLoad')}${settingsIcon('arrow')}</button></div>`}
    </div>
   </section>
   <section class="settings-group">
@@ -243,16 +238,10 @@ function openReglages(){
  const bkOut=document.getElementById('bkExport'),bkBtn=document.getElementById('bkImportBtn'),bkIn=document.getElementById('bkImport');
  if(bkOut)bkOut.onclick=async()=>{bkOut.disabled=true;try{await exporterSauvegarde();toast(t('backupOk'))}catch(e){toast(t('backupRead'))}bkOut.disabled=false};
  if(bkBtn&&bkIn)bkBtn.onclick=()=>bkIn.click();
- const pilotBtn=document.getElementById('pilotStart');
- if(pilotBtn)pilotBtn.onclick=async()=>{pilotBtn.disabled=true;await preparerTestReel();};
  const pilotAutoBtn=document.getElementById('pilotAutoStart');
  if(pilotAutoBtn)pilotAutoBtn.onclick=async()=>{pilotAutoBtn.disabled=true;await chargerParcoursDemonstration(true);};
- const pilotAutoPause=document.getElementById('pilotAutoPause');
- if(pilotAutoPause)pilotAutoPause.onclick=async()=>{st.live=!st.live;await save();startFeed();if(st.live)setTimeout(posEvent,300);openReglages();};
- const resetBtn=document.getElementById('resetDemo');
- if(resetBtn)resetBtn.onclick=async()=>{resetBtn.disabled=true;await resetDemo();};
- const pilotDemoBtn=document.getElementById('pilotDemoLoad');
- if(pilotDemoBtn)pilotDemoBtn.onclick=async()=>{pilotDemoBtn.disabled=true;await chargerParcoursDemonstration();};
+ const pilotAutoStop=document.getElementById('pilotAutoStop');
+ if(pilotAutoStop)pilotAutoStop.onclick=async()=>{pilotAutoStop.disabled=true;await arreterDemoCaisse();};
  if(bkIn)bkIn.onchange=async()=>{const f=bkIn.files&&bkIn.files[0];bkIn.value='';await importerSauvegarde(f)};
  const re_=document.getElementById('rEtab');
  if(re_)re_.oninput=e=>{st.etabNom=e.target.value;mettreAJourMarqueEtablissement();save()};

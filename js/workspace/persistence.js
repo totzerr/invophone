@@ -101,23 +101,30 @@ async function preparerTestReel(){
 
 
 /* ── Retour volontaire à la démonstration, toujours précédé d'une sauvegarde. ── */
-async function resetDemo(){
+async function resetDemo(options={}){
+ const silencieux=!!options.silencieux,sauvegarder=options.sauvegarder!==false;
  let avant;
- try{avant=await creerSauvegarde()}catch(e){toast(t('backupRead'));return}
- if(!confirm(t('resetConfirm')))return;
- dlJson(avant,nomSauvegarde('-avant-reset'));
+ if(sauvegarder){try{avant=await creerSauvegarde()}catch(e){toast(t('backupRead'));return false}}
+ if(!silencieux&&!confirm(t('resetConfirm')))return false;
+ if(sauvegarder)dlJson(avant,nomSauvegarde('-avant-reset'));
  const etabNom=st.etabNom,lang=st.lang,who=st.who,whoId=st.whoId,svc=st.svc;
  const doseurs=st.doseurs?JSON.parse(JSON.stringify(st.doseurs)):undefined;
  st=stVierge();
  st.lang=lang;st.who=who;st.whoId=whoId;st.etabNom=etabNom;st.svc=svc;
  if(doseurs)st.doseurs=doseurs;
- st.modePilote=false;st.demoParcours=false;
+ st.modePilote=false;st.demoParcours=false;st.live=false;
  st.prods=JSON.parse(JSON.stringify(PRODUITS_DEF));
  st.carte=JSON.parse(JSON.stringify(CARTE_DEF));
  st.prods.forEach(p=>st.stock[p.id]=p.s);
  Docs._cache={};panier={};panierMotifs={};motif=null;motifsSelectionnes=[];decPhoto=null;screen='caisse';
  _pvCache=null;_pvCle='';
- await save();closeModal();renderAll();toast(t('cleared'));
+ await save();closeModal();renderAll();toast(silencieux?'Démo caisse arrêtée et réinitialisée.':t('cleared'));
+ return true;
+}
+
+async function arreterDemoCaisse(){
+ if(!st.demoParcours){toast('Aucune démo caisse n’est en cours.');return false}
+ return resetDemo({silencieux:true,sauvegarder:false});
 }
 
 /* Parcours entièrement fictif : il sert à vérifier les connexions commande,
