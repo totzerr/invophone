@@ -185,8 +185,7 @@ function chaineMouvement(mvId){
  return ch.reverse();
 }
 
-function toast(msg){const el=document.getElementById('toast');
-el.innerHTML=`<div class="toast">✓ ${msg}</div>`;setTimeout(()=>{el.innerHTML=''},1800)}
+function toast(msg,type){const el=document.getElementById('toast');if(!el)return;const text=String(msg||''),lower=text.toLowerCase();const tone=type||(/impossible|erreur|échec|refus|invalide|manquant/.test(lower)?'danger':/attention|vérifier|hausse|alerte/.test(lower)?'warning':/démo|prévisualisation|prévu/.test(lower)?'info':'success');const icons={success:'✓',warning:'!',danger:'×',info:'i'};el.innerHTML='';const notice=document.createElement('div');notice.className='toast is-'+tone;const icon=document.createElement('span');icon.className='toast-icon';icon.textContent=icons[tone]||icons.success;const label=document.createElement('span');label.textContent=text;notice.append(icon,label);el.appendChild(notice);setTimeout(()=>{if(el.contains(notice))el.innerHTML=''},2600)}
 
 /* ═════ FLUX CAISSE ═════ */
 function posEvent(){

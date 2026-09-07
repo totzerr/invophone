@@ -1,7 +1,7 @@
 /* SWAY · point d'entrée applicatif
    Charge les modules dans un ordre explicite. L'index.html reste volontairement léger. */
 (()=>{
- const version='20260906-architecture';
+ const version='20260908-unified-controls';
  const scripts=[
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.102.0/dist/umd/supabase.js',
   'js/supabase-auth.js',
